@@ -17,6 +17,11 @@ public:
     HK_BIN_Tool(QWidget *parent = nullptr);
     ~HK_BIN_Tool();
 
+private slots:
+    void on_Add_Bin_pushButton_clicked();
+
+    void on_Save_Bin_pushButton_clicked();
+
 private:
     Ui::HK_BIN_Tool *ui;
 };
