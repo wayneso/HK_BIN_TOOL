@@ -22,6 +22,8 @@ private slots:
 
     void on_Save_Bin_pushButton_clicked();
 
+    void on_Next_EDID_Button_clicked();
+
 private:
     Ui::HK_BIN_Tool *ui;
 };
