@@ -69,7 +69,9 @@ void HK_BIN_Tool::on_Add_Bin_pushButton_clicked()
     ui->EDIDVER_lineEdit->setText(edidInfo.version);
     ui->DATA_YEAR_lineEdit->setText(QString::number(edidInfo.manufactureYear));
     ui->DATA_WEEK_lineEdit->setText(QString::number(edidInfo.manufactureWeek));
-    ui->Measure_lineEdit->setText(QString::number(edidInfo.diagonalSizeInches));
+    ui->Measure_H_lineEdit->setText(QString::number(edidInfo.horizontalSizeCm));
+    ui->Measure_V_lineEdit->setText(QString::number(edidInfo.verticalSizeCm));
+    ui->Measure_lineEdit->setText(QString::number(edidInfo.diagonalSizeInches, 'f', 1));
     ui->InputName_lineEdit->setText(edidInfo.monitorName);
 
 }
@@ -102,7 +104,9 @@ void HK_BIN_Tool::on_Next_EDID_Button_clicked()
     ui->EDIDVER_lineEdit->setText(edidInfo.version);
     ui->DATA_YEAR_lineEdit->setText(QString::number(edidInfo.manufactureYear));
     ui->DATA_WEEK_lineEdit->setText(QString::number(edidInfo.manufactureWeek));
-    ui->Measure_lineEdit->setText(QString::number(edidInfo.diagonalSizeInches));
+    ui->Measure_H_lineEdit->setText(QString::number(edidInfo.horizontalSizeCm));
+    ui->Measure_V_lineEdit->setText(QString::number(edidInfo.verticalSizeCm));
+    ui->Measure_lineEdit->setText(QString::number(edidInfo.diagonalSizeInches, 'f', 1));
     ui->InputName_lineEdit->setText(edidInfo.monitorName);
 
     // 更新索引以指向下一个 EDID
@@ -137,8 +141,15 @@ void HK_BIN_Tool::on_Save_Bin_pushButton_clicked()
     }
 
     EDID_Info edidInfo;
-
-
+    edidInfo.horizontalSizeCm = ui->Measure_H_lineEdit->text().toFloat();
+    edidInfo.verticalSizeCm = ui->Measure_V_lineEdit->text().toFloat();
+    edidInfo.diagonalSizeInches = ui->Measure_lineEdit->text().toFloat();
+    edidInfo.manufactureWeek = ui->DATA_WEEK_lineEdit->text().toInt();
+    edidInfo.manufactureYear = ui->DATA_YEAR_lineEdit->text().toInt();
+    edidInfo.manufacturerID = ui->Factory_lineEdit->text();
+    edidInfo.productID = ui->CODE_lineEdit->text();
+    edidInfo.monitorName = ui->InputName_lineEdit->text();
+    edidInfo.version = ui->EDIDVER_lineEdit->text();
     // 修改每个 EDID（例如修改厂商信息）
     for (EDID& edid : Bin_EDID) {
         edid.buffer = Modify_EDID(edid.buffer, edidInfo);

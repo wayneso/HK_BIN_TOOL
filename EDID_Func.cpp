@@ -74,31 +74,44 @@ QVector<EDID> Find_EDID(const QByteArray& binBuffer) {
     return edidList;
 }
 
-
 EDID_Info Read_EDID(const QByteArray& edidBuffer) {
     EDID_Info info;
 
+    const int EDID_MIN_SIZE = 128;
+    const int MANUFACTURER_ID_OFFSET = 8;
+    const int PRODUCT_ID_OFFSET = 10;
+    const int EDID_VERSION_OFFSET = 18;
+    const int MANUFACTURE_YEAR_OFFSET = 17;
+    const int MANUFACTURE_WEEK_OFFSET = 16;
+    const int MONITOR_NAME_BLOCK_START = 108;
+    const int MONITOR_NAME_BLOCK_END = 125;
+
     // 校验 EDID 数据长度
-    if (edidBuffer.size() < 128) {
+    if (edidBuffer.size() < EDID_MIN_SIZE) {
         qDebug() << "Invalid EDID size";
         return info;
     }
 
-    unsigned char id1 = edidBuffer[8];
-    unsigned char id2 = edidBuffer[9];
+    // 提取厂商 ID
+    unsigned char id1 = edidBuffer[MANUFACTURER_ID_OFFSET];
+    unsigned char id2 = edidBuffer[MANUFACTURER_ID_OFFSET + 1];
     info.manufacturerID.append(QChar((id1 >> 2) + 'A' - 1));
     info.manufacturerID.append(QChar(((id1 & 0x03) << 3 | id2 >> 5) + 'A' - 1));
     info.manufacturerID.append(QChar((id2 & 0x1F) + 'A' - 1));
 
-    unsigned short productID = static_cast<unsigned char>(edidBuffer[10]) |
-                               (static_cast<unsigned char>(edidBuffer[11]) << 8);
-    info.productID = QString("0x%1").arg(productID, 4, 16, QLatin1Char('0')).toUpper();
+    // 提取产品 ID
+    unsigned short productID = static_cast<unsigned char>(edidBuffer[PRODUCT_ID_OFFSET]) |
+                               (static_cast<unsigned char>(edidBuffer[PRODUCT_ID_OFFSET + 1]) << 8);
+    info.productID = QString("%1").arg(productID, 4, 16, QLatin1Char('0')).toUpper();
 
-    int majorVersion = static_cast<unsigned char>(edidBuffer[18]);
-    int minorVersion = static_cast<unsigned char>(edidBuffer[19]);
+    // 提取 EDID 版本
+    int majorVersion = static_cast<unsigned char>(edidBuffer[EDID_VERSION_OFFSET]);
+    int minorVersion = static_cast<unsigned char>(edidBuffer[EDID_VERSION_OFFSET + 1]);
     info.version = QString("%1.%2").arg(majorVersion).arg(minorVersion);
-    info.manufactureWeek = static_cast<unsigned char>(edidBuffer[16]);
-    info.manufactureYear = static_cast<unsigned char>(edidBuffer[17]) + 1990;
+
+    // 提取制造周和年份
+    info.manufactureWeek = static_cast<unsigned char>(edidBuffer[MANUFACTURE_WEEK_OFFSET]);
+    info.manufactureYear = static_cast<unsigned char>(edidBuffer[MANUFACTURE_YEAR_OFFSET]) + 1990;
 
     // 提取尺寸数据并转换单位
     unsigned char hSizeCm = edidBuffer[21];
@@ -111,9 +124,9 @@ EDID_Info Read_EDID(const QByteArray& edidBuffer) {
         info.diagonalSizeInches = diagonalInches;
     }
 
-
+    // 查找显示器名称
     info.monitorName.clear();  // 确保 monitorName 初始为空
-    for (int i = 108; i <= 125; i += 18) {  // 遍历描述符块
+    for (int i = MONITOR_NAME_BLOCK_START; i <= MONITOR_NAME_BLOCK_END; i += 18) {  // 遍历描述符块
         if (edidBuffer[i] == 0x00 && edidBuffer[i + 1] == 0x00 &&
             edidBuffer[i + 2] == 0x00 && static_cast<unsigned char>(edidBuffer[i + 3]) == 0xFC) {  // 名称标识符
             QByteArray nameData = edidBuffer.mid(i + 5, 13);  // 名称数据区域
@@ -134,7 +147,7 @@ QByteArray Modify_EDID(QByteArray edidBuffer, const EDID_Info& edidInfo) {
         return edidBuffer;
     }
 
-    // 将厂商 ID 转换为 EDID 格式
+    // 检查厂商 ID 是否为 3 个字符
     if (edidInfo.manufacturerID.size() != 3) {
         qDebug() << "Manufacturer ID must be 3 characters.";
         return edidBuffer;
@@ -150,10 +163,8 @@ QByteArray Modify_EDID(QByteArray edidBuffer, const EDID_Info& edidInfo) {
     edidBuffer[8] = id[0];
     edidBuffer[9] = id[1];
 
-    // 修改产品 ID（如果需要，可以通过类似方式修改）
-    // 例如，你可以通过 `edidInfo.productID` 修改产品 ID
-
-    unsigned short productID = edidInfo.productID.toUInt(nullptr, 16);  // 从十六进制字符串转换
+    // 修改产品 ID
+    unsigned short productID = edidInfo.productID.toUInt(nullptr, 16);
     edidBuffer[10] = static_cast<char>(productID & 0xFF);
     edidBuffer[11] = static_cast<char>((productID >> 8) & 0xFF);
 
@@ -167,10 +178,25 @@ QByteArray Modify_EDID(QByteArray edidBuffer, const EDID_Info& edidInfo) {
     edidBuffer[16] = static_cast<char>(edidInfo.manufactureWeek);
     edidBuffer[17] = static_cast<char>(edidInfo.manufactureYear - 1990);
 
-    // 修改显示器名称（如果需要）
-    // 注意：EDID 名称存储在描述符块中，因此需要使用类似前面提到的方式来插入或修改名称
 
-    // 更新校验和（第 127 字节）
+    // 提取尺寸数据并转换单位
+    edidBuffer[21] = edidInfo.horizontalSizeCm;;
+    edidBuffer[22] = edidInfo.verticalSizeCm;
+
+    // 修改显示器名称
+    QByteArray nameData = edidInfo.monitorName.toUtf8();  // 使用 UTF-8 转换
+    nameData = nameData.trimmed();  // 去除名称中的多余空格或 \0 字符
+    for (int i = 108; i <= 125; i += 18) {
+        if (edidBuffer[i] == 0x00 && edidBuffer[i + 1] == 0x00 &&
+            edidBuffer[i + 2] == 0x00 && static_cast<unsigned char>(edidBuffer[i + 3]) == 0xFC) {
+            edidBuffer.replace(i + 5, 13, QByteArray(13, '\0'));  // 将原名称部分清零
+            // 然后插入新的显示器名称
+            edidBuffer.replace(i + 5, nameData.size(), nameData);  // 替换名称
+            break;
+        }
+    }
+
+    // 更新校验和
     int checksum = 0;
     for (int i = 0; i < 127; ++i) {
         checksum += static_cast<unsigned char>(edidBuffer[i]);
@@ -179,6 +205,7 @@ QByteArray Modify_EDID(QByteArray edidBuffer, const EDID_Info& edidInfo) {
 
     return edidBuffer;
 }
+
 
 
 

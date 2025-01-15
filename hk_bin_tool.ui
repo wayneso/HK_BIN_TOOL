@@ -93,7 +93,7 @@
        <rect>
         <x>20</x>
         <y>20</y>
-        <width>111</width>
+        <width>181</width>
         <height>21</height>
        </rect>
       </property>
@@ -109,7 +109,7 @@
      <widget class="QLineEdit" name="EDID_lineEdit">
       <property name="geometry">
        <rect>
-        <x>140</x>
+        <x>170</x>
         <y>20</y>
         <width>113</width>
         <height>21</height>
@@ -127,13 +127,16 @@
       <property name="alignment">
        <set>Qt::AlignmentFlag::AlignLeading|Qt::AlignmentFlag::AlignLeft|Qt::AlignmentFlag::AlignVCenter</set>
       </property>
+      <property name="readOnly">
+       <bool>true</bool>
+      </property>
      </widget>
      <widget class="QLabel" name="label_2">
       <property name="geometry">
        <rect>
         <x>20</x>
         <y>50</y>
-        <width>111</width>
+        <width>181</width>
         <height>21</height>
        </rect>
       </property>
@@ -143,13 +146,13 @@
        </font>
       </property>
       <property name="text">
-       <string>制造厂商</string>
+       <string>制造厂商(三个大写字母)</string>
       </property>
      </widget>
      <widget class="QLineEdit" name="Factory_lineEdit">
       <property name="geometry">
        <rect>
-        <x>140</x>
+        <x>170</x>
         <y>50</y>
         <width>113</width>
         <height>21</height>
@@ -173,7 +176,7 @@
        <rect>
         <x>20</x>
         <y>80</y>
-        <width>111</width>
+        <width>181</width>
         <height>21</height>
        </rect>
       </property>
@@ -183,13 +186,13 @@
        </font>
       </property>
       <property name="text">
-       <string>产品代码</string>
+       <string>产品代码(0000 - FFFF)</string>
       </property>
      </widget>
      <widget class="QLineEdit" name="CODE_lineEdit">
       <property name="geometry">
        <rect>
-        <x>140</x>
+        <x>170</x>
         <y>80</y>
         <width>113</width>
         <height>21</height>
@@ -213,7 +216,7 @@
        <rect>
         <x>20</x>
         <y>110</y>
-        <width>111</width>
+        <width>181</width>
         <height>21</height>
        </rect>
       </property>
@@ -229,7 +232,7 @@
      <widget class="QLineEdit" name="DATA_YEAR_lineEdit">
       <property name="geometry">
        <rect>
-        <x>140</x>
+        <x>170</x>
         <y>110</y>
         <width>113</width>
         <height>21</height>
@@ -253,7 +256,7 @@
        <rect>
         <x>20</x>
         <y>170</y>
-        <width>111</width>
+        <width>181</width>
         <height>21</height>
        </rect>
       </property>
@@ -269,7 +272,7 @@
      <widget class="QLineEdit" name="EDIDVER_lineEdit">
       <property name="geometry">
        <rect>
-        <x>140</x>
+        <x>170</x>
         <y>170</y>
         <width>113</width>
         <height>21</height>
@@ -292,8 +295,8 @@
       <property name="geometry">
        <rect>
         <x>20</x>
-        <y>200</y>
-        <width>111</width>
+        <y>230</y>
+        <width>181</width>
         <height>21</height>
        </rect>
       </property>
@@ -303,14 +306,14 @@
        </font>
       </property>
       <property name="text">
-       <string>屏幕尺寸</string>
+       <string>屏幕尺寸(英寸)</string>
       </property>
      </widget>
      <widget class="QLineEdit" name="Measure_lineEdit">
       <property name="geometry">
        <rect>
-        <x>140</x>
-        <y>200</y>
+        <x>170</x>
+        <y>230</y>
         <width>113</width>
         <height>21</height>
        </rect>
@@ -331,8 +334,8 @@
      <widget class="QLineEdit" name="InputName_lineEdit">
       <property name="geometry">
        <rect>
-        <x>140</x>
-        <y>230</y>
+        <x>170</x>
+        <y>260</y>
         <width>113</width>
         <height>21</height>
        </rect>
@@ -354,8 +357,8 @@
       <property name="geometry">
        <rect>
         <x>20</x>
-        <y>230</y>
-        <width>111</width>
+        <y>260</y>
+        <width>181</width>
         <height>21</height>
        </rect>
       </property>
@@ -384,7 +387,7 @@
      <widget class="QLineEdit" name="DATA_WEEK_lineEdit">
       <property name="geometry">
        <rect>
-        <x>140</x>
+        <x>170</x>
         <y>140</y>
         <width>113</width>
         <height>21</height>
@@ -408,7 +411,7 @@
        <rect>
         <x>20</x>
         <y>140</y>
-        <width>111</width>
+        <width>181</width>
         <height>21</height>
        </rect>
       </property>
@@ -419,6 +422,78 @@
       </property>
       <property name="text">
        <string>生产周份</string>
+      </property>
+     </widget>
+     <widget class="QLabel" name="label_9">
+      <property name="geometry">
+       <rect>
+        <x>20</x>
+        <y>200</y>
+        <width>181</width>
+        <height>21</height>
+       </rect>
+      </property>
+      <property name="font">
+       <font>
+        <pointsize>10</pointsize>
+       </font>
+      </property>
+      <property name="text">
+       <string>屏幕尺寸(HV:CM)</string>
+      </property>
+     </widget>
+     <widget class="QLineEdit" name="Measure_H_lineEdit">
+      <property name="geometry">
+       <rect>
+        <x>170</x>
+        <y>200</y>
+        <width>51</width>
+        <height>21</height>
+       </rect>
+      </property>
+      <property name="font">
+       <font>
+        <pointsize>10</pointsize>
+        <bold>false</bold>
+       </font>
+      </property>
+      <property name="text">
+       <string/>
+      </property>
+      <property name="alignment">
+       <set>Qt::AlignmentFlag::AlignLeading|Qt::AlignmentFlag::AlignLeft|Qt::AlignmentFlag::AlignVCenter</set>
+      </property>
+     </widget>
+     <widget class="QLineEdit" name="Measure_V_lineEdit">
+      <property name="geometry">
+       <rect>
+        <x>230</x>
+        <y>200</y>
+        <width>51</width>
+        <height>21</height>
+       </rect>
+      </property>
+      <property name="font">
+       <font>
+        <pointsize>10</pointsize>
+        <bold>false</bold>
+       </font>
+      </property>
+      <property name="text">
+       <string/>
+      </property>
+      <property name="alignment">
+       <set>Qt::AlignmentFlag::AlignLeading|Qt::AlignmentFlag::AlignLeft|Qt::AlignmentFlag::AlignVCenter</set>
+      </property>
+     </widget>
+     <widget class="QComboBox" name="comboBox">
+      <property name="geometry">
+       <rect>
+        <x>290</x>
+        <y>230</y>
+        <width>71</width>
+        <height>22</height>
+       </rect>
       </property>
      </widget>
     </widget>
