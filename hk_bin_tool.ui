@@ -542,7 +542,7 @@
      <attribute name="title">
       <string>FUNC</string>
      </attribute>
-     <widget class="QLabel" name="label_10">
+     <widget class="QLabel" name="Bin_Data_Flag_label">
       <property name="geometry">
        <rect>
         <x>10</x>

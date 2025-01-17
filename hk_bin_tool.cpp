@@ -24,6 +24,24 @@ QByteArray Bin_Buffer;
 QString filepath;
 int EDID_index = 1;
 
+uchar BacklightDef_Data_Buffer[6] = {0};
+Bin_Data_String BinData_BackLightDef = {
+    "This is BacklightDef Flag!",  // 目标字符串
+    0,                             // 字符串初始位置
+    27,                            // 偏移量
+    BacklightDef_Data_Buffer,      // 输出缓冲区
+    6                              // 输出缓冲区大小
+};
+
+uchar Key_Value_Data_Buffer[10] = {0};
+Bin_Data_String Key_Value_DataDef = {
+    "This is Keyboardflag Flag!",  // 目标字符串
+    0,                             // 字符串初始位置
+    27,                            // 偏移量
+    Key_Value_Data_Buffer,      // 输出缓冲区
+    10                              // 输出缓冲区大小
+};
+
 HK_BIN_Tool::HK_BIN_Tool(QWidget *parent) : QWidget(parent), ui(new Ui::HK_BIN_Tool)
 {
     ui->setupUi(this);
@@ -85,6 +103,52 @@ void HK_BIN_Tool::on_Add_Bin_pushButton_clicked()
     /************* EDID *************/
 
     /************* BIN *************/
+
+    bool State = Find_TargetString_InBinFile(Bin_Buffer,BinData_BackLightDef);
+    ui->_BACKLIGHT_MIN->setText(QString::number(BinData_BackLightDef.outputBuffer[0], 16).toUpper());
+    ui->_BACKLIGHT_DEF_PWM->setText(QString::number(BinData_BackLightDef.outputBuffer[1], 16).toUpper());
+    ui->_BACKLIGHT_MAX->setText(QString::number(BinData_BackLightDef.outputBuffer[2], 16).toUpper());
+    ui->_MPRT_PWM_MIN->setText(QString::number(BinData_BackLightDef.outputBuffer[3], 16).toUpper());
+    ui->_MPRT_PWM_DEF->setText(QString::number(BinData_BackLightDef.outputBuffer[4], 16).toUpper());
+    ui->_MPRT_PWM_MAX->setText(QString::number(BinData_BackLightDef.outputBuffer[5], 16).toUpper());
+
+    State = Find_TargetString_InBinFile(Bin_Buffer,Key_Value_DataDef);
+    ui->POWER_KEY->setText(QString::number(Key_Value_DataDef.outputBuffer[0], 16).toUpper());
+    ui->MENU_KEY->setText(QString::number(Key_Value_DataDef.outputBuffer[1], 16).toUpper());
+    ui->EXIT_KEY->setText(QString::number(Key_Value_DataDef.outputBuffer[2], 16).toUpper());
+    ui->RIGHT_KEY->setText(QString::number(Key_Value_DataDef.outputBuffer[3], 16).toUpper());
+    ui->LEFT_KEY->setText(QString::number(Key_Value_DataDef.outputBuffer[4], 16).toUpper());
+    ui->POWER_REG->setText(QString::number(Key_Value_DataDef.outputBuffer[5], 16).toUpper());
+    ui->MENU_REG->setText(QString::number(Key_Value_DataDef.outputBuffer[6], 16).toUpper());
+    ui->EXIT_REG->setText(QString::number(Key_Value_DataDef.outputBuffer[7], 16).toUpper());
+    ui->RIGHT_REG->setText(QString::number(Key_Value_DataDef.outputBuffer[8], 16).toUpper());
+    ui->LEFT_REG->setText(QString::number(Key_Value_DataDef.outputBuffer[9], 16).toUpper());
+
+    if (State == true)
+    {
+        ui->Bin_Data_Flag_label->setText("该BIN文件适用修改工具");
+    }
+    else
+    {
+        ui->Bin_Data_Flag_label->setText("该BIN文件不适用修改工具");
+        ui->_BACKLIGHT_MIN->setText("0");
+        ui->_BACKLIGHT_DEF_PWM->setText("0");
+        ui->_BACKLIGHT_MAX->setText("0");
+        ui->_MPRT_PWM_MIN->setText("0");
+        ui->_MPRT_PWM_DEF->setText("0");
+        ui->_MPRT_PWM_MAX->setText("0");
+        ui->POWER_KEY->setText("0");
+        ui->MENU_KEY->setText("0");
+        ui->EXIT_KEY->setText("0");
+        ui->RIGHT_KEY->setText("0");
+        ui->LEFT_KEY->setText("0");
+        ui->POWER_REG->setText("0");
+        ui->MENU_REG->setText("0");
+        ui->EXIT_REG->setText("0");
+        ui->RIGHT_REG->setText("0");
+        ui->LEFT_REG->setText("0");
+    }
+
 
     /************* BIN *************/
 }
@@ -211,7 +275,7 @@ void HK_BIN_Tool::on_Measure_comboBox_currentTextChanged(const QString &arg1)
 {
     if (arg1 != "快捷选项")
         ui->Measure_lineEdit->setText(arg1);
-/*
+    /*
     // 定义选项和对应的值
     static const QHash<QString, QStringList> measureMap = {
         {"19.0", {"42", "24", "19.0"}},

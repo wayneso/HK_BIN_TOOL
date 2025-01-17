@@ -19,6 +19,8 @@ set(PROJECT_SOURCES
         hk_bin_tool.ui
         EDID_Func.h
         EDID_Func.cpp
+        BIN_Data_Func.cpp
+        BIN_Data_Func.h
 )
 
 if(${QT_VERSION_MAJOR} GREATER_EQUAL 6)

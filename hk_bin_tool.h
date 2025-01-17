@@ -2,6 +2,7 @@
 #define HK_BIN_TOOL_H
 
 #include <QWidget>
+#include "BIN_Data_Func.h"
 
 QT_BEGIN_NAMESPACE
 namespace Ui {
@@ -37,3 +38,4 @@ private:
     Ui::HK_BIN_Tool *ui;
 };
 #endif // HK_BIN_TOOL_H
+
