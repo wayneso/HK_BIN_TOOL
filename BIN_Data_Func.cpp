@@ -22,3 +22,22 @@ bool Find_TargetString_InBinFile(const QByteArray Bin_Buffer, Bin_Data_String &B
     }
     return State;
 }
+
+
+bool Write_TargetString_InBinFile(QByteArray &Bin_Buffer, Bin_Data_String &Bin_Data)
+{
+    bool State;
+
+    if (Bin_Data.positions != -1) {
+
+        std::memcpy(Bin_Buffer.data() + Bin_Data.positions + Bin_Data.offset, Bin_Data.outputBuffer, Bin_Data.outputBufferSize);
+        //Bin_Buffer.replace(Bin_Data.positions + Bin_Data.offset, Bin_Data.outputBuffer, Bin_Data.outputBufferSize);
+        State = true;
+        qDebug() << "写入成功";
+
+    } else {
+        State = false;
+        qDebug() << "写入失败";
+    }
+    return State;
+}

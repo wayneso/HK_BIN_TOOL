@@ -261,6 +261,43 @@ void HK_BIN_Tool::on_Save_Bin_pushButton_clicked()
     // 将修改后的 EDID 写回 binBuffer
     Write_EDID(Bin_Buffer, Bin_EDID);
 
+    bool State = false;
+    State = Find_TargetString_InBinFile(Bin_Buffer, BinData_BackLightDef);
+    State = Find_TargetString_InBinFile(Bin_Buffer, Key_Value_DataDef);
+    if (State == true)
+    {
+    /*
+        bool State = Find_TargetString_InBinFile(Bin_Buffer,BinData_BackLightDef);
+        ui->_BACKLIGHT_MIN->setText(QString::number(BinData_BackLightDef.outputBuffer[0], 16).toUpper());
+        ui->_BACKLIGHT_DEF_PWM->setText(QString::number(BinData_BackLightDef.outputBuffer[1], 16).toUpper());
+        ui->_BACKLIGHT_MAX->setText(QString::number(BinData_BackLightDef.outputBuffer[2], 16).toUpper());
+        ui->_MPRT_PWM_MIN->setText(QString::number(BinData_BackLightDef.outputBuffer[3], 16).toUpper());
+        ui->_MPRT_PWM_DEF->setText(QString::number(BinData_BackLightDef.outputBuffer[4], 16).toUpper());
+        ui->_MPRT_PWM_MAX->setText(QString::number(BinData_BackLightDef.outputBuffer[5], 16).toUpper());
+
+        State = Find_TargetString_InBinFile(Bin_Buffer,Key_Value_DataDef);
+        ui->POWER_KEY->setText(QString::number(Key_Value_DataDef.outputBuffer[0], 16).toUpper());
+        ui->MENU_KEY->setText(QString::number(Key_Value_DataDef.outputBuffer[1], 16).toUpper());
+        ui->EXIT_KEY->setText(QString::number(Key_Value_DataDef.outputBuffer[2], 16).toUpper());
+        ui->RIGHT_KEY->setText(QString::number(Key_Value_DataDef.outputBuffer[3], 16).toUpper());
+        ui->LEFT_KEY->setText(QString::number(Key_Value_DataDef.outputBuffer[4], 16).toUpper());
+        ui->POWER_REG->setText(QString::number(Key_Value_DataDef.outputBuffer[5], 16).toUpper());
+        ui->MENU_REG->setText(QString::number(Key_Value_DataDef.outputBuffer[6], 16).toUpper());
+        ui->EXIT_REG->setText(QString::number(Key_Value_DataDef.outputBuffer[7], 16).toUpper());
+        ui->RIGHT_REG->setText(QString::number(Key_Value_DataDef.outputBuffer[8], 16).toUpper());
+        ui->LEFT_REG->setText(QString::number(Key_Value_DataDef.outputBuffer[9], 16).toUpper());
+    */
+        BinData_BackLightDef.outputBuffer[0] = 0;
+        //BinData_BackLightDef.outputBuffer[0] = ui->_BACKLIGHT_MIN->text().toInt();
+        BinData_BackLightDef.outputBuffer[1] = ui->_BACKLIGHT_DEF_PWM->text().toInt();
+        BinData_BackLightDef.outputBuffer[2] = ui->_BACKLIGHT_MAX->text().toInt();
+        BinData_BackLightDef.outputBuffer[3] = ui->_MPRT_PWM_MIN->text().toInt();
+        BinData_BackLightDef.outputBuffer[4] = ui->_MPRT_PWM_DEF->text().toInt();
+        BinData_BackLightDef.outputBuffer[5] = ui->_MPRT_PWM_MAX->text().toInt();
+        State = Write_TargetString_InBinFile(Bin_Buffer, BinData_BackLightDef);
+        //State = Write_TargetString_InBinFile(Bin_Buffer, Key_Value_DataDef);
+    }
+
     // 写入数据并关闭文件
     file.write(Bin_Buffer);
     file.close();
