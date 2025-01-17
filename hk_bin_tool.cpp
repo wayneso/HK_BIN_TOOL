@@ -61,6 +61,8 @@ void HK_BIN_Tool::on_Add_Bin_pushButton_clicked()
     QString fileName = QFileInfo(filepath).fileName();
     file.close();
     ui->Bin_File_label->setText(fileName);
+
+    /************* EDID *************/
     // 提取所有的 EDID 信息
     Bin_EDID = Find_EDID(Bin_Buffer);
     ui->EDID_textEdit->setText(EDID_Data_Convert_String(Bin_EDID[0]));
@@ -80,7 +82,11 @@ void HK_BIN_Tool::on_Add_Bin_pushButton_clicked()
     ui->Measure_V_lineEdit->setText(QString::number(edidInfo.verticalSizeCm));
     ui->Measure_lineEdit->setText(QString::number(edidInfo.diagonalSizeInches, 'f', 1));
     ui->InputName_lineEdit->setText(edidInfo.monitorName);
+    /************* EDID *************/
 
+    /************* BIN *************/
+
+    /************* BIN *************/
 }
 
 void HK_BIN_Tool::on_Next_EDID_Button_clicked()
@@ -205,43 +211,64 @@ void HK_BIN_Tool::on_Measure_comboBox_currentTextChanged(const QString &arg1)
 {
     if (arg1 != "快捷选项")
         ui->Measure_lineEdit->setText(arg1);
+/*
+    // 定义选项和对应的值
+    static const QHash<QString, QStringList> measureMap = {
+        {"19.0", {"42", "24", "19.0"}},
+        {"21.0", {"46", "26", "21.0"}},
+        {"23.8", {"53", "29", "23.8"}},
+        {"24.0", {"53", "30", "24.0"}},
+        {"24.5", {"54", "31", "24.5"}},
+        {"27.0", {"60", "33", "27.0"}},
+        {"32.0", {"71", "40", "32.0"}}
+    };
 
+    // 检查是否存在对应的选项
+    if (measureMap.contains(arg1)) {
+        const QStringList &values = measureMap[arg1];
+        ui->Measure_H_lineEdit->setText(values[0]);
+        ui->Measure_V_lineEdit->setText(values[1]);
+        ui->Measure_lineEdit->setText(values[2]);
+    } else {
+        qDebug() << "其他选项被选择：" << arg1;
+    }
+*/
 }
-
 
 void HK_BIN_Tool::on_Measure_lineEdit_textChanged(const QString &arg1)
 {
-    // 将 arg1 转换为浮点数（对角线尺寸，单位：英寸）
+    // 将 arg1 转换为浮点数（输入的对角线尺寸，单位：英寸）
     bool ok = false;
     float diagonalInInches = arg1.toFloat(&ok);
 
+    // 如果输入无效（非数字或负数/零），打印错误信息并清空相关文本框
     if (!ok || diagonalInInches <= 0) {
-        // 如果输入无效或非正数，打印错误信息
         qDebug() << "无效的对角线尺寸（英寸）：" << arg1;
+        ui->Measure_H_lineEdit->clear();  // 清空宽度 (cm)
+        ui->Measure_V_lineEdit->clear();  // 清空高度 (cm)
         return;
     }
 
     // 将对角线尺寸从英寸转换为厘米
-    const float inchToCm = 2.54;  // 英寸到厘米的转换比率
+    const float inchToCm = 2.54;  // 英寸到厘米的转换因子
     float diagonalInCm = diagonalInInches * inchToCm;
 
-    // 宽高比 (长:宽 = 16:9)
+    // 宽高比 (宽:高 = 16:9)
     const float aspectRatio = 16.0 / 9.0;
 
-    // 计算宽和长（单位：厘米）
-    float width = std::sqrt((diagonalInCm * diagonalInCm) / (1 + aspectRatio * aspectRatio)) ;
-    float height = width * aspectRatio;
+    // 根据对角线尺寸和宽高比计算宽度和高度（单位：厘米）
+    float width = std::sqrt((diagonalInCm * diagonalInCm) / (1 + aspectRatio * aspectRatio)); // 宽度 (cm)
+    float height = width * aspectRatio;  // 高度 (cm)
 
-    // 转换为整数（四舍五入）
+    // 将宽度和高度转换为整数（四舍五入处理）
     int roundedWidth = static_cast<int>(std::round(width));
     int roundedHeight = static_cast<int>(std::round(height));
 
-    // 更新 UI 控件
-    ui->Measure_H_lineEdit->setText(QString::number(roundedHeight));  // 高度 (cm)
-    ui->Measure_V_lineEdit->setText(QString::number(roundedWidth));   // 宽度 (cm)
-    ui->Measure_lineEdit->setText(arg1);                              // 对角线尺寸 (英寸)
-
+    // 更新 UI 控件中的文本框
+    ui->Measure_V_lineEdit->setText(QString::number(roundedWidth));    // 宽度 (cm)
+    ui->Measure_H_lineEdit->setText(QString::number(roundedHeight));   // 高度 (cm)
 }
+
 
 void HK_BIN_Tool::on_DATA_checkBox_clicked(bool checked)
 {
