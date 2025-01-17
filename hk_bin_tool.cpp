@@ -27,6 +27,13 @@ int EDID_index = 1;
 HK_BIN_Tool::HK_BIN_Tool(QWidget *parent) : QWidget(parent), ui(new Ui::HK_BIN_Tool)
 {
     ui->setupUi(this);
+    ui->Measure_comboBox->addItem("快捷选项");
+    ui->Measure_comboBox->addItem("19.0");
+    ui->Measure_comboBox->addItem("21.0");
+    ui->Measure_comboBox->addItem("23.8");
+    ui->Measure_comboBox->addItem("24.5");
+    ui->Measure_comboBox->addItem("27.0");
+    ui->Measure_comboBox->addItem("32.0");
 }
 
 HK_BIN_Tool::~HK_BIN_Tool()
@@ -140,6 +147,31 @@ void HK_BIN_Tool::on_Save_Bin_pushButton_clicked()
         return;
     }
 
+    bool DATA_checkBox_isChecked = ui->DATA_checkBox->isChecked();
+    bool CODE_INC_checkBox_isChecked = ui->CODE_INC_checkBox->isChecked();
+    if (DATA_checkBox_isChecked)
+    {
+        // 获取当前日期
+        QDate currentDate = QDate::currentDate();
+
+        // 获取当前年份
+        int currentYear = currentDate.year();
+
+        // 获取当前周数，注意：默认周一为一周的开始
+        int currentWeek = currentDate.weekNumber();
+
+        // 将当前年份和周数写入到文本框
+        ui->DATA_YEAR_lineEdit->setText(QString::number(currentYear));
+        ui->DATA_WEEK_lineEdit->setText(QString::number(currentWeek));
+    }
+    if(CODE_INC_checkBox_isChecked)
+    {
+        float CODE = ui->Measure_lineEdit->text().toFloat();
+        int CODE_Int = static_cast<int>(std::round(CODE));
+        ui->CODE_lineEdit->setText(QString::number(CODE_Int*100));
+    }
+
+
     EDID_Info edidInfo;
     edidInfo.horizontalSizeCm = ui->Measure_H_lineEdit->text().toFloat();
     edidInfo.verticalSizeCm = ui->Measure_V_lineEdit->text().toFloat();
@@ -167,4 +199,71 @@ void HK_BIN_Tool::on_Save_Bin_pushButton_clicked()
     QMessageBox::information(this, tr("成功"), tr("文件已保存到:\n%1").arg(newFileName));
 }
 
+
+
+void HK_BIN_Tool::on_Measure_comboBox_currentTextChanged(const QString &arg1)
+{
+    if (arg1 != "快捷选项")
+        ui->Measure_lineEdit->setText(arg1);
+
+}
+
+
+void HK_BIN_Tool::on_Measure_lineEdit_textChanged(const QString &arg1)
+{
+    // 将 arg1 转换为浮点数（对角线尺寸，单位：英寸）
+    bool ok = false;
+    float diagonalInInches = arg1.toFloat(&ok);
+
+    if (!ok || diagonalInInches <= 0) {
+        // 如果输入无效或非正数，打印错误信息
+        qDebug() << "无效的对角线尺寸（英寸）：" << arg1;
+        return;
+    }
+
+    // 将对角线尺寸从英寸转换为厘米
+    const float inchToCm = 2.54;  // 英寸到厘米的转换比率
+    float diagonalInCm = diagonalInInches * inchToCm;
+
+    // 宽高比 (长:宽 = 16:9)
+    const float aspectRatio = 16.0 / 9.0;
+
+    // 计算宽和长（单位：厘米）
+    float width = std::sqrt((diagonalInCm * diagonalInCm) / (1 + aspectRatio * aspectRatio)) ;
+    float height = width * aspectRatio;
+
+    // 转换为整数（四舍五入）
+    int roundedWidth = static_cast<int>(std::round(width));
+    int roundedHeight = static_cast<int>(std::round(height));
+
+    // 更新 UI 控件
+    ui->Measure_H_lineEdit->setText(QString::number(roundedHeight));  // 高度 (cm)
+    ui->Measure_V_lineEdit->setText(QString::number(roundedWidth));   // 宽度 (cm)
+    ui->Measure_lineEdit->setText(arg1);                              // 对角线尺寸 (英寸)
+
+}
+
+void HK_BIN_Tool::on_DATA_checkBox_clicked(bool checked)
+{
+    // 获取当前日期
+    QDate currentDate = QDate::currentDate();
+
+    // 获取当前年份
+    int currentYear = currentDate.year();
+
+    // 获取当前周数，注意：默认周一为一周的开始
+    int currentWeek = currentDate.weekNumber();
+
+    // 将当前年份和周数写入到文本框
+    ui->DATA_YEAR_lineEdit->setText(QString::number(currentYear));
+    ui->DATA_WEEK_lineEdit->setText(QString::number(currentWeek));
+}
+
+void HK_BIN_Tool::on_CODE_INC_checkBox_clicked(bool checked)
+{
+    float CODE = ui->Measure_lineEdit->text().toFloat();
+    int CODE_Int = static_cast<int>(std::round(CODE));
+    ui->CODE_lineEdit->setText(QString::number(CODE_Int*100));
+
+}
 

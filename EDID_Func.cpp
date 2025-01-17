@@ -167,13 +167,13 @@ QByteArray Modify_EDID(QByteArray edidBuffer, const EDID_Info& edidInfo) {
     unsigned short productID = edidInfo.productID.toUInt(nullptr, 16);
     edidBuffer[10] = static_cast<char>(productID & 0xFF);
     edidBuffer[11] = static_cast<char>((productID >> 8) & 0xFF);
-
+/*
     // 修改 EDID 版本
     int majorVersion = edidInfo.version.split(".")[0].toInt();
     int minorVersion = edidInfo.version.split(".")[1].toInt();
     edidBuffer[18] = static_cast<char>(majorVersion);
     edidBuffer[19] = static_cast<char>(minorVersion);
-
+*/
     // 修改制造周和制造年
     edidBuffer[16] = static_cast<char>(edidInfo.manufactureWeek);
     edidBuffer[17] = static_cast<char>(edidInfo.manufactureYear - 1990);
@@ -252,3 +252,5 @@ QString EDID_Data_Convert_String(const EDID& edid)
 
     return result.trimmed(); // 移除末尾多余的换行符
 }
+
+

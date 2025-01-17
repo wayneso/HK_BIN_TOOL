@@ -24,6 +24,15 @@ private slots:
 
     void on_Next_EDID_Button_clicked();
 
+    void on_Measure_comboBox_currentTextChanged(const QString &arg1);
+
+    void on_Measure_lineEdit_textChanged(const QString &arg1);
+
+
+    void on_DATA_checkBox_clicked(bool checked);
+
+    void on_CODE_INC_checkBox_clicked(bool checked);
+
 private:
     Ui::HK_BIN_Tool *ui;
 };

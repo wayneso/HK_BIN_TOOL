@@ -91,7 +91,7 @@
      <widget class="QLabel" name="label">
       <property name="geometry">
        <rect>
-        <x>20</x>
+        <x>10</x>
         <y>20</y>
         <width>181</width>
         <height>21</height>
@@ -103,7 +103,7 @@
        </font>
       </property>
       <property name="text">
-       <string>EDID索引</string>
+       <string>EDID索引(禁止修改)</string>
       </property>
      </widget>
      <widget class="QLineEdit" name="EDID_lineEdit">
@@ -134,7 +134,7 @@
      <widget class="QLabel" name="label_2">
       <property name="geometry">
        <rect>
-        <x>20</x>
+        <x>10</x>
         <y>50</y>
         <width>181</width>
         <height>21</height>
@@ -174,7 +174,7 @@
      <widget class="QLabel" name="label_3">
       <property name="geometry">
        <rect>
-        <x>20</x>
+        <x>10</x>
         <y>80</y>
         <width>181</width>
         <height>21</height>
@@ -214,7 +214,7 @@
      <widget class="QLabel" name="label_4">
       <property name="geometry">
        <rect>
-        <x>20</x>
+        <x>10</x>
         <y>110</y>
         <width>181</width>
         <height>21</height>
@@ -254,7 +254,7 @@
      <widget class="QLabel" name="label_5">
       <property name="geometry">
        <rect>
-        <x>20</x>
+        <x>10</x>
         <y>170</y>
         <width>181</width>
         <height>21</height>
@@ -266,7 +266,7 @@
        </font>
       </property>
       <property name="text">
-       <string>EDID版本</string>
+       <string>EDID版本(禁止修改)</string>
       </property>
      </widget>
      <widget class="QLineEdit" name="EDIDVER_lineEdit">
@@ -290,11 +290,14 @@
       <property name="alignment">
        <set>Qt::AlignmentFlag::AlignLeading|Qt::AlignmentFlag::AlignLeft|Qt::AlignmentFlag::AlignVCenter</set>
       </property>
+      <property name="readOnly">
+       <bool>true</bool>
+      </property>
      </widget>
      <widget class="QLabel" name="label_6">
       <property name="geometry">
        <rect>
-        <x>20</x>
+        <x>10</x>
         <y>230</y>
         <width>181</width>
         <height>21</height>
@@ -356,7 +359,7 @@
      <widget class="QLabel" name="label_7">
       <property name="geometry">
        <rect>
-        <x>20</x>
+        <x>10</x>
         <y>260</y>
         <width>181</width>
         <height>21</height>
@@ -368,7 +371,7 @@
        </font>
       </property>
       <property name="text">
-       <string>视频输入名称</string>
+       <string>视频输入名称(显示器名称)</string>
       </property>
      </widget>
      <widget class="QPushButton" name="Next_EDID_Button">
@@ -409,7 +412,7 @@
      <widget class="QLabel" name="label_8">
       <property name="geometry">
        <rect>
-        <x>20</x>
+        <x>10</x>
         <y>140</y>
         <width>181</width>
         <height>21</height>
@@ -427,7 +430,7 @@
      <widget class="QLabel" name="label_9">
       <property name="geometry">
        <rect>
-        <x>20</x>
+        <x>10</x>
         <y>200</y>
         <width>181</width>
         <height>21</height>
@@ -486,14 +489,52 @@
        <set>Qt::AlignmentFlag::AlignLeading|Qt::AlignmentFlag::AlignLeft|Qt::AlignmentFlag::AlignVCenter</set>
       </property>
      </widget>
-     <widget class="QComboBox" name="comboBox">
+     <widget class="QComboBox" name="Measure_comboBox">
       <property name="geometry">
        <rect>
-        <x>290</x>
+        <x>100</x>
         <y>230</y>
         <width>71</width>
         <height>22</height>
        </rect>
+      </property>
+      <property name="layoutDirection">
+       <enum>Qt::LayoutDirection::LeftToRight</enum>
+      </property>
+      <property name="editable">
+       <bool>false</bool>
+      </property>
+     </widget>
+     <widget class="QCheckBox" name="DATA_checkBox">
+      <property name="geometry">
+       <rect>
+        <x>10</x>
+        <y>380</y>
+        <width>121</width>
+        <height>31</height>
+       </rect>
+      </property>
+      <property name="text">
+       <string>修改最新生产日期</string>
+      </property>
+      <property name="checked">
+       <bool>true</bool>
+      </property>
+     </widget>
+     <widget class="QCheckBox" name="CODE_INC_checkBox">
+      <property name="geometry">
+       <rect>
+        <x>140</x>
+        <y>380</y>
+        <width>131</width>
+        <height>31</height>
+       </rect>
+      </property>
+      <property name="text">
+       <string>产品代码与尺寸匹配</string>
+      </property>
+      <property name="checked">
+       <bool>true</bool>
       </property>
      </widget>
     </widget>
@@ -512,6 +553,9 @@
      <width>641</width>
      <height>241</height>
     </rect>
+   </property>
+   <property name="readOnly">
+    <bool>true</bool>
    </property>
   </widget>
  </widget>
