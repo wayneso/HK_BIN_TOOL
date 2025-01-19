@@ -25,6 +25,24 @@ typedef struct {
 } EDID_Info;
 
 
+typedef struct {
+    int Pixel_Clock;                     // 像素时钟（单位：kHz，通常需将 EDID 数据中10kHz单位的值乘以10）
+    int Horizontal_Active_Pixels;        // 水平活动像素数（分辨率的水平部分，例如1920）
+    int Horizontal_Blanking_Pixels;      // 水平空白像素数
+    int Horizontal_Sync_Offset;          // 水平同步偏移量
+    int Horizontal_Sync_Width;           // 水平同步宽度
+
+    int Vertical_Active_Pixels;          // 垂直活动像素数（分辨率的垂直部分，例如1080）
+    int Vertical_Blanking_Pixels;        // 垂直空白像素数
+    int Vertical_Sync_Offset;            // 垂直同步偏移量
+    int Vertical_Sync_Width;             // 垂直同步宽度
+
+    int Horizontal_Image_Size;           // 水平图像尺寸（单位：毫米）
+    int Vertical_Image_Size;             // 垂直图像尺寸（单位：毫米）
+} EDID_Resolution;
+
+
+
 
 QVector<EDID> Find_EDID(const QByteArray& binBuffer);
 EDID_Info Read_EDID(const QByteArray& edidBuffer);
