@@ -74,6 +74,76 @@ QVector<EDID> Find_EDID(const QByteArray& binBuffer) {
     return edidList;
 }
 
+EDID_Resolution Parse_EDID_DTD(const QByteArray& edidBuffer, int offset) {
+    EDID_Resolution resolution;
+
+    // 获取像素时钟（单位：10kHz）
+    unsigned char pixelClockLow = edidBuffer[offset];
+    unsigned char pixelClockHigh = edidBuffer[offset + 1];
+    unsigned short pixelClock = (pixelClockHigh << 8) | pixelClockLow;
+    resolution.Pixel_Clock = pixelClock / 100.0f;
+
+    // 获取水平活动像素
+    unsigned char horizontalActiveLow = edidBuffer[offset + 2];
+    unsigned char horizontalActiveHigh = edidBuffer[offset + 4] & 0xF0;
+    unsigned short horizontalActive = (horizontalActiveHigh / 16 * 256) + horizontalActiveLow;
+    resolution.Horizontal_Active_Pixels = horizontalActive;
+
+    // 获取水平空白像素
+    unsigned char horizontalBlankingLow = edidBuffer[offset + 3];
+    unsigned char horizontalBlankingHigh = edidBuffer[offset + 4] & 0x0F;
+    unsigned short horizontalBlanking = (horizontalBlankingHigh * 256) + horizontalBlankingLow;
+    resolution.Horizontal_Blanking_Pixels = horizontalBlanking;
+
+    // 获取垂直活动像素
+    unsigned char verticalActiveLow = edidBuffer[offset + 5];
+    unsigned char verticalActiveHigh = edidBuffer[offset + 7];
+    unsigned short verticalActive = (verticalActiveHigh  / 16 * 256) + verticalActiveLow;
+    resolution.Vertical_Active_Pixels = verticalActive;
+
+    // 获取垂直空白像素
+    unsigned char verticalBlankingLow = edidBuffer[offset + 6];
+    unsigned char verticalBlankingHigh = edidBuffer[offset + 7] & 0x0F;
+    unsigned short verticalBlanking = (verticalBlankingHigh * 256) + verticalBlankingLow;
+    resolution.Vertical_Blanking_Pixels = verticalBlanking;
+
+    // 获取水平同步偏移和宽度
+    unsigned char Horizontal_Sync_OffsetLow = edidBuffer[offset + 8];
+    unsigned char Horizontal_Sync_OffsetHigh = edidBuffer[offset + 10];
+    unsigned short Horizontal_Sync_Offset = (Horizontal_Sync_OffsetHigh << 4) | Horizontal_Sync_OffsetLow;
+    resolution.Horizontal_Sync_Offset = Horizontal_Sync_Offset;
+
+    unsigned char Horizontal_Sync_WidthLow = edidBuffer[offset + 9];
+    unsigned char Horizontal_Sync_WidthHigh = edidBuffer[offset + 10];
+    unsigned short Horizontal_Sync_Width = (Horizontal_Sync_WidthHigh >> 4) | Horizontal_Sync_WidthLow;
+    resolution.Horizontal_Sync_Width = Horizontal_Sync_Width;
+
+    // 获取垂直同步偏移和宽度
+    resolution.Vertical_Sync_Offset = edidBuffer[offset + 10];
+    resolution.Vertical_Sync_Width = edidBuffer[offset + 11];
+
+    // 获取水平和垂直图像尺寸
+    resolution.Horizontal_Image_Size = edidBuffer[offset + 12];
+    resolution.Vertical_Image_Size = edidBuffer[offset + 13];
+
+    qDebug() << "Pixel Clock (MHz):" << resolution.Pixel_Clock;
+    qDebug() << "Horizontal Active Pixels:" << resolution.Horizontal_Active_Pixels;
+    qDebug() << "Horizontal Blanking Pixels:" << resolution.Horizontal_Blanking_Pixels;
+    qDebug() << "Vertical Active Pixels:" << resolution.Vertical_Active_Pixels;
+    qDebug() << "Vertical Blanking Pixels:" << resolution.Vertical_Blanking_Pixels;
+    qDebug() << "Horizontal Sync Offset:" << resolution.Horizontal_Sync_Offset;
+    qDebug() << "Horizontal Sync Width:" << resolution.Horizontal_Sync_Width;
+    qDebug() << "Vertical Sync Offset:" << resolution.Vertical_Sync_Offset;
+    qDebug() << "Vertical Sync Width:" << resolution.Vertical_Sync_Width;
+    qDebug() << "Horizontal Image Size (mm):" << resolution.Horizontal_Image_Size;
+    qDebug() << "Vertical Image Size (mm):" << resolution.Vertical_Image_Size;
+
+    return resolution;
+}
+
+
+
+
 EDID_Info Read_EDID(const QByteArray& edidBuffer) {
     EDID_Info info;
 
@@ -137,6 +207,22 @@ EDID_Info Read_EDID(const QByteArray& edidBuffer) {
             break;
         }
     }
+/*
+    // 假设EDID数据从54偏移开始，每个DTD是18个字节
+for (int offset = 54; offset < edidBuffer.size(); offset += 18) {
+    EDID_Resolution resolution = Parse_EDID_DTD(edidBuffer, offset);
+    info.EDID_DTD.append(resolution);
+}
+
+ */
+    // 解析 DTD 描述符，假设从 offset 54 开始
+    EDID_Resolution resolution = Parse_EDID_DTD(edidBuffer, 54);
+
+    // 将解析的分辨率信息添加到 EDID_Info 中
+    info.EDID_DTD.append(resolution);
+
+
+
     return info;
 }
 

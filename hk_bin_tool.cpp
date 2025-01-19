@@ -100,6 +100,16 @@ void HK_BIN_Tool::on_Add_Bin_pushButton_clicked()
     ui->Measure_V_lineEdit->setText(QString::number(edidInfo.verticalSizeCm));
     ui->Measure_lineEdit->setText(QString::number(edidInfo.diagonalSizeInches, 'f', 1));
     ui->InputName_lineEdit->setText(edidInfo.monitorName);
+
+    ui->Pixel_Clock->setText(QString::number(edidInfo.EDID_DTD.first().Pixel_Clock, 'f', 2));  // 保留两位小数
+    ui->H_Adressable->setText(QString::number(edidInfo.EDID_DTD.first().Horizontal_Active_Pixels));
+    ui->H_Blanking->setText(QString::number(edidInfo.EDID_DTD.first().Horizontal_Blanking_Pixels));
+    ui->V_Adressable->setText(QString::number(edidInfo.EDID_DTD.first().Vertical_Active_Pixels));
+    ui->V_Blanking->setText(QString::number(edidInfo.EDID_DTD.first().Vertical_Blanking_Pixels));
+
+    float FPS_HZ = (edidInfo.EDID_DTD.first().Pixel_Clock * 1000000) / ((edidInfo.EDID_DTD.first().Horizontal_Active_Pixels + edidInfo.EDID_DTD.first().Horizontal_Blanking_Pixels) * ((edidInfo.EDID_DTD.first().Vertical_Active_Pixels) + edidInfo.EDID_DTD.first().Vertical_Blanking_Pixels));
+    ui->FPS_HZ->setText(QString::number(FPS_HZ, 'f', 2));
+
     /************* EDID *************/
 
     /************* BIN *************/
@@ -185,6 +195,12 @@ void HK_BIN_Tool::on_Next_EDID_Button_clicked()
     ui->Measure_V_lineEdit->setText(QString::number(edidInfo.verticalSizeCm));
     ui->Measure_lineEdit->setText(QString::number(edidInfo.diagonalSizeInches, 'f', 1));
     ui->InputName_lineEdit->setText(edidInfo.monitorName);
+
+    ui->Pixel_Clock->setText(QString::number(edidInfo.EDID_DTD.first().Pixel_Clock, 'f', 2));  // 保留两位小数
+    ui->H_Adressable->setText(QString::number(edidInfo.EDID_DTD.first().Horizontal_Active_Pixels));
+    ui->H_Blanking->setText(QString::number(edidInfo.EDID_DTD.first().Horizontal_Blanking_Pixels));
+    ui->V_Adressable->setText(QString::number(edidInfo.EDID_DTD.first().Vertical_Active_Pixels));
+    ui->V_Blanking->setText(QString::number(edidInfo.EDID_DTD.first().Vertical_Blanking_Pixels));
 
     // 更新索引以指向下一个 EDID
     EDID_index++;
@@ -383,6 +399,29 @@ void HK_BIN_Tool::on_CODE_INC_checkBox_clicked(bool checked)
     float CODE = ui->Measure_lineEdit->text().toFloat();
     int CODE_Int = static_cast<int>(std::round(CODE));
     ui->CODE_lineEdit->setText(QString::number(CODE_Int*100));
+
+}
+
+
+void HK_BIN_Tool::on_FPS_HZ_textChanged(const QString &arg1)
+{
+/*
+
+    ui->Pixel_Clock->setText(QString::number(edidInfo.EDID_DTD.first().Pixel_Clock, 'f', 2));  // 保留两位小数
+    ui->H_Adressable->setText(QString::number(edidInfo.EDID_DTD.first().Horizontal_Active_Pixels));
+    ui->H_Blanking->setText(QString::number(edidInfo.EDID_DTD.first().Horizontal_Blanking_Pixels));
+    ui->V_Adressable->setText(QString::number(edidInfo.EDID_DTD.first().Vertical_Active_Pixels));
+    ui->V_Blanking->setText(QString::number(edidInfo.EDID_DTD.first().Vertical_Blanking_Pixels));
+*/
+    float FPS_HZ = arg1.toFloat();
+    float Pixel_Clock;
+    int H_Adressable = ui->H_Adressable->text().toInt();
+    int H_Blanking = ui->H_Blanking->text().toInt();
+    int V_Adressable = ui->V_Adressable->text().toInt();
+    int V_Blanking = ui->V_Blanking->text().toInt();
+    Pixel_Clock = (FPS_HZ * (H_Adressable + H_Blanking) * (V_Adressable + V_Blanking)) / 1000000;
+
+    ui->Pixel_Clock->setText(QString::number(Pixel_Clock, 'f', 2));  // 保留两位小数
 
 }
 

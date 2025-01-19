@@ -3,6 +3,7 @@
 
 #include <QByteArray>
 #include <QString>
+#include <QList>
 
 typedef struct
 {
@@ -11,6 +12,21 @@ typedef struct
     int len;
 }EDID;
 
+typedef struct {
+    float Pixel_Clock;                     // 像素时钟
+    unsigned short Horizontal_Active_Pixels;        // 水平活动像素数（分辨率的水平部分，例如1920）
+    unsigned short Horizontal_Blanking_Pixels;      // 水平空白像素数
+    unsigned short Horizontal_Sync_Offset;          // 水平同步偏移量
+    unsigned short Horizontal_Sync_Width;           // 水平同步宽度
+
+    unsigned short Vertical_Active_Pixels;          // 垂直活动像素数（分辨率的垂直部分，例如1080）
+    unsigned short Vertical_Blanking_Pixels;        // 垂直空白像素数
+    unsigned short Vertical_Sync_Offset;            // 垂直同步偏移量
+    unsigned short Vertical_Sync_Width;             // 垂直同步宽度
+
+    unsigned short Horizontal_Image_Size;           // 水平图像尺寸（单位：毫米）
+    unsigned short Vertical_Image_Size;             // 垂直图像尺寸（单位：毫米）
+} EDID_Resolution;
 
 typedef struct {
     QString manufacturerID;    // 制造商 ID
@@ -22,24 +38,11 @@ typedef struct {
     float verticalSizeCm;     // 垂直物理尺寸（厘米）
     float diagonalSizeInches; // 对角线尺寸（英寸）
     QString monitorName;       // 显示器名字
+    QList<EDID_Resolution> EDID_DTD;
 } EDID_Info;
 
 
-typedef struct {
-    int Pixel_Clock;                     // 像素时钟（单位：kHz，通常需将 EDID 数据中10kHz单位的值乘以10）
-    int Horizontal_Active_Pixels;        // 水平活动像素数（分辨率的水平部分，例如1920）
-    int Horizontal_Blanking_Pixels;      // 水平空白像素数
-    int Horizontal_Sync_Offset;          // 水平同步偏移量
-    int Horizontal_Sync_Width;           // 水平同步宽度
 
-    int Vertical_Active_Pixels;          // 垂直活动像素数（分辨率的垂直部分，例如1080）
-    int Vertical_Blanking_Pixels;        // 垂直空白像素数
-    int Vertical_Sync_Offset;            // 垂直同步偏移量
-    int Vertical_Sync_Width;             // 垂直同步宽度
-
-    int Horizontal_Image_Size;           // 水平图像尺寸（单位：毫米）
-    int Vertical_Image_Size;             // 垂直图像尺寸（单位：毫米）
-} EDID_Resolution;
 
 
 
@@ -50,5 +53,6 @@ QByteArray Modify_EDID(QByteArray edidBuffer, const EDID_Info& edidInfo);
 void Write_EDID(QByteArray& binBuffer, const QVector<EDID>& edidList);
 QString EDID_Data_Convert_String(const EDID& edid);
 
+EDID_Resolution Parse_EDID_DTD(const QByteArray& edidBuffer, int offset);
 
 #endif

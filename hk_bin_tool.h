@@ -34,6 +34,8 @@ private slots:
 
     void on_CODE_INC_checkBox_clicked(bool checked);
 
+    void on_FPS_HZ_textChanged(const QString &arg1);
+
 private:
     Ui::HK_BIN_Tool *ui;
 };
