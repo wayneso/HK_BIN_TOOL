@@ -36,6 +36,18 @@ private slots:
 
     void on_FPS_HZ_textChanged(const QString &arg1);
 
+
+
+    void Bandwidth_Calculation();
+
+    void on_H_Adressable_textChanged(const QString &arg1);
+
+    void on_H_Blanking_textChanged(const QString &arg1);
+
+    void on_V_Adressable_textChanged(const QString &arg1);
+
+    void on_V_Blanking_textChanged(const QString &arg1);
+
 private:
     Ui::HK_BIN_Tool *ui;
 };

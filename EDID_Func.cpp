@@ -109,34 +109,25 @@ EDID_Resolution Parse_EDID_DTD(const QByteArray& edidBuffer, int offset) {
 
     // 获取水平同步偏移和宽度
     unsigned char Horizontal_Sync_OffsetLow = edidBuffer[offset + 8];
-    unsigned char Horizontal_Sync_OffsetHigh = edidBuffer[offset + 10];
-    unsigned short Horizontal_Sync_Offset = (Horizontal_Sync_OffsetHigh << 4) | Horizontal_Sync_OffsetLow;
+    unsigned char Horizontal_Sync_OffsetHigh = edidBuffer[offset + 11] >> 6;
+    unsigned short Horizontal_Sync_Offset = (Horizontal_Sync_OffsetHigh * 256) + Horizontal_Sync_OffsetLow;
     resolution.Horizontal_Sync_Offset = Horizontal_Sync_Offset;
 
     unsigned char Horizontal_Sync_WidthLow = edidBuffer[offset + 9];
-    unsigned char Horizontal_Sync_WidthHigh = edidBuffer[offset + 10];
-    unsigned short Horizontal_Sync_Width = (Horizontal_Sync_WidthHigh >> 4) | Horizontal_Sync_WidthLow;
+    unsigned char Horizontal_Sync_WidthHigh = edidBuffer[offset + 11] & 0x30 >> 4;
+    unsigned short Horizontal_Sync_Width = (Horizontal_Sync_WidthHigh * 256) + Horizontal_Sync_WidthLow;
     resolution.Horizontal_Sync_Width = Horizontal_Sync_Width;
 
     // 获取垂直同步偏移和宽度
-    resolution.Vertical_Sync_Offset = edidBuffer[offset + 10];
-    resolution.Vertical_Sync_Width = edidBuffer[offset + 11];
+    unsigned char Vertical_Sync_OffsetLow = edidBuffer[offset + 10] & 0xF0 >> 4;
+    unsigned char Vertical_Sync_OffsetHigh = edidBuffer[offset + 11] & 0x0C >> 2;
+    unsigned short Vertical_Sync_Offset = (Vertical_Sync_OffsetHigh * 16) + Vertical_Sync_OffsetLow;
+    resolution.Vertical_Sync_Offset = Vertical_Sync_Offset;
 
-    // 获取水平和垂直图像尺寸
-    resolution.Horizontal_Image_Size = edidBuffer[offset + 12];
-    resolution.Vertical_Image_Size = edidBuffer[offset + 13];
-
-    qDebug() << "Pixel Clock (MHz):" << resolution.Pixel_Clock;
-    qDebug() << "Horizontal Active Pixels:" << resolution.Horizontal_Active_Pixels;
-    qDebug() << "Horizontal Blanking Pixels:" << resolution.Horizontal_Blanking_Pixels;
-    qDebug() << "Vertical Active Pixels:" << resolution.Vertical_Active_Pixels;
-    qDebug() << "Vertical Blanking Pixels:" << resolution.Vertical_Blanking_Pixels;
-    qDebug() << "Horizontal Sync Offset:" << resolution.Horizontal_Sync_Offset;
-    qDebug() << "Horizontal Sync Width:" << resolution.Horizontal_Sync_Width;
-    qDebug() << "Vertical Sync Offset:" << resolution.Vertical_Sync_Offset;
-    qDebug() << "Vertical Sync Width:" << resolution.Vertical_Sync_Width;
-    qDebug() << "Horizontal Image Size (mm):" << resolution.Horizontal_Image_Size;
-    qDebug() << "Vertical Image Size (mm):" << resolution.Vertical_Image_Size;
+    unsigned char Vertical_Sync_WidthLow = edidBuffer[offset + 10] & 0x0F;
+    unsigned char Vertical_Sync_WidthHigh = edidBuffer[offset + 11] & 0x03;
+    unsigned short Vertical_Sync_Width = (Vertical_Sync_WidthHigh * 16) + Vertical_Sync_WidthLow;
+    resolution.Vertical_Sync_Width = Vertical_Sync_Width;
 
     return resolution;
 }
@@ -215,7 +206,7 @@ for (int offset = 54; offset < edidBuffer.size(); offset += 18) {
 }
 
  */
-    // 解析 DTD 描述符，假设从 offset 54 开始
+    // 解析 DTD 描述符，假设从 offset 54 开始 155 205
     EDID_Resolution resolution = Parse_EDID_DTD(edidBuffer, 54);
 
     // 将解析的分辨率信息添加到 EDID_Info 中

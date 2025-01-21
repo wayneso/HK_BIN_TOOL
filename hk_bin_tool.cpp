@@ -18,10 +18,10 @@
 #include <QDateTime>
 
 
-QVector<EDID> Bin_EDID;
-QVector<EDID_Info> Bin_EDID_Info;
-QByteArray Bin_Buffer;
-QString filepath;
+QVector<EDID> Bin_EDID = {};
+QVector<EDID_Info> Bin_EDID_Info = {};
+QByteArray Bin_Buffer = {};
+QString filepath = {};
 int EDID_index = 1;
 
 uchar BacklightDef_Data_Buffer[6] = {0};
@@ -106,6 +106,10 @@ void HK_BIN_Tool::on_Add_Bin_pushButton_clicked()
     ui->H_Blanking->setText(QString::number(edidInfo.EDID_DTD.first().Horizontal_Blanking_Pixels));
     ui->V_Adressable->setText(QString::number(edidInfo.EDID_DTD.first().Vertical_Active_Pixels));
     ui->V_Blanking->setText(QString::number(edidInfo.EDID_DTD.first().Vertical_Blanking_Pixels));
+    ui->H_Front_Porch->setText(QString::number(edidInfo.EDID_DTD.first().Horizontal_Sync_Offset));
+    ui->H_Sync_Width->setText(QString::number(edidInfo.EDID_DTD.first().Horizontal_Sync_Width));
+    ui->V_Front_Porch->setText(QString::number(edidInfo.EDID_DTD.first().Vertical_Sync_Offset));
+    ui->V_Sync_Width->setText(QString::number(edidInfo.EDID_DTD.first().Vertical_Sync_Width));
 
     float FPS_HZ = (edidInfo.EDID_DTD.first().Pixel_Clock * 1000000) / ((edidInfo.EDID_DTD.first().Horizontal_Active_Pixels + edidInfo.EDID_DTD.first().Horizontal_Blanking_Pixels) * ((edidInfo.EDID_DTD.first().Vertical_Active_Pixels) + edidInfo.EDID_DTD.first().Vertical_Blanking_Pixels));
     ui->FPS_HZ->setText(QString::number(FPS_HZ, 'f', 2));
@@ -201,6 +205,10 @@ void HK_BIN_Tool::on_Next_EDID_Button_clicked()
     ui->H_Blanking->setText(QString::number(edidInfo.EDID_DTD.first().Horizontal_Blanking_Pixels));
     ui->V_Adressable->setText(QString::number(edidInfo.EDID_DTD.first().Vertical_Active_Pixels));
     ui->V_Blanking->setText(QString::number(edidInfo.EDID_DTD.first().Vertical_Blanking_Pixels));
+    ui->H_Front_Porch->setText(QString::number(edidInfo.EDID_DTD.first().Horizontal_Sync_Offset));
+    ui->H_Sync_Width->setText(QString::number(edidInfo.EDID_DTD.first().Horizontal_Sync_Width));
+    ui->V_Front_Porch->setText(QString::number(edidInfo.EDID_DTD.first().Vertical_Sync_Offset));
+    ui->V_Sync_Width->setText(QString::number(edidInfo.EDID_DTD.first().Vertical_Sync_Width));
 
     // 更新索引以指向下一个 EDID
     EDID_index++;
@@ -300,9 +308,9 @@ void HK_BIN_Tool::on_Save_Bin_pushButton_clicked()
         State = Write_TargetString_InBinFile(Bin_Buffer, BinData_BackLightDef);
         State = Write_TargetString_InBinFile(Bin_Buffer, Key_Value_DataDef);
         if (State == true)
-            ui->Bin_Data_Flag_label->setText("该BIN文件适用修改工具，Successful！");
+            ui->Bin_Data_Flag_label->setText("Successful！");
         else
-            ui->Bin_Data_Flag_label->setText("该BIN文件适用修改工具，False！");
+            ui->Bin_Data_Flag_label->setText("False！");
     }
     /************* BIN *************/
     // 写入数据并关闭文件
@@ -319,28 +327,6 @@ void HK_BIN_Tool::on_Measure_comboBox_currentTextChanged(const QString &arg1)
 {
     if (arg1 != "快捷选项")
         ui->Measure_lineEdit->setText(arg1);
-    /*
-    // 定义选项和对应的值
-    static const QHash<QString, QStringList> measureMap = {
-        {"19.0", {"42", "24", "19.0"}},
-        {"21.0", {"46", "26", "21.0"}},
-        {"23.8", {"53", "29", "23.8"}},
-        {"24.0", {"53", "30", "24.0"}},
-        {"24.5", {"54", "31", "24.5"}},
-        {"27.0", {"60", "33", "27.0"}},
-        {"32.0", {"71", "40", "32.0"}}
-    };
-
-    // 检查是否存在对应的选项
-    if (measureMap.contains(arg1)) {
-        const QStringList &values = measureMap[arg1];
-        ui->Measure_H_lineEdit->setText(values[0]);
-        ui->Measure_V_lineEdit->setText(values[1]);
-        ui->Measure_lineEdit->setText(values[2]);
-    } else {
-        qDebug() << "其他选项被选择：" << arg1;
-    }
-*/
 }
 
 void HK_BIN_Tool::on_Measure_lineEdit_textChanged(const QString &arg1)
@@ -402,26 +388,42 @@ void HK_BIN_Tool::on_CODE_INC_checkBox_clicked(bool checked)
 
 }
 
-
-void HK_BIN_Tool::on_FPS_HZ_textChanged(const QString &arg1)
+void HK_BIN_Tool::Bandwidth_Calculation()
 {
-/*
-
-    ui->Pixel_Clock->setText(QString::number(edidInfo.EDID_DTD.first().Pixel_Clock, 'f', 2));  // 保留两位小数
-    ui->H_Adressable->setText(QString::number(edidInfo.EDID_DTD.first().Horizontal_Active_Pixels));
-    ui->H_Blanking->setText(QString::number(edidInfo.EDID_DTD.first().Horizontal_Blanking_Pixels));
-    ui->V_Adressable->setText(QString::number(edidInfo.EDID_DTD.first().Vertical_Active_Pixels));
-    ui->V_Blanking->setText(QString::number(edidInfo.EDID_DTD.first().Vertical_Blanking_Pixels));
-*/
-    float FPS_HZ = arg1.toFloat();
-    float Pixel_Clock;
+    float FPS_HZ = ui->FPS_HZ->text().toFloat();
     int H_Adressable = ui->H_Adressable->text().toInt();
     int H_Blanking = ui->H_Blanking->text().toInt();
     int V_Adressable = ui->V_Adressable->text().toInt();
     int V_Blanking = ui->V_Blanking->text().toInt();
-    Pixel_Clock = (FPS_HZ * (H_Adressable + H_Blanking) * (V_Adressable + V_Blanking)) / 1000000;
-
+    float Pixel_Clock = (FPS_HZ * (H_Adressable + H_Blanking) * (V_Adressable + V_Blanking)) / 1000000;
     ui->Pixel_Clock->setText(QString::number(Pixel_Clock, 'f', 2));  // 保留两位小数
+}
+void HK_BIN_Tool::on_FPS_HZ_textChanged(const QString &arg1)
+{
+    Bandwidth_Calculation();
 
+}
+
+void HK_BIN_Tool::on_H_Adressable_textChanged(const QString &arg1)
+{
+    Bandwidth_Calculation();
+}
+
+
+void HK_BIN_Tool::on_H_Blanking_textChanged(const QString &arg1)
+{
+    Bandwidth_Calculation();
+}
+
+
+void HK_BIN_Tool::on_V_Adressable_textChanged(const QString &arg1)
+{
+    Bandwidth_Calculation();
+}
+
+
+void HK_BIN_Tool::on_V_Blanking_textChanged(const QString &arg1)
+{
+    Bandwidth_Calculation();
 }
 

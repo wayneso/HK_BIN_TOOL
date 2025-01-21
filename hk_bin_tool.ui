@@ -666,7 +666,7 @@
         <string>V Blanking</string>
        </property>
       </widget>
-      <widget class="QLineEdit" name="V_Sync_width">
+      <widget class="QLineEdit" name="V_Sync_Width">
        <property name="geometry">
         <rect>
          <x>120</x>
