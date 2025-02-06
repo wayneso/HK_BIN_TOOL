@@ -101,17 +101,17 @@ void HK_BIN_Tool::on_Add_Bin_pushButton_clicked()
     ui->Measure_lineEdit->setText(QString::number(edidInfo.diagonalSizeInches, 'f', 1));
     ui->InputName_lineEdit->setText(edidInfo.monitorName);
 
-    ui->Pixel_Clock->setText(QString::number(edidInfo.EDID_DTD.first().Pixel_Clock, 'f', 2));  // 保留两位小数
-    ui->H_Adressable->setText(QString::number(edidInfo.EDID_DTD.first().Horizontal_Active_Pixels));
-    ui->H_Blanking->setText(QString::number(edidInfo.EDID_DTD.first().Horizontal_Blanking_Pixels));
-    ui->V_Adressable->setText(QString::number(edidInfo.EDID_DTD.first().Vertical_Active_Pixels));
-    ui->V_Blanking->setText(QString::number(edidInfo.EDID_DTD.first().Vertical_Blanking_Pixels));
-    ui->H_Front_Porch->setText(QString::number(edidInfo.EDID_DTD.first().Horizontal_Sync_Offset));
-    ui->H_Sync_Width->setText(QString::number(edidInfo.EDID_DTD.first().Horizontal_Sync_Width));
-    ui->V_Front_Porch->setText(QString::number(edidInfo.EDID_DTD.first().Vertical_Sync_Offset));
-    ui->V_Sync_Width->setText(QString::number(edidInfo.EDID_DTD.first().Vertical_Sync_Width));
+    ui->Pixel_Clock->setText(QString::number(edidInfo.EDID_DTD.first().pixel_clock_MHz, 'f', 2));  // 保留两位小数
+    ui->H_Adressable->setText(QString::number(edidInfo.EDID_DTD.first().h_active));
+    ui->H_Blanking->setText(QString::number(edidInfo.EDID_DTD.first().h_blank));
+    ui->V_Adressable->setText(QString::number(edidInfo.EDID_DTD.first().v_active));
+    ui->V_Blanking->setText(QString::number(edidInfo.EDID_DTD.first().v_blank));
+    ui->H_Front_Porch->setText(QString::number(edidInfo.EDID_DTD.first().h_front_porch));
+    ui->H_Sync_Width->setText(QString::number(edidInfo.EDID_DTD.first().h_sync_pulse));
+    ui->V_Front_Porch->setText(QString::number(edidInfo.EDID_DTD.first().v_front_porch));
+    ui->V_Sync_Width->setText(QString::number(edidInfo.EDID_DTD.first().v_sync_pulse));
 
-    float FPS_HZ = (edidInfo.EDID_DTD.first().Pixel_Clock * 1000000) / ((edidInfo.EDID_DTD.first().Horizontal_Active_Pixels + edidInfo.EDID_DTD.first().Horizontal_Blanking_Pixels) * ((edidInfo.EDID_DTD.first().Vertical_Active_Pixels) + edidInfo.EDID_DTD.first().Vertical_Blanking_Pixels));
+    float FPS_HZ = (edidInfo.EDID_DTD.first().pixel_clock_MHz * 1000000) / ((edidInfo.EDID_DTD.first().h_active + edidInfo.EDID_DTD.first().h_blank) * ((edidInfo.EDID_DTD.first().v_active) + edidInfo.EDID_DTD.first().v_blank));
     ui->FPS_HZ->setText(QString::number(FPS_HZ, 'f', 2));
 
     /************* EDID *************/
@@ -200,15 +200,16 @@ void HK_BIN_Tool::on_Next_EDID_Button_clicked()
     ui->Measure_lineEdit->setText(QString::number(edidInfo.diagonalSizeInches, 'f', 1));
     ui->InputName_lineEdit->setText(edidInfo.monitorName);
 
-    ui->Pixel_Clock->setText(QString::number(edidInfo.EDID_DTD.first().Pixel_Clock, 'f', 2));  // 保留两位小数
-    ui->H_Adressable->setText(QString::number(edidInfo.EDID_DTD.first().Horizontal_Active_Pixels));
-    ui->H_Blanking->setText(QString::number(edidInfo.EDID_DTD.first().Horizontal_Blanking_Pixels));
-    ui->V_Adressable->setText(QString::number(edidInfo.EDID_DTD.first().Vertical_Active_Pixels));
-    ui->V_Blanking->setText(QString::number(edidInfo.EDID_DTD.first().Vertical_Blanking_Pixels));
-    ui->H_Front_Porch->setText(QString::number(edidInfo.EDID_DTD.first().Horizontal_Sync_Offset));
-    ui->H_Sync_Width->setText(QString::number(edidInfo.EDID_DTD.first().Horizontal_Sync_Width));
-    ui->V_Front_Porch->setText(QString::number(edidInfo.EDID_DTD.first().Vertical_Sync_Offset));
-    ui->V_Sync_Width->setText(QString::number(edidInfo.EDID_DTD.first().Vertical_Sync_Width));
+    ui->Pixel_Clock->setText(QString::number(edidInfo.EDID_DTD.first().pixel_clock_MHz, 'f', 2));  // 保留两位小数
+    ui->H_Adressable->setText(QString::number(edidInfo.EDID_DTD.first().h_active));
+    ui->H_Blanking->setText(QString::number(edidInfo.EDID_DTD.first().h_blank));
+    ui->V_Adressable->setText(QString::number(edidInfo.EDID_DTD.first().v_active));
+    ui->V_Blanking->setText(QString::number(edidInfo.EDID_DTD.first().v_blank));
+    ui->H_Front_Porch->setText(QString::number(edidInfo.EDID_DTD.first().h_front_porch));
+    ui->H_Sync_Width->setText(QString::number(edidInfo.EDID_DTD.first().h_sync_pulse));
+    ui->V_Front_Porch->setText(QString::number(edidInfo.EDID_DTD.first().v_front_porch));
+    ui->V_Sync_Width->setText(QString::number(edidInfo.EDID_DTD.first().v_sync_pulse));
+
 
     // 更新索引以指向下一个 EDID
     EDID_index++;

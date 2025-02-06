@@ -77,58 +77,33 @@ QVector<EDID> Find_EDID(const QByteArray& binBuffer) {
 EDID_Resolution Parse_EDID_DTD(const QByteArray& edidBuffer, int offset) {
     EDID_Resolution resolution;
 
-    // 获取像素时钟（单位：10kHz）
-    unsigned char pixelClockLow = edidBuffer[offset];
-    unsigned char pixelClockHigh = edidBuffer[offset + 1];
-    unsigned short pixelClock = (pixelClockHigh << 8) | pixelClockLow;
-    resolution.Pixel_Clock = pixelClock / 100.0f;
-
+    // 获取像素时钟（单位：MHz）
+    resolution.pixel_clock_MHz = ((edidBuffer[offset + 1] << 8) | edidBuffer[offset]) / 100.0f;
     // 获取水平活动像素
-    unsigned char horizontalActiveLow = edidBuffer[offset + 2];
-    unsigned char horizontalActiveHigh = edidBuffer[offset + 4] & 0xF0;
-    unsigned short horizontalActive = (horizontalActiveHigh / 16 * 256) + horizontalActiveLow;
-    resolution.Horizontal_Active_Pixels = horizontalActive;
-
+    resolution.h_active = edidBuffer[offset + 2] | ((edidBuffer[offset + 4] & 0xF0) << 4);
     // 获取水平空白像素
-    unsigned char horizontalBlankingLow = edidBuffer[offset + 3];
-    unsigned char horizontalBlankingHigh = edidBuffer[offset + 4] & 0x0F;
-    unsigned short horizontalBlanking = (horizontalBlankingHigh * 256) + horizontalBlankingLow;
-    resolution.Horizontal_Blanking_Pixels = horizontalBlanking;
-
+    resolution.h_blank = edidBuffer[offset + 3] | ((edidBuffer[offset + 4] & 0x0F) << 8);
     // 获取垂直活动像素
-    unsigned char verticalActiveLow = edidBuffer[offset + 5];
-    unsigned char verticalActiveHigh = edidBuffer[offset + 7];
-    unsigned short verticalActive = (verticalActiveHigh  / 16 * 256) + verticalActiveLow;
-    resolution.Vertical_Active_Pixels = verticalActive;
-
+    resolution.v_active = edidBuffer[offset + 5] | ((edidBuffer[offset + 7] & 0xF0) << 4);
     // 获取垂直空白像素
-    unsigned char verticalBlankingLow = edidBuffer[offset + 6];
-    unsigned char verticalBlankingHigh = edidBuffer[offset + 7] & 0x0F;
-    unsigned short verticalBlanking = (verticalBlankingHigh * 256) + verticalBlankingLow;
-    resolution.Vertical_Blanking_Pixels = verticalBlanking;
+    resolution.v_blank = edidBuffer[offset + 6] | ((edidBuffer[offset + 7] & 0x0F) << 8);
 
     // 获取水平同步偏移和宽度
-    unsigned char Horizontal_Sync_OffsetLow = edidBuffer[offset + 8];
-    unsigned char Horizontal_Sync_OffsetHigh = edidBuffer[offset + 11] >> 6;
-    unsigned short Horizontal_Sync_Offset = (Horizontal_Sync_OffsetHigh * 256) + Horizontal_Sync_OffsetLow;
-    resolution.Horizontal_Sync_Offset = Horizontal_Sync_Offset;
-
-    unsigned char Horizontal_Sync_WidthLow = edidBuffer[offset + 9];
-    unsigned char Horizontal_Sync_WidthHigh = edidBuffer[offset + 11] & 0x30 >> 4;
-    unsigned short Horizontal_Sync_Width = (Horizontal_Sync_WidthHigh * 256) + Horizontal_Sync_WidthLow;
-    resolution.Horizontal_Sync_Width = Horizontal_Sync_Width;
+    resolution.h_front_porch = edidBuffer[offset + 8] | ((edidBuffer[offset + 11] & 0xC0) << 2);
+    resolution.h_sync_pulse = edidBuffer[offset + 9] | ((edidBuffer[offset + 11] & 0x30) << 4);
 
     // 获取垂直同步偏移和宽度
-    unsigned char Vertical_Sync_OffsetLow = edidBuffer[offset + 10] & 0xF0 >> 4;
-    unsigned char Vertical_Sync_OffsetHigh = edidBuffer[offset + 11] & 0x0C >> 2;
-    unsigned short Vertical_Sync_Offset = (Vertical_Sync_OffsetHigh * 16) + Vertical_Sync_OffsetLow;
-    resolution.Vertical_Sync_Offset = Vertical_Sync_Offset;
+    resolution.v_front_porch = edidBuffer[offset + 10] | ((edidBuffer[offset + 11] & 0x0C) << 2);
+    resolution.v_sync_pulse = edidBuffer[offset + 10] | ((edidBuffer[offset + 11] & 0x03) << 4);
+/*
+    // 解析标志位（字节17）
+    resolution.interlaced = (edidBuffer[offset + 17] & 0x80) >> 7;  // 隔行扫描标志
+    uint8_t sync_flags = edidBuffer[offset + 17];
 
-    unsigned char Vertical_Sync_WidthLow = edidBuffer[offset + 10] & 0x0F;
-    unsigned char Vertical_Sync_WidthHigh = edidBuffer[offset + 11] & 0x03;
-    unsigned short Vertical_Sync_Width = (Vertical_Sync_WidthHigh * 16) + Vertical_Sync_WidthLow;
-    resolution.Vertical_Sync_Width = Vertical_Sync_Width;
-
+    // 解析同步极性（假设为分离同步模式）
+    resolution.h_sync_positive = (sync_flags & 0x04) >> 2;
+    resolution.v_sync_positive = (sync_flags & 0x08) >> 3;
+*/
     return resolution;
 }
 

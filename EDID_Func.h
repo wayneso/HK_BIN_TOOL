@@ -13,19 +13,18 @@ typedef struct
 }EDID;
 
 typedef struct {
-    float Pixel_Clock;                     // 像素时钟
-    unsigned short Horizontal_Active_Pixels;        // 水平活动像素数（分辨率的水平部分，例如1920）
-    unsigned short Horizontal_Blanking_Pixels;      // 水平空白像素数
-    unsigned short Horizontal_Sync_Offset;          // 水平同步偏移量
-    unsigned short Horizontal_Sync_Width;           // 水平同步宽度
-
-    unsigned short Vertical_Active_Pixels;          // 垂直活动像素数（分辨率的垂直部分，例如1080）
-    unsigned short Vertical_Blanking_Pixels;        // 垂直空白像素数
-    unsigned short Vertical_Sync_Offset;            // 垂直同步偏移量
-    unsigned short Vertical_Sync_Width;             // 垂直同步宽度
-
-    unsigned short Horizontal_Image_Size;           // 水平图像尺寸（单位：毫米）
-    unsigned short Vertical_Image_Size;             // 垂直图像尺寸（单位：毫米）
+    float pixel_clock_MHz;        // 像素时钟（单位：MHz）
+    uint16_t h_active;            // 水平有效像素
+    uint16_t h_blank;             // 水平消隐像素
+    uint16_t v_active;            // 垂直有效行数
+    uint16_t v_blank;             // 垂直消隐行数
+    uint16_t h_front_porch;       // 水平前廊
+    uint16_t h_sync_pulse;        // 水平同步脉冲宽度
+    uint16_t v_front_porch;       // 垂直前廊
+    uint16_t v_sync_pulse;        // 垂直同步脉冲宽度
+    bool h_sync_positive;         // 水平同步极性（true = 正极性）
+    bool v_sync_positive;         // 垂直同步极性（true = 正极性）
+    bool interlaced;              // 隔行扫描标志
 } EDID_Resolution;
 
 typedef struct {
