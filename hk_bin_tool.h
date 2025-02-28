@@ -34,19 +34,13 @@ private slots:
 
     void on_CODE_INC_checkBox_clicked(bool checked);
 
-    void on_FPS_HZ_textChanged(const QString &arg1);
 
 
+    void on_Add_Edid_checkBox_clicked(bool checked);
 
-    void Bandwidth_Calculation();
+    void on_Add_Edid_pushButton_clicked();
 
-    void on_H_Adressable_textChanged(const QString &arg1);
-
-    void on_H_Blanking_textChanged(const QString &arg1);
-
-    void on_V_Adressable_textChanged(const QString &arg1);
-
-    void on_V_Blanking_textChanged(const QString &arg1);
+    void on_Save_Edid_pushButton_clicked();
 
 private:
     Ui::HK_BIN_Tool *ui;

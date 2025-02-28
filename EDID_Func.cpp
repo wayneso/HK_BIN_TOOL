@@ -73,52 +73,6 @@ QVector<EDID> Find_EDID(const QByteArray& binBuffer) {
     }
     return edidList;
 }
-EDID_Resolution Parse_EDID_DTD(const QByteArray& edidBuffer, int offset) {
-    EDID_Resolution resolution;
-
-    // 像素时钟：两个字节组成，单位为 10 kHz，除以 100 得到 MHz
-    resolution.pixel_clock_MHz = ((static_cast<quint8>(edidBuffer[offset + 1]) << 8)
-                                  | static_cast<quint8>(edidBuffer[offset])) / 100.0f;
-
-    // 水平有效像素：字节2 为低8位，字节4 高4位（高4位左移4位）
-    resolution.h_active = static_cast<quint8>(edidBuffer[offset + 2])
-                          | ((static_cast<quint8>(edidBuffer[offset + 4]) & 0xF0) << 4);
-    // 水平空白像素：字节3 为低8位，字节4 低4位（低4位左移8位）
-    resolution.h_blank = static_cast<quint8>(edidBuffer[offset + 3])
-                         | ((static_cast<quint8>(edidBuffer[offset + 4]) & 0x0F) << 8);
-
-    // 垂直有效行数：字节5 为低8位，字节7 高4位（高4位左移4位）
-    resolution.v_active = static_cast<quint8>(edidBuffer[offset + 5])
-                          | ((static_cast<quint8>(edidBuffer[offset + 7]) & 0xF0) << 4);
-    // 垂直空白行数：字节6 为低8位，字节7 低4位（低4位左移8位）
-    resolution.v_blank = static_cast<quint8>(edidBuffer[offset + 6])
-                         | ((static_cast<quint8>(edidBuffer[offset + 7]) & 0x0F) << 8);
-
-    // 水平同步参数：
-    // 水平前廊：字节8 为低8位，加上字节11中高2位（0xC0）左移2位
-    resolution.h_front_porch = static_cast<quint8>(edidBuffer[offset + 8])
-                               | ((static_cast<quint8>(edidBuffer[offset + 11]) & 0xC0) << 2);
-    // 水平同步脉宽：字节9 为低8位，加上字节11中中间2位（0x30）左移4位
-    resolution.h_sync_pulse = static_cast<quint8>(edidBuffer[offset + 9])
-                              | ((static_cast<quint8>(edidBuffer[offset + 11]) & 0x30) << 4);
-
-    // 垂直同步参数：
-    // 字节10高4位为垂直前廊（前沿），低4位为垂直同步脉宽的低8位部分，
-    // 字节11低4位提供额外数据：高4位（0x0C）用于垂直前廊，高2位（0x03）用于垂直脉宽
-    resolution.v_front_porch = (static_cast<quint8>(edidBuffer[offset + 10]) >> 4)
-                               | ((static_cast<quint8>(edidBuffer[offset + 11]) & 0x0C) << 2);
-    resolution.v_sync_pulse  = (static_cast<quint8>(edidBuffer[offset + 10]) & 0x0F)
-                              | ((static_cast<quint8>(edidBuffer[offset + 11]) & 0x03) << 4);
-
-    // 同步极性和隔行扫描标志通常存放在字节17
-    quint8 sync_flags = static_cast<quint8>(edidBuffer[offset + 17]);
-    resolution.interlaced    = (sync_flags & 0x80) != 0;
-    resolution.h_sync_positive = (sync_flags & 0x04) != 0;
-    resolution.v_sync_positive = (sync_flags & 0x08) != 0;
-
-    return resolution;
-}
-
 
 
 
@@ -186,25 +140,6 @@ EDID_Info Read_EDID(const QByteArray& edidBuffer) {
             break;
         }
     }
-/*
-    // 假设EDID数据从54偏移开始，每个DTD是18个字节
-for (int offset = 54; offset < edidBuffer.size(); offset += 18) {
-    EDID_Resolution resolution = Parse_EDID_DTD(edidBuffer, offset);
-    info.EDID_DTD.append(resolution);
-}
-
- */
-    // 解析 DTD 描述符，假设从 offset 54 开始 155 205
-    EDID_Resolution resolution = Parse_EDID_DTD(edidBuffer, 54);
-    // 将解析的分辨率信息添加到 EDID_Info 中
-    info.EDID_DTD.append(resolution);
-    resolution = Parse_EDID_DTD(edidBuffer, 155);
-    // 将解析的分辨率信息添加到 EDID_Info 中
-    info.EDID_DTD.append(resolution);
-    resolution = Parse_EDID_DTD(edidBuffer, 205);
-    // 将解析的分辨率信息添加到 EDID_Info 中
-    info.EDID_DTD.append(resolution);
-
 
 
     return info;
@@ -290,6 +225,13 @@ void Write_EDID(QByteArray& binBuffer, const QVector<EDID>& edidList) {
         qDebug() << "EDID written back at position:" << edid.addr;
     }
 }
+
+// void Replace_EDID(QByteArray& binBuffer, const QVector<EDID>& edid) {
+
+//     //binBuffer.replace(edid.addr, edid.len, edid.buffer);
+
+
+// }
 
 QString EDID_Data_Convert_String(const EDID& edid)
 {

@@ -21,8 +21,10 @@
 QVector<EDID> Bin_EDID = {};
 QVector<EDID_Info> Bin_EDID_Info = {};
 QByteArray Bin_Buffer = {};
-QString filepath = {};
-int EDID_index = 1;
+QByteArray Add_EDID_Buffer = {};
+QString Bin_Filer = {};
+QString Add_EDID_fileName ={};
+int EDID_index = 0;
 
 uchar BacklightDef_Data_Buffer[6] = {0};
 Bin_Data_String BinData_BackLightDef = {
@@ -52,6 +54,18 @@ HK_BIN_Tool::HK_BIN_Tool(QWidget *parent) : QWidget(parent), ui(new Ui::HK_BIN_T
     ui->Measure_comboBox->addItem("24.5");
     ui->Measure_comboBox->addItem("27.0");
     ui->Measure_comboBox->addItem("32.0");
+    if(ui->Add_Edid_checkBox->isChecked())
+    {
+        ui->Add_Edid_pushButton->setEnabled(true);
+        ui->Save_Edid_pushButton->setEnabled(true);
+        ui->Save_Bin_pushButton->setEnabled(false);
+    }
+    else
+    {
+        ui->Add_Edid_pushButton->setEnabled(false);
+        ui->Save_Edid_pushButton->setEnabled(false);
+        ui->Save_Bin_pushButton->setEnabled(true);
+    }
 }
 
 HK_BIN_Tool::~HK_BIN_Tool()
@@ -65,24 +79,26 @@ HK_BIN_Tool::~HK_BIN_Tool()
  */
 void HK_BIN_Tool::on_Add_Bin_pushButton_clicked()
 {
-    filepath = QFileDialog::getOpenFileName(this, "选择BIN文件", "", "Bin文件 (*.bin)");
-    if (filepath.isEmpty())
+    EDID_index = 0;
+    Bin_Filer = QFileDialog::getOpenFileName(this, "选择BIN文件", "", "Bin文件 (*.bin)");
+    if (Bin_Filer.isEmpty())
         return;
-    QFile file(filepath);
+    QFile file(Bin_Filer);
     if (!file.open(QIODevice::ReadOnly))
     {
-        QMessageBox::warning(nullptr, "错误", "无法打开文件: " + filepath);
+        QMessageBox::warning(nullptr, "错误", "无法打开文件: " + Bin_Filer);
         return;
     }
     // 读取文件中的所有数据
     Bin_Buffer = file.readAll();
-    QString fileName = QFileInfo(filepath).fileName();
+    QString fileName = QFileInfo(Bin_Filer).fileName();
     file.close();
     ui->Bin_File_label->setText(fileName);
 
     /************* EDID *************/
     // 提取所有的 EDID 信息
     Bin_EDID = Find_EDID(Bin_Buffer);
+
     ui->EDID_textEdit->setText(EDID_Data_Convert_String(Bin_EDID[0]));
     ui->EDID_lineEdit->setText("0");
 
@@ -101,18 +117,7 @@ void HK_BIN_Tool::on_Add_Bin_pushButton_clicked()
     ui->Measure_lineEdit->setText(QString::number(edidInfo.diagonalSizeInches, 'f', 1));
     ui->InputName_lineEdit->setText(edidInfo.monitorName);
 
-    ui->Pixel_Clock->setText(QString::number(edidInfo.EDID_DTD.first().pixel_clock_MHz, 'f', 2));  // 保留两位小数
-    ui->H_Adressable->setText(QString::number(edidInfo.EDID_DTD.first().h_active));
-    ui->H_Blanking->setText(QString::number(edidInfo.EDID_DTD.first().h_blank));
-    ui->V_Adressable->setText(QString::number(edidInfo.EDID_DTD.first().v_active));
-    ui->V_Blanking->setText(QString::number(edidInfo.EDID_DTD.first().v_blank));
-    ui->H_Front_Porch->setText(QString::number(edidInfo.EDID_DTD.first().h_front_porch));
-    ui->H_Sync_Width->setText(QString::number(edidInfo.EDID_DTD.first().h_sync_pulse));
-    ui->V_Front_Porch->setText(QString::number(edidInfo.EDID_DTD.first().v_front_porch));
-    ui->V_Sync_Width->setText(QString::number(edidInfo.EDID_DTD.first().v_sync_pulse));
 
-    float FPS_HZ = (edidInfo.EDID_DTD.first().pixel_clock_MHz * 1000000) / ((edidInfo.EDID_DTD.first().h_active + edidInfo.EDID_DTD.first().h_blank) * ((edidInfo.EDID_DTD.first().v_active) + edidInfo.EDID_DTD.first().v_blank));
-    ui->FPS_HZ->setText(QString::number(FPS_HZ, 'f', 2));
 
     /************* EDID *************/
 
@@ -169,20 +174,20 @@ void HK_BIN_Tool::on_Add_Bin_pushButton_clicked()
 
 void HK_BIN_Tool::on_Next_EDID_Button_clicked()
 {
-    int edidCount = Bin_EDID.size();  // 获取 Bin_EDID 中的 EDID 数量
+    // 更新索引以指向下一个 EDID
+    EDID_index++;
 
+    int edidCount = Bin_EDID.size();  // 获取 Bin_EDID 中的 EDID 数量
+    // 如果索引超出边界，则从头开始
+    if (EDID_index >= edidCount) {
+        EDID_index = 0;
+    }
     ui->EDID_lineEdit->setText(QString::number(EDID_index));
 
     if (edidCount == 0) {
         qDebug() << "No EDID data available.";
         return;  // 如果 Bin_EDID 为空，直接返回
     }
-
-    // 如果索引超出边界，则从头开始
-    if (EDID_index >= edidCount) {
-        EDID_index = 0;
-    }
-
     // 显示当前 EDID 的数据
     ui->EDID_textEdit->setText(EDID_Data_Convert_String(Bin_EDID[EDID_index]));
 
@@ -200,19 +205,6 @@ void HK_BIN_Tool::on_Next_EDID_Button_clicked()
     ui->Measure_lineEdit->setText(QString::number(edidInfo.diagonalSizeInches, 'f', 1));
     ui->InputName_lineEdit->setText(edidInfo.monitorName);
 
-    ui->Pixel_Clock->setText(QString::number(edidInfo.EDID_DTD.first().pixel_clock_MHz, 'f', 2));  // 保留两位小数
-    ui->H_Adressable->setText(QString::number(edidInfo.EDID_DTD.first().h_active));
-    ui->H_Blanking->setText(QString::number(edidInfo.EDID_DTD.first().h_blank));
-    ui->V_Adressable->setText(QString::number(edidInfo.EDID_DTD.first().v_active));
-    ui->V_Blanking->setText(QString::number(edidInfo.EDID_DTD.first().v_blank));
-    ui->H_Front_Porch->setText(QString::number(edidInfo.EDID_DTD.first().h_front_porch));
-    ui->H_Sync_Width->setText(QString::number(edidInfo.EDID_DTD.first().h_sync_pulse));
-    ui->V_Front_Porch->setText(QString::number(edidInfo.EDID_DTD.first().v_front_porch));
-    ui->V_Sync_Width->setText(QString::number(edidInfo.EDID_DTD.first().v_sync_pulse));
-
-
-    // 更新索引以指向下一个 EDID
-    EDID_index++;
 }
 
 
@@ -223,7 +215,7 @@ void HK_BIN_Tool::on_Next_EDID_Button_clicked()
 void HK_BIN_Tool::on_Save_Bin_pushButton_clicked()
 {
     QString currentDate = QDateTime::currentDateTime().toString("yyyyMMdd");
-    QString originalPath = filepath;
+    QString originalPath = Bin_Filer;
     // 提取文件名和路径
     QFileInfo fileInfo(originalPath);
     QString dirPath = fileInfo.absolutePath();      // 获取文件所在目录
@@ -389,42 +381,92 @@ void HK_BIN_Tool::on_CODE_INC_checkBox_clicked(bool checked)
 
 }
 
-void HK_BIN_Tool::Bandwidth_Calculation()
-{
-    float FPS_HZ = ui->FPS_HZ->text().toFloat();
-    int H_Adressable = ui->H_Adressable->text().toInt();
-    int H_Blanking = ui->H_Blanking->text().toInt();
-    int V_Adressable = ui->V_Adressable->text().toInt();
-    int V_Blanking = ui->V_Blanking->text().toInt();
-    float Pixel_Clock = (FPS_HZ * (H_Adressable + H_Blanking) * (V_Adressable + V_Blanking)) / 1000000;
-    ui->Pixel_Clock->setText(QString::number(Pixel_Clock, 'f', 2));  // 保留两位小数
-}
-void HK_BIN_Tool::on_FPS_HZ_textChanged(const QString &arg1)
-{
-    Bandwidth_Calculation();
 
-}
-
-void HK_BIN_Tool::on_H_Adressable_textChanged(const QString &arg1)
+void HK_BIN_Tool::on_Add_Edid_checkBox_clicked(bool checked)
 {
-    Bandwidth_Calculation();
+    if(ui->Add_Edid_checkBox->isChecked())
+    {
+        ui->Add_Edid_pushButton->setEnabled(true);
+        ui->Save_Edid_pushButton->setEnabled(true);
+        ui->Save_Bin_pushButton->setEnabled(false);
+    }
+    else
+    {
+        ui->Add_Edid_pushButton->setEnabled(false);
+        ui->Save_Edid_pushButton->setEnabled(false);
+        ui->Save_Bin_pushButton->setEnabled(true);
+    }
 }
 
 
-void HK_BIN_Tool::on_H_Blanking_textChanged(const QString &arg1)
+void HK_BIN_Tool::on_Add_Edid_pushButton_clicked()
 {
-    Bandwidth_Calculation();
+    // 当点击“添加”按钮时，弹出文件选择对话框，只允许选择后缀为txt或rtd的文件
+    Add_EDID_fileName = QFileDialog::getOpenFileName(this, "选择文件", "", "EDID文本文件 (*.txt *.rtd)");  // 弹出文件选择对话框
+
+    // 如果用户选择了文件，则进行后续处理
+    if (!Add_EDID_fileName.isEmpty()){
+        qDebug() << "选中的文件:" << Add_EDID_fileName;  // 输出选中文件的路径
+        // TODO: 在此处添加对选中文件的处理代码
+
+        // 创建文件对象，并以只读方式打开文件
+        QFile file(Add_EDID_fileName);
+        if(file.open(QIODevice::ReadOnly | QIODevice::Text)){
+            // 使用文本流读取文件内容
+            QTextStream in(&file);
+            QString Add_Edid = in.readAll();  // 读取所有数据
+            ui->Add_Edid_textEdit->setText(Add_Edid);
+            // 先处理原始字符串（保持你的原有逻辑）
+            Add_Edid = Add_Edid.replace("0X", "", Qt::CaseInsensitive)
+                           .replace(", ", "")
+                           .replace("\n", "");
+
+            // 将处理后的HEX字符串转为QByteArray
+            Add_EDID_Buffer = QByteArray::fromHex(Add_Edid.toLatin1());
+
+            // 验证结果（例如打印字节数组的16进制形式）
+            qDebug() << "EDID Buffer:" << Add_EDID_Buffer.toHex().toUpper();
+
+            qDebug() << Add_Edid;
+            Bin_EDID[EDID_index].buffer = Add_EDID_Buffer;
+
+        } else {
+            qDebug() << "无法打开文件";  // 打开文件失败时输出提示信息
+        }
+    }
 }
 
 
-void HK_BIN_Tool::on_V_Adressable_textChanged(const QString &arg1)
+void HK_BIN_Tool::on_Save_Edid_pushButton_clicked()
 {
-    Bandwidth_Calculation();
-}
+    QString currentDate = QDateTime::currentDateTime().toString("yyyyMMdd");
+    QString originalPath = Bin_Filer;
+    // 提取文件名和路径
+    QFileInfo fileInfo(originalPath);
+    QString dirPath = fileInfo.absolutePath();      // 获取文件所在目录
+    QString baseName = fileInfo.completeBaseName(); // 文件名（不含扩展名）
+    QString extension = fileInfo.suffix();          // 文件扩展名
+
+    // 生成新文件名
+    QString newFileName = QString("%1/%2_%3.%4").arg(dirPath).arg(currentDate).arg(baseName).arg(extension);
+
+    // 打开文件并写入数据
+    QFile file(newFileName);
+    if (!file.open(QIODevice::WriteOnly))
+    {
+        // 如果打开失败，可以记录日志或者执行其他错误处理操作
+        qDebug() << "Failed to open file for writing:" << newFileName;
+        return;
+    }
 
 
-void HK_BIN_Tool::on_V_Blanking_textChanged(const QString &arg1)
-{
-    Bandwidth_Calculation();
+    Write_EDID(Bin_Buffer, Bin_EDID);
+    // 写入数据并关闭文件
+    file.write(Bin_Buffer);
+    file.close();
+
+    // 保存成功提示
+    QMessageBox::information(this, tr("成功"), tr("文件已保存到:\n%1").arg(newFileName));
+
 }
 

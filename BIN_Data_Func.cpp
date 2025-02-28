@@ -1,4 +1,4 @@
-#include "BIN_Data_Func.h"
+ #include "BIN_Data_Func.h"
 
 
 bool Find_TargetString_InBinFile(const QByteArray Bin_Buffer, Bin_Data_String &Bin_Data)
