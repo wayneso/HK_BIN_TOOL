@@ -42,6 +42,14 @@ private slots:
 
     void on_Save_Edid_pushButton_clicked();
 
+    void on_checkBox_clicked(bool checked);
+
+    void on_Resolution_comboBox_currentTextChanged(const QString &arg1);
+
+    void on_calculate_pushButton_clicked();
+
+    void on_MA_pushButton_clicked();
+
 private:
     Ui::HK_BIN_Tool *ui;
 };

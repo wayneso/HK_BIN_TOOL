@@ -51,8 +51,10 @@ HK_BIN_Tool::HK_BIN_Tool(QWidget *parent) : QWidget(parent), ui(new Ui::HK_BIN_T
     ui->Measure_comboBox->addItem("19.0");
     ui->Measure_comboBox->addItem("21.0");
     ui->Measure_comboBox->addItem("23.8");
+    ui->Measure_comboBox->addItem("24.0");
     ui->Measure_comboBox->addItem("24.5");
     ui->Measure_comboBox->addItem("27.0");
+    ui->Measure_comboBox->addItem("31.5");
     ui->Measure_comboBox->addItem("32.0");
     if(ui->Add_Edid_checkBox->isChecked())
     {
@@ -66,6 +68,13 @@ HK_BIN_Tool::HK_BIN_Tool(QWidget *parent) : QWidget(parent), ui(new Ui::HK_BIN_T
         ui->Save_Edid_pushButton->setEnabled(false);
         ui->Save_Bin_pushButton->setEnabled(true);
     }
+
+    ui->Resolution_comboBox->addItem("FHD");
+    ui->Resolution_comboBox->addItem("QHD");
+    ui->Resolution_comboBox->addItem("UHD");
+    ui->Resolution_comboBox->addItem("特殊分辨率");
+
+    ui->FPS_lineEdit->setText("60");
 }
 
 HK_BIN_Tool::~HK_BIN_Tool()
@@ -336,24 +345,49 @@ void HK_BIN_Tool::on_Measure_lineEdit_textChanged(const QString &arg1)
         return;
     }
 
-    // 将对角线尺寸从英寸转换为厘米
-    const float inchToCm = 2.54;  // 英寸到厘米的转换因子
-    float diagonalInCm = diagonalInInches * inchToCm;
+    // 预定义已知显示器数据：对角线尺寸 (英寸) -> 宽度 (cm), 高度 (cm)
+    QMap<float, QPair<int, int>> knownData = {
+        {19.0, {42, 24}},
+        {21.5, {48, 26}},
+        {24.0, {53, 30}},
+        {24.5, {54, 30}},
+        {23.8, {53, 29}},
+        {27, {60, 33}},
+        {28, {62, 35}},
+        {31.5, {70, 39}},
+        {32, {73, 36}}
+    };
 
-    // 宽高比 (宽:高 = 16:9)
-    const float aspectRatio = 16.0 / 9.0;
+    // 检查是否有匹配的显示器尺寸
+    if (knownData.contains(diagonalInInches)) {
+        int width = knownData[diagonalInInches].second;  // 宽度 (cm)
+        int height = knownData[diagonalInInches].first;  // 高度 (cm)
 
-    // 根据对角线尺寸和宽高比计算宽度和高度（单位：厘米）
-    float width = std::sqrt((diagonalInCm * diagonalInCm) / (1 + aspectRatio * aspectRatio)); // 宽度 (cm)
-    float height = width * aspectRatio;  // 高度 (cm)
+        // 更新 UI 控件中的文本框
+        ui->Measure_V_lineEdit->setText(QString::number(width));    // 宽度 (cm)
+        ui->Measure_H_lineEdit->setText(QString::number(height));   // 高度 (cm)
+    } else {
+        // 如果没有匹配的数据，根据对角线尺寸计算宽高
 
-    // 将宽度和高度转换为整数（四舍五入处理）
-    int roundedWidth = static_cast<int>(std::round(width));
-    int roundedHeight = static_cast<int>(std::round(height));
+        // 将对角线尺寸从英寸转换为厘米
+        const float inchToCm = 2.54;  // 英寸到厘米的转换因子
+        float diagonalInCm = diagonalInInches * inchToCm;
 
-    // 更新 UI 控件中的文本框
-    ui->Measure_V_lineEdit->setText(QString::number(roundedWidth));    // 宽度 (cm)
-    ui->Measure_H_lineEdit->setText(QString::number(roundedHeight));   // 高度 (cm)
+        // 宽高比 (宽:高 = 16:9)
+        const float aspectRatio = 16.0 / 9.0;
+
+        // 根据对角线尺寸和宽高比计算宽度和高度（单位：厘米）
+        float width = std::sqrt((diagonalInCm * diagonalInCm) / (1 + aspectRatio * aspectRatio)); // 宽度 (cm)
+        float height = width * aspectRatio;  // 高度 (cm)
+
+        // 将宽度和高度转换为整数（四舍五入处理）
+        int roundedWidth = static_cast<int>(std::round(width));
+        int roundedHeight = static_cast<int>(std::round(height));
+
+        // 更新 UI 控件中的文本框
+        ui->Measure_V_lineEdit->setText(QString::number(roundedWidth));    // 宽度 (cm)
+        ui->Measure_H_lineEdit->setText(QString::number(roundedHeight));   // 高度 (cm)
+    }
 }
 
 
@@ -468,5 +502,114 @@ void HK_BIN_Tool::on_Save_Edid_pushButton_clicked()
     // 保存成功提示
     QMessageBox::information(this, tr("成功"), tr("文件已保存到:\n%1").arg(newFileName));
 
+}
+
+
+void HK_BIN_Tool::on_checkBox_clicked(bool checked)
+{
+    if (checked == true)
+    {
+        if(ui->Resolution_comboBox->currentText() == "FHD")
+        {
+            ui->HBANK_lineEdit->setText("160");
+            ui->VBANK_lineEdit->setText("41");
+        }
+        else if(ui->Resolution_comboBox->currentText() == "QHD")
+        {
+            ui->HBANK_lineEdit->setText("160");
+            ui->VBANK_lineEdit->setText("41");
+        }
+        else if(ui->Resolution_comboBox->currentText() == "UHD")
+        {
+            ui->HBANK_lineEdit->setText("260");
+            ui->VBANK_lineEdit->setText("45");
+        }
+    }
+    else
+    {
+        ui->HBANK_lineEdit->clear();
+        ui->VBANK_lineEdit->clear();
+    }
+}
+
+
+void HK_BIN_Tool::on_Resolution_comboBox_currentTextChanged(const QString &arg1)
+{
+    if(arg1 == "FHD")
+    {
+        ui->H_lineEdit->setText("1920");
+        ui->V_lineEdit->setText("1080");
+        if(ui->H_V_checkBox->isChecked())
+        {
+            ui->HBANK_lineEdit->setText("160");
+            ui->VBANK_lineEdit->setText("41");
+        }
+    }
+    else if(arg1 == "QHD")
+    {
+        ui->H_lineEdit->setText("2560");
+        ui->V_lineEdit->setText("1440");
+        if(ui->H_V_checkBox->isChecked())
+        {
+            ui->HBANK_lineEdit->setText("160");
+            ui->VBANK_lineEdit->setText("41");
+        }
+
+    }
+    else if(arg1 == "UHD")
+    {
+        ui->H_lineEdit->setText("3840");
+        ui->V_lineEdit->setText("2160");
+        if(ui->H_V_checkBox->isChecked())
+        {
+            ui->HBANK_lineEdit->setText("280");
+            ui->VBANK_lineEdit->setText("45");
+        }
+    }
+    else
+    {
+        ui->H_lineEdit->clear();
+        ui->V_lineEdit->clear();
+        ui->HBANK_lineEdit->clear();
+        ui->VBANK_lineEdit->clear();
+    }
+}
+
+
+void HK_BIN_Tool::on_calculate_pushButton_clicked()
+{
+    int H = ui->H_lineEdit->text().toInt();
+    int V = ui->V_lineEdit->text().toInt();
+    int H_BANK = ui->HBANK_lineEdit->text().toInt();
+    int V_BANK = ui->VBANK_lineEdit->text().toInt();
+    int FPS = ui->FPS_lineEdit->text().toInt();
+    float NUM = ((H + H_BANK) * (V + V_BANK)) * FPS / 1000000.00;
+    ui->BANDWIDTH_lineEdit->setText(QString::number(NUM, 'f', 2));
+}
+
+
+
+void HK_BIN_Tool::on_MA_pushButton_clicked()
+{
+    int MA_MAX = ui->MA_MAX_lineEdit->text().toInt();
+    int MAX = ui->MAX_lineEdit->text().toInt(nullptr, 16);
+    int MA_TYPE = ui->MA_TYPE_lineEdit->text().toInt();
+    int TYPE = ui->TYPE_lineEdit->text().toInt(nullptr, 16);
+    float Rate = (MA_MAX - MA_TYPE) / (MAX - TYPE) * 1.00;
+    qDebug()<< MA_MAX <<MAX<<MA_TYPE<<TYPE;
+
+    for (int New_MA = 100; New_MA <= 750; New_MA += 10) {
+        // 计算对应的 New_A 值
+        double New_A = New_MA + (MA_MAX - MA_TYPE) * Rate;
+        int New_A_Int = static_cast<int>(std::round(New_A));
+
+        // 构造输出字符串
+        QString hexValue = QString::number(New_A_Int, 16).toUpper();
+        QString displayText = QString("0x%1 = %2 ma").arg(hexValue).arg(New_MA);
+
+        // 输出到界面和调试控制台
+        ui->MA_textEdit->append(displayText);  // 显示到文本框
+        qDebug() << displayText;                 // 调试输出
+    }
 }
 
