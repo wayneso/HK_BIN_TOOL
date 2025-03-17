@@ -591,16 +591,28 @@ void HK_BIN_Tool::on_calculate_pushButton_clicked()
 
 void HK_BIN_Tool::on_MA_pushButton_clicked()
 {
-    int MA_MAX = ui->MA_MAX_lineEdit->text().toInt();
-    int MAX = ui->MAX_lineEdit->text().toInt(nullptr, 16);
-    int MA_TYPE = ui->MA_TYPE_lineEdit->text().toInt();
-    int TYPE = ui->TYPE_lineEdit->text().toInt(nullptr, 16);
-    float Rate = (MA_MAX - MA_TYPE) / (MAX - TYPE) * 1.00;
-    qDebug()<< MA_MAX <<MAX<<MA_TYPE<<TYPE;
+    // 安全读取输入值
+    bool ok1, ok2, ok3, ok4;
+    int MA_MAX = ui->MA_MAX_lineEdit->text().toInt(&ok1);
+    int MAX = ui->MAX_lineEdit->text().toInt(&ok2, 16);
+    int MA_TYPE = ui->MA_TYPE_lineEdit->text().toInt(&ok3);
+    int TYPE = ui->TYPE_lineEdit->text().toInt(&ok4, 16);
+
+    // 确保所有输入转换成功，并防止除数为 0
+    if (!ok1 || !ok2 || !ok3 || !ok4 || (MAX == TYPE)) {
+        ui->MA_textEdit->append("输入值无效！");
+        return;
+    }
+
+    // 计算比例，确保浮点除法
+    float Rate = static_cast<float> (MAX - TYPE)  / (MA_MAX - MA_TYPE);
+
+    ui->MA_textEdit->clear();  // 清空旧结果
+
 
     for (int New_MA = 100; New_MA <= 750; New_MA += 10) {
         // 计算对应的 New_A 值
-        double New_A = New_MA + (MA_MAX - MA_TYPE) * Rate;
+        double New_A = TYPE + (New_MA - MA_TYPE) * Rate;
         int New_A_Int = static_cast<int>(std::round(New_A));
 
         // 构造输出字符串
