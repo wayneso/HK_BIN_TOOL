@@ -129,9 +129,9 @@ EDID_Info Read_EDID(const QByteArray& edidBuffer) {
 
     // 查找显示器名称
     info.monitorName.clear();  // 确保 monitorName 初始为空
-    for (int i = MONITOR_NAME_BLOCK_START; i <= MONITOR_NAME_BLOCK_END; i += 18) {  // 遍历描述符块
+    for (int i = 108; i <= 125; i += 18) {  // 遍历描述符块
         if (edidBuffer[i] == 0x00 && edidBuffer[i + 1] == 0x00 &&
-            edidBuffer[i + 2] == 0x00 && static_cast<unsigned char>(edidBuffer[i + 3]) == 0xFC) {  // 名称标识符
+            edidBuffer[i + 2] == 0x00 && static_cast<unsigned char>(edidBuffer[i + 3]) == 0xFC && edidBuffer[i + 4] == 0x00) {  // 名称标识符
             QByteArray nameData = edidBuffer.mid(i + 5, 13);  // 名称数据区域
             nameData = nameData.trimmed();  // 去掉末尾空格或 \0
             if (!nameData.isEmpty()) {
@@ -141,7 +141,7 @@ EDID_Info Read_EDID(const QByteArray& edidBuffer) {
         }
     }
 
-
+    qDebug() << info.monitorName;
     return info;
 }
 
@@ -193,8 +193,8 @@ QByteArray Modify_EDID(QByteArray edidBuffer, const EDID_Info& edidInfo) {
     nameData = nameData.trimmed();  // 去除名称中的多余空格或 \0 字符
     for (int i = 108; i <= 125; i += 18) {
         if (edidBuffer[i] == 0x00 && edidBuffer[i + 1] == 0x00 &&
-            edidBuffer[i + 2] == 0x00 && static_cast<unsigned char>(edidBuffer[i + 3]) == 0xFC) {
-            edidBuffer.replace(i + 5, 13, QByteArray(13, '\0'));  // 将原名称部分清零
+            edidBuffer[i + 2] == 0x00 && static_cast<unsigned char>(edidBuffer[i + 3]) == 0xFC && edidBuffer[i + 4] == 0x00) {
+            edidBuffer.replace(i + 5, 13, QByteArray(13, ' '));  // 将原名称部分清零
             // 然后插入新的显示器名称
             edidBuffer.replace(i + 5, nameData.size(), nameData);  // 替换名称
             break;

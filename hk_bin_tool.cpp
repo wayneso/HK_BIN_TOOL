@@ -243,9 +243,7 @@ void HK_BIN_Tool::on_Save_Bin_pushButton_clicked()
         return;
     }
 
-    bool DATA_checkBox_isChecked = ui->DATA_checkBox->isChecked();
-    bool CODE_INC_checkBox_isChecked = ui->CODE_INC_checkBox->isChecked();
-    if (DATA_checkBox_isChecked)
+    if (ui->DATA_checkBox->isChecked())
     {
         // 获取当前日期
         QDate currentDate = QDate::currentDate();
@@ -260,12 +258,17 @@ void HK_BIN_Tool::on_Save_Bin_pushButton_clicked()
         ui->DATA_YEAR_lineEdit->setText(QString::number(currentYear));
         ui->DATA_WEEK_lineEdit->setText(QString::number(currentWeek));
     }
-    if(CODE_INC_checkBox_isChecked)
+    if(ui->CODE_INC_checkBox->isChecked())
     {
         float CODE = ui->Measure_lineEdit->text().toFloat();
         int CODE_Int = static_cast<int>(std::round(CODE));
         ui->CODE_lineEdit->setText(QString::number(CODE_Int*100));
     }
+    if(ui->Manufacturer_checkBox->isChecked())
+    {
+        ui->Factory_lineEdit->setText("HKM");
+    }
+
     EDID_Info edidInfo;
     edidInfo.horizontalSizeCm = ui->Measure_H_lineEdit->text().toFloat();
     edidInfo.verticalSizeCm = ui->Measure_V_lineEdit->text().toFloat();
