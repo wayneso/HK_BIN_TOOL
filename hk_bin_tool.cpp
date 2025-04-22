@@ -1,8 +1,9 @@
 /*
  * @Author: Wayne 2546850503@qq.com
  * @Date: 2024-11-22 15:30:16
- * @LastEditors: Wayne 2546850503@qq.com
- * @LastEditTime: 2024-11-22 16:33:49
+ * @LastEditors: error: error: git config user.name & please set dead value or install git && error: git config user.email & please set dead value or install git & please set dead value or install git
+ * user.email & please set dead value or install git & please set dead value or install git
+ * @LastEditTime: 2025-04-23 00:53:37
  * @FilePath: \HK_BIN_Tool\hk_bin_tool.cpp
  * @Description:
  *
@@ -11,38 +12,19 @@
 #include "hk_bin_tool.h"
 #include "./ui_hk_bin_tool.h"
 
+#include "BIN_Data_Func.h"
 #include "EDID_Func.h"
-
+#include <QDateTime>
 #include <QFileDialog>
 #include <QMessageBox>
-#include <QDateTime>
-
 
 QVector<EDID> Bin_EDID = {};
 QVector<EDID_Info> Bin_EDID_Info = {};
 QByteArray Bin_Buffer = {};
 QByteArray Add_EDID_Buffer = {};
 QString Bin_Filer = {};
-QString Add_EDID_fileName ={};
+QString Add_EDID_fileName = {};
 int EDID_index = 0;
-
-uchar BacklightDef_Data_Buffer[6] = {0};
-Bin_Data_String BinData_BackLightDef = {
-    "This is BacklightDef Flag!",  // 目标字符串
-    0,                             // 字符串初始位置
-    27,                            // 偏移量
-    BacklightDef_Data_Buffer,      // 输出缓冲区
-    6                              // 输出缓冲区大小
-};
-
-uchar Key_Value_Data_Buffer[10] = {0};
-Bin_Data_String Key_Value_DataDef = {
-    "This is Keyboardflag Flag!",  // 目标字符串
-    0,                             // 字符串初始位置
-    27,                            // 偏移量
-    Key_Value_Data_Buffer,      // 输出缓冲区
-    10                              // 输出缓冲区大小
-};
 
 HK_BIN_Tool::HK_BIN_Tool(QWidget *parent) : QWidget(parent), ui(new Ui::HK_BIN_Tool)
 {
@@ -56,7 +38,7 @@ HK_BIN_Tool::HK_BIN_Tool(QWidget *parent) : QWidget(parent), ui(new Ui::HK_BIN_T
     ui->Measure_comboBox->addItem("27.0");
     ui->Measure_comboBox->addItem("31.5");
     ui->Measure_comboBox->addItem("32.0");
-    if(ui->Add_Edid_checkBox->isChecked())
+    if (ui->Add_Edid_checkBox->isChecked())
     {
         ui->Add_Edid_pushButton->setEnabled(true);
         ui->Save_Edid_pushButton->setEnabled(true);
@@ -112,7 +94,7 @@ void HK_BIN_Tool::on_Add_Bin_pushButton_clicked()
     ui->EDID_lineEdit->setText("0");
 
     // 获取当前 EDID
-    const EDID& edid = Bin_EDID[EDID_index];
+    const EDID &edid = Bin_EDID[EDID_index];
     EDID_Info edidInfo = Read_EDID(edid.buffer);
 
     // 输出解析结果
@@ -126,13 +108,11 @@ void HK_BIN_Tool::on_Add_Bin_pushButton_clicked()
     ui->Measure_lineEdit->setText(QString::number(edidInfo.diagonalSizeInches, 'f', 1));
     ui->InputName_lineEdit->setText(edidInfo.monitorName);
 
-
-
     /************* EDID *************/
 
     /************* BIN *************/
 
-    bool State = Find_TargetString_InBinFile(Bin_Buffer,BinData_BackLightDef);
+    bool State = Find_TargetString_InBinFile(Bin_Buffer, BinData_BackLightDef);
     ui->_BACKLIGHT_MIN->setText(QString::number(BinData_BackLightDef.outputBuffer[0], 16).toUpper());
     ui->_BACKLIGHT_DEF_PWM->setText(QString::number(BinData_BackLightDef.outputBuffer[1], 16).toUpper());
     ui->_BACKLIGHT_MAX->setText(QString::number(BinData_BackLightDef.outputBuffer[2], 16).toUpper());
@@ -140,7 +120,7 @@ void HK_BIN_Tool::on_Add_Bin_pushButton_clicked()
     ui->_MPRT_PWM_DEF->setText(QString::number(BinData_BackLightDef.outputBuffer[4], 16).toUpper());
     ui->_MPRT_PWM_MAX->setText(QString::number(BinData_BackLightDef.outputBuffer[5], 16).toUpper());
 
-    State = Find_TargetString_InBinFile(Bin_Buffer,Key_Value_DataDef);
+    State = Find_TargetString_InBinFile(Bin_Buffer, Key_Value_DataDef);
     ui->POWER_KEY->setText(QString::number(Key_Value_DataDef.outputBuffer[0], 16).toUpper());
     ui->MENU_KEY->setText(QString::number(Key_Value_DataDef.outputBuffer[1], 16).toUpper());
     ui->EXIT_KEY->setText(QString::number(Key_Value_DataDef.outputBuffer[2], 16).toUpper());
@@ -152,6 +132,24 @@ void HK_BIN_Tool::on_Add_Bin_pushButton_clicked()
     ui->RIGHT_REG->setText(QString::number(Key_Value_DataDef.outputBuffer[8], 16).toUpper());
     ui->LEFT_REG->setText(QString::number(Key_Value_DataDef.outputBuffer[9], 16).toUpper());
 
+    State = Find_TargetString_InBinFile(Bin_Buffer, Osd_DataDef);
+    for (int var = 0; var < 10; ++var)
+    {
+        qDebug() << Osd_DataDef.outputBuffer[var];
+    }
+    /******************************LOGO******************************/
+    State = Find_TargetString_InBinFile(Bin_Buffer, LOGO_INDEX_DataDef);
+    for (int var = 0; var < 256; ++var)
+    {
+        qDebug() << LOGO_INDEX_DataDef.outputBuffer[var];
+    }
+    State = Find_TargetString_InBinFile(Bin_Buffer, LOGO_DataDef);
+    for (int var = 0; var < 10; ++var)
+    {
+        qDebug() << LOGO_DataDef.outputBuffer[var];
+    }
+
+    /******************************LOGO******************************/
     if (State == true)
     {
         ui->Bin_Data_Flag_label->setText("该BIN文件适用修改工具");
@@ -177,7 +175,6 @@ void HK_BIN_Tool::on_Add_Bin_pushButton_clicked()
         ui->LEFT_REG->setText("0");
     }
 
-
     /************* BIN *************/
 }
 
@@ -186,22 +183,24 @@ void HK_BIN_Tool::on_Next_EDID_Button_clicked()
     // 更新索引以指向下一个 EDID
     EDID_index++;
 
-    int edidCount = Bin_EDID.size();  // 获取 Bin_EDID 中的 EDID 数量
+    int edidCount = Bin_EDID.size(); // 获取 Bin_EDID 中的 EDID 数量
     // 如果索引超出边界，则从头开始
-    if (EDID_index >= edidCount) {
+    if (EDID_index >= edidCount)
+    {
         EDID_index = 0;
     }
     ui->EDID_lineEdit->setText(QString::number(EDID_index));
 
-    if (edidCount == 0) {
+    if (edidCount == 0)
+    {
         qDebug() << "No EDID data available.";
-        return;  // 如果 Bin_EDID 为空，直接返回
+        return; // 如果 Bin_EDID 为空，直接返回
     }
     // 显示当前 EDID 的数据
     ui->EDID_textEdit->setText(EDID_Data_Convert_String(Bin_EDID[EDID_index]));
 
     // 获取当前 EDID
-    const EDID& edid = Bin_EDID[EDID_index];
+    const EDID &edid = Bin_EDID[EDID_index];
     EDID_Info edidInfo = Read_EDID(edid.buffer);
 
     ui->Factory_lineEdit->setText(edidInfo.manufacturerID);
@@ -213,9 +212,7 @@ void HK_BIN_Tool::on_Next_EDID_Button_clicked()
     ui->Measure_V_lineEdit->setText(QString::number(edidInfo.verticalSizeCm));
     ui->Measure_lineEdit->setText(QString::number(edidInfo.diagonalSizeInches, 'f', 1));
     ui->InputName_lineEdit->setText(edidInfo.monitorName);
-
 }
-
 
 /**
  * @description: 保存bin文件按键
@@ -258,13 +255,13 @@ void HK_BIN_Tool::on_Save_Bin_pushButton_clicked()
         ui->DATA_YEAR_lineEdit->setText(QString::number(currentYear));
         ui->DATA_WEEK_lineEdit->setText(QString::number(currentWeek));
     }
-    if(ui->CODE_INC_checkBox->isChecked())
+    if (ui->CODE_INC_checkBox->isChecked())
     {
         float CODE = ui->Measure_lineEdit->text().toFloat();
         int CODE_Int = static_cast<int>(std::round(CODE));
-        ui->CODE_lineEdit->setText(QString::number(CODE_Int*100));
+        ui->CODE_lineEdit->setText(QString::number(CODE_Int * 100));
     }
-    if(ui->Manufacturer_checkBox->isChecked())
+    if (ui->Manufacturer_checkBox->isChecked())
     {
         ui->Factory_lineEdit->setText("HKM");
     }
@@ -280,7 +277,8 @@ void HK_BIN_Tool::on_Save_Bin_pushButton_clicked()
     edidInfo.monitorName = ui->InputName_lineEdit->text();
     edidInfo.version = ui->EDIDVER_lineEdit->text();
     // 修改每个 EDID（例如修改厂商信息）
-    for (EDID& edid : Bin_EDID) {
+    for (EDID &edid : Bin_EDID)
+    {
         edid.buffer = Modify_EDID(edid.buffer, edidInfo);
     }
     // 将修改后的 EDID 写回 binBuffer
@@ -326,8 +324,6 @@ void HK_BIN_Tool::on_Save_Bin_pushButton_clicked()
     QMessageBox::information(this, tr("成功"), tr("文件已保存到:\n%1").arg(newFileName));
 }
 
-
-
 void HK_BIN_Tool::on_Measure_comboBox_currentTextChanged(const QString &arg1)
 {
     if (arg1 != "快捷选项")
@@ -341,39 +337,35 @@ void HK_BIN_Tool::on_Measure_lineEdit_textChanged(const QString &arg1)
     float diagonalInInches = arg1.toFloat(&ok);
 
     // 如果输入无效（非数字或负数/零），打印错误信息并清空相关文本框
-    if (!ok || diagonalInInches <= 0) {
+    if (!ok || diagonalInInches <= 0)
+    {
         qDebug() << "无效的对角线尺寸（英寸）：" << arg1;
-        ui->Measure_H_lineEdit->clear();  // 清空宽度 (cm)
-        ui->Measure_V_lineEdit->clear();  // 清空高度 (cm)
+        ui->Measure_H_lineEdit->clear(); // 清空宽度 (cm)
+        ui->Measure_V_lineEdit->clear(); // 清空高度 (cm)
         return;
     }
 
     // 预定义已知显示器数据：对角线尺寸 (英寸) -> 宽度 (cm), 高度 (cm)
-    QMap<float, QPair<int, int>> knownData = {
-        {19.0, {42, 24}},
-        {21.5, {48, 26}},
-        {24.0, {53, 30}},
-        {24.5, {54, 30}},
-        {23.8, {53, 29}},
-        {27, {60, 33}},
-        {28, {62, 35}},
-        {31.5, {70, 39}},
-        {32, {73, 36}}
-    };
+    QMap<float, QPair<int, int>> knownData = {{19.0, {42, 24}}, {21.5, {48, 26}}, {24.0, {53, 30}},
+                                              {24.5, {54, 30}}, {23.8, {53, 29}}, {27, {60, 33}},
+                                              {28, {62, 35}},   {31.5, {70, 39}}, {32, {73, 36}}};
 
     // 检查是否有匹配的显示器尺寸
-    if (knownData.contains(diagonalInInches)) {
-        int width = knownData[diagonalInInches].second;  // 宽度 (cm)
-        int height = knownData[diagonalInInches].first;  // 高度 (cm)
+    if (knownData.contains(diagonalInInches))
+    {
+        int width = knownData[diagonalInInches].second; // 宽度 (cm)
+        int height = knownData[diagonalInInches].first; // 高度 (cm)
 
         // 更新 UI 控件中的文本框
-        ui->Measure_V_lineEdit->setText(QString::number(width));    // 宽度 (cm)
-        ui->Measure_H_lineEdit->setText(QString::number(height));   // 高度 (cm)
-    } else {
+        ui->Measure_V_lineEdit->setText(QString::number(width));  // 宽度 (cm)
+        ui->Measure_H_lineEdit->setText(QString::number(height)); // 高度 (cm)
+    }
+    else
+    {
         // 如果没有匹配的数据，根据对角线尺寸计算宽高
 
         // 将对角线尺寸从英寸转换为厘米
-        const float inchToCm = 2.54;  // 英寸到厘米的转换因子
+        const float inchToCm = 2.54; // 英寸到厘米的转换因子
         float diagonalInCm = diagonalInInches * inchToCm;
 
         // 宽高比 (宽:高 = 16:9)
@@ -381,18 +373,17 @@ void HK_BIN_Tool::on_Measure_lineEdit_textChanged(const QString &arg1)
 
         // 根据对角线尺寸和宽高比计算宽度和高度（单位：厘米）
         float width = std::sqrt((diagonalInCm * diagonalInCm) / (1 + aspectRatio * aspectRatio)); // 宽度 (cm)
-        float height = width * aspectRatio;  // 高度 (cm)
+        float height = width * aspectRatio;                                                       // 高度 (cm)
 
         // 将宽度和高度转换为整数（四舍五入处理）
         int roundedWidth = static_cast<int>(std::round(width));
         int roundedHeight = static_cast<int>(std::round(height));
 
         // 更新 UI 控件中的文本框
-        ui->Measure_V_lineEdit->setText(QString::number(roundedWidth));    // 宽度 (cm)
-        ui->Measure_H_lineEdit->setText(QString::number(roundedHeight));   // 高度 (cm)
+        ui->Measure_V_lineEdit->setText(QString::number(roundedWidth));  // 宽度 (cm)
+        ui->Measure_H_lineEdit->setText(QString::number(roundedHeight)); // 高度 (cm)
     }
 }
-
 
 void HK_BIN_Tool::on_DATA_checkBox_clicked(bool checked)
 {
@@ -414,14 +405,12 @@ void HK_BIN_Tool::on_CODE_INC_checkBox_clicked(bool checked)
 {
     float CODE = ui->Measure_lineEdit->text().toFloat();
     int CODE_Int = static_cast<int>(std::round(CODE));
-    ui->CODE_lineEdit->setText(QString::number(CODE_Int*100));
-
+    ui->CODE_lineEdit->setText(QString::number(CODE_Int * 100));
 }
-
 
 void HK_BIN_Tool::on_Add_Edid_checkBox_clicked(bool checked)
 {
-    if(ui->Add_Edid_checkBox->isChecked())
+    if (ui->Add_Edid_checkBox->isChecked())
     {
         ui->Add_Edid_pushButton->setEnabled(true);
         ui->Save_Edid_pushButton->setEnabled(true);
@@ -435,28 +424,28 @@ void HK_BIN_Tool::on_Add_Edid_checkBox_clicked(bool checked)
     }
 }
 
-
 void HK_BIN_Tool::on_Add_Edid_pushButton_clicked()
 {
     // 当点击“添加”按钮时，弹出文件选择对话框，只允许选择后缀为txt或rtd的文件
-    Add_EDID_fileName = QFileDialog::getOpenFileName(this, "选择文件", "", "EDID文本文件 (*.txt *.rtd)");  // 弹出文件选择对话框
+    Add_EDID_fileName =
+        QFileDialog::getOpenFileName(this, "选择文件", "", "EDID文本文件 (*.txt *.rtd)"); // 弹出文件选择对话框
 
     // 如果用户选择了文件，则进行后续处理
-    if (!Add_EDID_fileName.isEmpty()){
-        qDebug() << "选中的文件:" << Add_EDID_fileName;  // 输出选中文件的路径
+    if (!Add_EDID_fileName.isEmpty())
+    {
+        qDebug() << "选中的文件:" << Add_EDID_fileName; // 输出选中文件的路径
         // TODO: 在此处添加对选中文件的处理代码
 
         // 创建文件对象，并以只读方式打开文件
         QFile file(Add_EDID_fileName);
-        if(file.open(QIODevice::ReadOnly | QIODevice::Text)){
+        if (file.open(QIODevice::ReadOnly | QIODevice::Text))
+        {
             // 使用文本流读取文件内容
             QTextStream in(&file);
-            QString Add_Edid = in.readAll();  // 读取所有数据
+            QString Add_Edid = in.readAll(); // 读取所有数据
             ui->Add_Edid_textEdit->setText(Add_Edid);
             // 先处理原始字符串（保持你的原有逻辑）
-            Add_Edid = Add_Edid.replace("0X", "", Qt::CaseInsensitive)
-                           .replace(", ", "")
-                           .replace("\n", "");
+            Add_Edid = Add_Edid.replace("0X", "", Qt::CaseInsensitive).replace(", ", "").replace("\n", "");
 
             // 将处理后的HEX字符串转为QByteArray
             Add_EDID_Buffer = QByteArray::fromHex(Add_Edid.toLatin1());
@@ -466,13 +455,13 @@ void HK_BIN_Tool::on_Add_Edid_pushButton_clicked()
 
             qDebug() << Add_Edid;
             Bin_EDID[EDID_index].buffer = Add_EDID_Buffer;
-
-        } else {
-            qDebug() << "无法打开文件";  // 打开文件失败时输出提示信息
+        }
+        else
+        {
+            qDebug() << "无法打开文件"; // 打开文件失败时输出提示信息
         }
     }
 }
-
 
 void HK_BIN_Tool::on_Save_Edid_pushButton_clicked()
 {
@@ -496,7 +485,6 @@ void HK_BIN_Tool::on_Save_Edid_pushButton_clicked()
         return;
     }
 
-
     Write_EDID(Bin_Buffer, Bin_EDID);
     // 写入数据并关闭文件
     file.write(Bin_Buffer);
@@ -504,25 +492,23 @@ void HK_BIN_Tool::on_Save_Edid_pushButton_clicked()
 
     // 保存成功提示
     QMessageBox::information(this, tr("成功"), tr("文件已保存到:\n%1").arg(newFileName));
-
 }
-
 
 void HK_BIN_Tool::on_checkBox_clicked(bool checked)
 {
     if (checked == true)
     {
-        if(ui->Resolution_comboBox->currentText() == "FHD")
+        if (ui->Resolution_comboBox->currentText() == "FHD")
         {
             ui->HBANK_lineEdit->setText("160");
             ui->VBANK_lineEdit->setText("41");
         }
-        else if(ui->Resolution_comboBox->currentText() == "QHD")
+        else if (ui->Resolution_comboBox->currentText() == "QHD")
         {
             ui->HBANK_lineEdit->setText("160");
             ui->VBANK_lineEdit->setText("41");
         }
-        else if(ui->Resolution_comboBox->currentText() == "UHD")
+        else if (ui->Resolution_comboBox->currentText() == "UHD")
         {
             ui->HBANK_lineEdit->setText("260");
             ui->VBANK_lineEdit->setText("45");
@@ -535,35 +521,33 @@ void HK_BIN_Tool::on_checkBox_clicked(bool checked)
     }
 }
 
-
 void HK_BIN_Tool::on_Resolution_comboBox_currentTextChanged(const QString &arg1)
 {
-    if(arg1 == "FHD")
+    if (arg1 == "FHD")
     {
         ui->H_lineEdit->setText("1920");
         ui->V_lineEdit->setText("1080");
-        if(ui->H_V_checkBox->isChecked())
+        if (ui->H_V_checkBox->isChecked())
         {
             ui->HBANK_lineEdit->setText("160");
             ui->VBANK_lineEdit->setText("41");
         }
     }
-    else if(arg1 == "QHD")
+    else if (arg1 == "QHD")
     {
         ui->H_lineEdit->setText("2560");
         ui->V_lineEdit->setText("1440");
-        if(ui->H_V_checkBox->isChecked())
+        if (ui->H_V_checkBox->isChecked())
         {
             ui->HBANK_lineEdit->setText("160");
             ui->VBANK_lineEdit->setText("41");
         }
-
     }
-    else if(arg1 == "UHD")
+    else if (arg1 == "UHD")
     {
         ui->H_lineEdit->setText("3840");
         ui->V_lineEdit->setText("2160");
-        if(ui->H_V_checkBox->isChecked())
+        if (ui->H_V_checkBox->isChecked())
         {
             ui->HBANK_lineEdit->setText("280");
             ui->VBANK_lineEdit->setText("45");
@@ -578,9 +562,9 @@ void HK_BIN_Tool::on_Resolution_comboBox_currentTextChanged(const QString &arg1)
     }
 }
 
-
 void HK_BIN_Tool::on_calculate_pushButton_clicked()
 {
+    ui->Clock_textEdit->clear();
     int H = ui->H_lineEdit->text().toInt();
     int V = ui->V_lineEdit->text().toInt();
     int H_BANK = ui->HBANK_lineEdit->text().toInt();
@@ -588,9 +572,17 @@ void HK_BIN_Tool::on_calculate_pushButton_clicked()
     int FPS = ui->FPS_lineEdit->text().toInt();
     float NUM = ((H + H_BANK) * (V + V_BANK)) * FPS / 1000000.00;
     ui->BANDWIDTH_lineEdit->setText(QString::number(NUM, 'f', 2));
+
+    int HZ_Aarray[] = {50, 60, 75, 100, 120, 144, 165, 180, 240, 280, 300, 320, 360, 400, 480, 500, 540, 600};
+    for (int var = 0; var < 18; ++var)
+    {
+        float NUM_Clock = ((H + H_BANK) * (V + V_BANK)) * HZ_Aarray[var] / 1000000.00;
+        QString HZ_NUM = QString::number(HZ_Aarray[var]);
+        QString NUM_Clock_Str = QString::number(NUM_Clock, 'f', 2);
+        QString ALL = HZ_NUM + "HZ" + " = " + NUM_Clock_Str + "MHz";
+        ui->Clock_textEdit->append(ALL);
+    }
 }
-
-
 
 void HK_BIN_Tool::on_MA_pushButton_clicked()
 {
@@ -602,18 +594,19 @@ void HK_BIN_Tool::on_MA_pushButton_clicked()
     int TYPE = ui->TYPE_lineEdit->text().toInt(&ok4, 16);
 
     // 确保所有输入转换成功，并防止除数为 0
-    if (!ok1 || !ok2 || !ok3 || !ok4 || (MAX == TYPE)) {
+    if (!ok1 || !ok2 || !ok3 || !ok4 || (MAX == TYPE))
+    {
         ui->MA_textEdit->append("输入值无效！");
         return;
     }
 
     // 计算比例，确保浮点除法
-    float Rate = static_cast<float> (MAX - TYPE)  / (MA_MAX - MA_TYPE);
+    float Rate = static_cast<float>(MAX - TYPE) / (MA_MAX - MA_TYPE);
 
-    ui->MA_textEdit->clear();  // 清空旧结果
+    ui->MA_textEdit->clear(); // 清空旧结果
 
-
-    for (int New_MA = 100; New_MA <= 750; New_MA += 10) {
+    for (int New_MA = 100; New_MA <= 750; New_MA += 10)
+    {
         // 计算对应的 New_A 值
         double New_A = TYPE + (New_MA - MA_TYPE) * Rate;
         int New_A_Int = static_cast<int>(std::round(New_A));
@@ -623,8 +616,7 @@ void HK_BIN_Tool::on_MA_pushButton_clicked()
         QString displayText = QString("0x%1 = %2 ma").arg(hexValue).arg(New_MA);
 
         // 输出到界面和调试控制台
-        ui->MA_textEdit->append(displayText);  // 显示到文本框
-        qDebug() << displayText;                 // 调试输出
+        ui->MA_textEdit->append(displayText); // 显示到文本框
+        qDebug() << displayText;              // 调试输出
     }
 }
-

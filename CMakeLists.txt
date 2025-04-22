@@ -39,7 +39,9 @@ else()
         )
     endif()
 endif()
-
+# 添加头文件搜索路径
+target_include_directories(HK_BIN_Tool PRIVATE
+    ${CMAKE_SOURCE_DIR}/Func)
 target_link_libraries(HK_BIN_Tool PRIVATE Qt${QT_VERSION_MAJOR}::Widgets)
 
 if(${QT_VERSION} VERSION_LESS 6.1.0)

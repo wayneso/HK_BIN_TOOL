@@ -82,7 +82,7 @@
      </rect>
     </property>
     <property name="currentIndex">
-     <number>0</number>
+     <number>1</number>
     </property>
     <widget class="QWidget" name="EDID">
      <attribute name="title">
@@ -1007,6 +1007,24 @@
       </property>
      </widget>
     </widget>
+    <widget class="QWidget" name="tab_2">
+     <attribute name="title">
+      <string>LOGO</string>
+     </attribute>
+     <widget class="QLabel" name="label_39">
+      <property name="geometry">
+       <rect>
+        <x>10</x>
+        <y>10</y>
+        <width>91</width>
+        <height>21</height>
+       </rect>
+      </property>
+      <property name="text">
+       <string>LOGO</string>
+      </property>
+     </widget>
+    </widget>
     <widget class="QWidget" name="tab">
      <attribute name="title">
       <string>计算器</string>
@@ -1017,7 +1035,7 @@
         <x>10</x>
         <y>10</y>
         <width>361</width>
-        <height>111</height>
+        <height>121</height>
        </rect>
       </property>
       <property name="title">
@@ -1390,6 +1408,21 @@
         <set>Qt::AlignmentFlag::AlignCenter</set>
        </property>
       </widget>
+     </widget>
+     <widget class="QTextEdit" name="Clock_textEdit">
+      <property name="geometry">
+       <rect>
+        <x>380</x>
+        <y>20</y>
+        <width>191</width>
+        <height>331</height>
+       </rect>
+      </property>
+      <property name="font">
+       <font>
+        <pointsize>10</pointsize>
+       </font>
+      </property>
      </widget>
     </widget>
    </widget>
