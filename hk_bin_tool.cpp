@@ -131,25 +131,6 @@ void HK_BIN_Tool::on_Add_Bin_pushButton_clicked()
     ui->EXIT_REG->setText(QString::number(Key_Value_DataDef.outputBuffer[7], 16).toUpper());
     ui->RIGHT_REG->setText(QString::number(Key_Value_DataDef.outputBuffer[8], 16).toUpper());
     ui->LEFT_REG->setText(QString::number(Key_Value_DataDef.outputBuffer[9], 16).toUpper());
-
-    State = Find_TargetString_InBinFile(Bin_Buffer, Osd_DataDef);
-    for (int var = 0; var < 10; ++var)
-    {
-        qDebug() << Osd_DataDef.outputBuffer[var];
-    }
-    /******************************LOGO******************************/
-    State = Find_TargetString_InBinFile(Bin_Buffer, LOGO_INDEX_DataDef);
-    for (int var = 0; var < 256; ++var)
-    {
-        qDebug() << LOGO_INDEX_DataDef.outputBuffer[var];
-    }
-    State = Find_TargetString_InBinFile(Bin_Buffer, LOGO_DataDef);
-    for (int var = 0; var < 10; ++var)
-    {
-        qDebug() << LOGO_DataDef.outputBuffer[var];
-    }
-
-    /******************************LOGO******************************/
     if (State == true)
     {
         ui->Bin_Data_Flag_label->setText("该BIN文件适用修改工具");
@@ -174,6 +155,46 @@ void HK_BIN_Tool::on_Add_Bin_pushButton_clicked()
         ui->RIGHT_REG->setText("0");
         ui->LEFT_REG->setText("0");
     }
+    /*
+    State = Find_TargetString_InBinFile(Bin_Buffer, Osd_DataDef);
+    for (int var = 0; var < 10; ++var)
+    {
+        qDebug() << Osd_DataDef.outputBuffer[var];
+    }
+    */
+    /******************************LOGO******************************/
+    ui->LOGO_MESSAGE_textEdit->clear();
+    State = Find_TargetString_InBinFile(Bin_Buffer, LOGO_BASE_Default_DataDef);
+    ui->_LOGO_FG_COLOR_lineEdit->setText(QString::number(LOGO_BASE_Default_DataDef.outputBuffer[0]));
+    ui->_LOGO_BG_COLOR_lineEdit->setText(QString::number(LOGO_BASE_Default_DataDef.outputBuffer[1]));
+    ui->_LOGO_COL_lineEdit->setText(QString::number(LOGO_BASE_Default_DataDef.outputBuffer[2]));
+    ui->_LOGO_ROW_lineEdit->setText(QString::number(LOGO_BASE_Default_DataDef.outputBuffer[3]));
+    ui->_LOGO_BG_RED_lineEdit->setText(QString::number(LOGO_BASE_Default_DataDef.outputBuffer[4]));
+    ui->_LOGO_BG_GREEN_lineEdit->setText(QString::number(LOGO_BASE_Default_DataDef.outputBuffer[5]));
+    ui->_LOGO_BG_BLUE_lineEdit->setText(QString::number(LOGO_BASE_Default_DataDef.outputBuffer[6]));
+    for (int var = 0; var < 7; ++var)
+    {
+        qDebug() << LOGO_BASE_Default_DataDef.outputBuffer[var];
+    }
+    /*
+    State = Find_TargetString_InBinFile(Bin_Buffer, LOGO_INDEX_DataDef);
+    for (int var = 0; var < 256; ++var)
+    {
+        qDebug() << LOGO_INDEX_DataDef.outputBuffer[var];
+    }
+    State = Find_TargetString_InBinFile(Bin_Buffer, LOGO_DataDef);
+    for (int var = 0; var < 10; ++var)
+    {
+        qDebug() << LOGO_DataDef.outputBuffer[var];
+    }
+    */
+
+    if (State == true)
+        ui->BIN_LOGO_flag_label->setText("该BIN文件适用修改工具");
+    else
+        ui->BIN_LOGO_flag_label->setText("该BIN文件不适用修改工具");
+    /******************************LOGO******************************/
+
 
     /************* BIN *************/
 }
@@ -315,6 +336,24 @@ void HK_BIN_Tool::on_Save_Bin_pushButton_clicked()
         else
             ui->Bin_Data_Flag_label->setText("False！");
     }
+    State = Find_TargetString_InBinFile(Bin_Buffer, LOGO_BASE_Default_DataDef);
+    if(State == true)
+    {
+        bool ok;
+        LOGO_BASE_Default_DataDef.outputBuffer[0] = ui->_LOGO_FG_COLOR_lineEdit->text().toInt(&ok, 10);
+        LOGO_BASE_Default_DataDef.outputBuffer[1] = ui->_LOGO_BG_COLOR_lineEdit->text().toInt(&ok, 10);
+        LOGO_BASE_Default_DataDef.outputBuffer[2] = ui->_LOGO_COL_lineEdit->text().toInt(&ok, 10);
+        LOGO_BASE_Default_DataDef.outputBuffer[3] = ui->_LOGO_ROW_lineEdit->text().toInt(&ok, 10);
+        LOGO_BASE_Default_DataDef.outputBuffer[4] = ui->_LOGO_BG_RED_lineEdit->text().toInt(&ok, 10);
+        LOGO_BASE_Default_DataDef.outputBuffer[5] = ui->_LOGO_BG_GREEN_lineEdit->text().toInt(&ok, 10);
+        LOGO_BASE_Default_DataDef.outputBuffer[6] = ui->_LOGO_BG_BLUE_lineEdit->text().toInt(&ok, 10);
+        State = Write_TargetString_InBinFile(Bin_Buffer, LOGO_BASE_Default_DataDef);
+        if (State == true)
+            ui->BIN_LOGO_flag_label->setText("Successful！");
+        else
+            ui->BIN_LOGO_flag_label->setText("False！");
+    }
+
     /************* BIN *************/
     // 写入数据并关闭文件
     file.write(Bin_Buffer);

@@ -48,7 +48,7 @@ extern Bin_Data_String LOGO_INDEX_DataDef;
 extern Bin_Data_String LOGO_DataDef;
 extern Bin_Data_String LOGO1_INDEX_DataDef;
 extern Bin_Data_String LOGO1_DataDef;
-
+extern Bin_Data_String LOGO_BASE_Default_DataDef;
 bool Find_TargetString_InBinFile(const QByteArray Bin_Buffer, Bin_Data_String &Bin_Data);
 bool Write_TargetString_InBinFile(QByteArray &Bin_Buffer, Bin_Data_String &Bin_Data);
 

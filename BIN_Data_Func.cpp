@@ -36,7 +36,7 @@ Bin_Data_String Key_Value_DataDef = {
 };
 
 uchar Osd_Data_Buffer[10] = {0};
-const char *Osd_Data_string = "This is OsdDefaultData Flag V001!";
+const char *Osd_Data_string = "HK_OSD_Default Flag";
 int Osd_Data_string_len = STRLEN_INCL_NULL(Osd_Data_string);
 Bin_Data_String Osd_DataDef = {
     Osd_Data_string,     // 目标字符串
@@ -44,6 +44,17 @@ Bin_Data_String Osd_DataDef = {
     Osd_Data_string_len, // 偏移量
     Osd_Data_Buffer,     // 输出缓冲区
     10                   // 输出缓冲区大小
+};
+
+uchar LOGO_BASE_Default_Buffer[7] = {0};
+const char *LOGO_BASE_Default_string = "HK_LOGO_BASE_Default Flag";
+int LOGO_BASE_Default_string_len = STRLEN_INCL_NULL(LOGO_BASE_Default_string);
+Bin_Data_String LOGO_BASE_Default_DataDef = {
+    LOGO_BASE_Default_string,     // 目标字符串
+    0,                      // 字符串初始位置
+    LOGO_BASE_Default_string_len, // 偏移量
+    LOGO_BASE_Default_Buffer,       // 输出缓冲区
+    7                    // 输出缓冲区大小
 };
 
 uchar LOGO_Data_Buffer[4096] = {0};
