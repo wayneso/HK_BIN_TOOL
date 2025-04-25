@@ -279,8 +279,8 @@ void HK_BIN_Tool::on_Save_Bin_pushButton_clicked()
     if (ui->CODE_INC_checkBox->isChecked())
     {
         float CODE = ui->Measure_lineEdit->text().toFloat();
-        int CODE_Int = static_cast<int>(std::round(CODE));
-        ui->CODE_lineEdit->setText(QString::number(CODE_Int * 100));
+        int CODE_Int = static_cast<int>(CODE * 100);
+        ui->CODE_lineEdit->setText(QString::number(CODE_Int));
     }
     if (ui->Manufacturer_checkBox->isChecked())
     {
@@ -386,7 +386,7 @@ void HK_BIN_Tool::on_Measure_lineEdit_textChanged(const QString &arg1)
 
     // 预定义已知显示器数据：对角线尺寸 (英寸) -> 宽度 (cm), 高度 (cm)
     QMap<float, QPair<int, int>> knownData = {{19.0, {42, 24}}, {21.5, {48, 26}}, {24.0, {53, 30}},
-                                              {24.5, {54, 30}}, {23.8, {53, 29}}, {27, {60, 33}},
+                                              {24.5, {54, 31}}, {23.8, {53, 29}}, {27, {60, 33}},
                                               {28, {62, 35}},   {31.5, {70, 39}}, {32, {73, 36}}};
 
     // 检查是否有匹配的显示器尺寸
