@@ -44,6 +44,7 @@ typedef struct
 extern Bin_Data_String BinData_BackLightDef;
 extern Bin_Data_String Key_Value_DataDef;
 extern Bin_Data_String Osd_DataDef;
+extern Bin_Data_String HKC_Osd_DataDef;
 extern Bin_Data_String LOGO_INDEX_DataDef;
 extern Bin_Data_String LOGO_DataDef;
 extern Bin_Data_String LOGO1_INDEX_DataDef;

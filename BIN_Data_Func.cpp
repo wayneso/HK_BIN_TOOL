@@ -46,6 +46,17 @@ Bin_Data_String Osd_DataDef = {
     10                   // 输出缓冲区大小
 };
 
+uchar HKC_Osd_Data_Buffer[24] = {0};
+const char *HKC_Osd_Data_string = "HK_HKC_OSD_Default Flag";
+int HKC_Osd_Data_string_len = STRLEN_INCL_NULL(HKC_Osd_Data_string);
+Bin_Data_String HKC_Osd_DataDef = {
+    HKC_Osd_Data_string,     // 目标字符串
+    0,                   // 字符串初始位置
+    HKC_Osd_Data_string_len, // 偏移量
+    HKC_Osd_Data_Buffer,     // 输出缓冲区
+    24                   // 输出缓冲区大小
+};
+
 uchar LOGO_BASE_Default_Buffer[7] = {0};
 const char *LOGO_BASE_Default_string = "HK_LOGO_BASE_Default Flag";
 int LOGO_BASE_Default_string_len = STRLEN_INCL_NULL(LOGO_BASE_Default_string);

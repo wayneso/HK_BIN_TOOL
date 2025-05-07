@@ -50,6 +50,8 @@ private slots:
 
     void on_MA_pushButton_clicked();
 
+    void on_LOGO_SIZE_COL_ROW_pushButton_clicked();
+
 private:
     Ui::HK_BIN_Tool *ui;
 };

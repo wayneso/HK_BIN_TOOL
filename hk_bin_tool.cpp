@@ -113,47 +113,46 @@ void HK_BIN_Tool::on_Add_Bin_pushButton_clicked()
     /************* BIN *************/
 
     bool State = Find_TargetString_InBinFile(Bin_Buffer, BinData_BackLightDef);
-    ui->_BACKLIGHT_MIN->setText(QString::number(BinData_BackLightDef.outputBuffer[0], 16).toUpper());
-    ui->_BACKLIGHT_DEF_PWM->setText(QString::number(BinData_BackLightDef.outputBuffer[1], 16).toUpper());
-    ui->_BACKLIGHT_MAX->setText(QString::number(BinData_BackLightDef.outputBuffer[2], 16).toUpper());
-    ui->_MPRT_PWM_MIN->setText(QString::number(BinData_BackLightDef.outputBuffer[3], 16).toUpper());
-    ui->_MPRT_PWM_DEF->setText(QString::number(BinData_BackLightDef.outputBuffer[4], 16).toUpper());
-    ui->_MPRT_PWM_MAX->setText(QString::number(BinData_BackLightDef.outputBuffer[5], 16).toUpper());
-
-    State = Find_TargetString_InBinFile(Bin_Buffer, Key_Value_DataDef);
-    ui->POWER_KEY->setText(QString::number(Key_Value_DataDef.outputBuffer[0], 16).toUpper());
-    ui->MENU_KEY->setText(QString::number(Key_Value_DataDef.outputBuffer[1], 16).toUpper());
-    ui->EXIT_KEY->setText(QString::number(Key_Value_DataDef.outputBuffer[2], 16).toUpper());
-    ui->RIGHT_KEY->setText(QString::number(Key_Value_DataDef.outputBuffer[3], 16).toUpper());
-    ui->LEFT_KEY->setText(QString::number(Key_Value_DataDef.outputBuffer[4], 16).toUpper());
-    ui->POWER_REG->setText(QString::number(Key_Value_DataDef.outputBuffer[5], 16).toUpper());
-    ui->MENU_REG->setText(QString::number(Key_Value_DataDef.outputBuffer[6], 16).toUpper());
-    ui->EXIT_REG->setText(QString::number(Key_Value_DataDef.outputBuffer[7], 16).toUpper());
-    ui->RIGHT_REG->setText(QString::number(Key_Value_DataDef.outputBuffer[8], 16).toUpper());
-    ui->LEFT_REG->setText(QString::number(Key_Value_DataDef.outputBuffer[9], 16).toUpper());
     if (State == true)
     {
-        ui->Bin_Data_Flag_label->setText("该BIN文件适用修改工具");
+        ui->_BACKLIGHT_MIN->setText(QString::number(BinData_BackLightDef.outputBuffer[0], 16).toUpper());
+        ui->_BACKLIGHT_DEF_PWM->setText(QString::number(BinData_BackLightDef.outputBuffer[1], 16).toUpper());
+        ui->_BACKLIGHT_MAX->setText(QString::number(BinData_BackLightDef.outputBuffer[2], 16).toUpper());
+        ui->_MPRT_PWM_MIN->setText(QString::number(BinData_BackLightDef.outputBuffer[3], 16).toUpper());
+        ui->_MPRT_PWM_DEF->setText(QString::number(BinData_BackLightDef.outputBuffer[4], 16).toUpper());
+        ui->_MPRT_PWM_MAX->setText(QString::number(BinData_BackLightDef.outputBuffer[5], 16).toUpper());
+    }
+    State = Find_TargetString_InBinFile(Bin_Buffer, Key_Value_DataDef);
+    if (State == true)
+    {
+        ui->POWER_KEY->setText(QString::number(Key_Value_DataDef.outputBuffer[0], 16).toUpper());
+        ui->MENU_KEY->setText(QString::number(Key_Value_DataDef.outputBuffer[1], 16).toUpper());
+        ui->EXIT_KEY->setText(QString::number(Key_Value_DataDef.outputBuffer[2], 16).toUpper());
+        ui->RIGHT_KEY->setText(QString::number(Key_Value_DataDef.outputBuffer[3], 16).toUpper());
+        ui->LEFT_KEY->setText(QString::number(Key_Value_DataDef.outputBuffer[4], 16).toUpper());
+        ui->POWER_REG->setText(QString::number(Key_Value_DataDef.outputBuffer[5], 16).toUpper());
+        ui->MENU_REG->setText(QString::number(Key_Value_DataDef.outputBuffer[6], 16).toUpper());
+        ui->EXIT_REG->setText(QString::number(Key_Value_DataDef.outputBuffer[7], 16).toUpper());
+        ui->RIGHT_REG->setText(QString::number(Key_Value_DataDef.outputBuffer[8], 16).toUpper());
+        ui->LEFT_REG->setText(QString::number(Key_Value_DataDef.outputBuffer[9], 16).toUpper());
+        //ui->Bin_Data_Flag_label->setText("该BIN文件适用修改工具");
     }
     else
     {
         ui->Bin_Data_Flag_label->setText("该BIN文件不适用修改工具");
-        ui->_BACKLIGHT_MIN->setText("0");
-        ui->_BACKLIGHT_DEF_PWM->setText("0");
-        ui->_BACKLIGHT_MAX->setText("0");
-        ui->_MPRT_PWM_MIN->setText("0");
-        ui->_MPRT_PWM_DEF->setText("0");
-        ui->_MPRT_PWM_MAX->setText("0");
-        ui->POWER_KEY->setText("0");
-        ui->MENU_KEY->setText("0");
-        ui->EXIT_KEY->setText("0");
-        ui->RIGHT_KEY->setText("0");
-        ui->LEFT_KEY->setText("0");
-        ui->POWER_REG->setText("0");
-        ui->MENU_REG->setText("0");
-        ui->EXIT_REG->setText("0");
-        ui->RIGHT_REG->setText("0");
-        ui->LEFT_REG->setText("0");
+    }
+    State = Find_TargetString_InBinFile(Bin_Buffer, HKC_Osd_DataDef);
+    if(State == true)
+    {
+        bool ok;
+        ui->HKC_BACKLIGHT_MIN->setText(QString::number(HKC_Osd_DataDef.outputBuffer[4], 16).toUpper());
+        ui->HKC_BACKLIGHT_DEF_PWM->setText(QString::number(HKC_Osd_DataDef.outputBuffer[5], 16).toUpper());
+        ui->HKC_BACKLIGHT_MAX->setText(QString::number(HKC_Osd_DataDef.outputBuffer[6], 16).toUpper());
+        ui->HKC_Language_DEF->setText(QString::number(HKC_Osd_DataDef.outputBuffer[8], 10).toUpper());
+        ui->HKC_Color_Temp_DEF->setText(QString::number(HKC_Osd_DataDef.outputBuffer[10], 10).toUpper());
+        for (int var = 0; var < 14; ++var) {
+            qDebug() << HKC_Osd_DataDef.outputBuffer[var];
+        }
     }
     /*
     State = Find_TargetString_InBinFile(Bin_Buffer, Osd_DataDef);
@@ -165,23 +164,24 @@ void HK_BIN_Tool::on_Add_Bin_pushButton_clicked()
     /******************************LOGO******************************/
     ui->LOGO_MESSAGE_textEdit->clear();
     State = Find_TargetString_InBinFile(Bin_Buffer, LOGO_BASE_Default_DataDef);
-    ui->_LOGO_FG_COLOR_lineEdit->setText(QString::number(LOGO_BASE_Default_DataDef.outputBuffer[0]));
-    ui->_LOGO_BG_COLOR_lineEdit->setText(QString::number(LOGO_BASE_Default_DataDef.outputBuffer[1]));
-    ui->_LOGO_COL_lineEdit->setText(QString::number(LOGO_BASE_Default_DataDef.outputBuffer[2]));
-    ui->_LOGO_ROW_lineEdit->setText(QString::number(LOGO_BASE_Default_DataDef.outputBuffer[3]));
-    ui->_LOGO_BG_RED_lineEdit->setText(QString::number(LOGO_BASE_Default_DataDef.outputBuffer[4]));
-    ui->_LOGO_BG_GREEN_lineEdit->setText(QString::number(LOGO_BASE_Default_DataDef.outputBuffer[5]));
-    ui->_LOGO_BG_BLUE_lineEdit->setText(QString::number(LOGO_BASE_Default_DataDef.outputBuffer[6]));
-    for (int var = 0; var < 7; ++var)
+    if(State == true)
     {
-        qDebug() << LOGO_BASE_Default_DataDef.outputBuffer[var];
+        ui->_LOGO_FG_COLOR_lineEdit->setText(QString::number(LOGO_BASE_Default_DataDef.outputBuffer[0]));
+        ui->_LOGO_BG_COLOR_lineEdit->setText(QString::number(LOGO_BASE_Default_DataDef.outputBuffer[1]));
+        ui->_LOGO_COL_lineEdit->setText(QString::number(LOGO_BASE_Default_DataDef.outputBuffer[2]));
+        ui->_LOGO_ROW_lineEdit->setText(QString::number(LOGO_BASE_Default_DataDef.outputBuffer[3]));
+        ui->_LOGO_BG_RED_lineEdit->setText(QString::number(LOGO_BASE_Default_DataDef.outputBuffer[4]));
+        ui->_LOGO_BG_GREEN_lineEdit->setText(QString::number(LOGO_BASE_Default_DataDef.outputBuffer[5]));
+        ui->_LOGO_BG_BLUE_lineEdit->setText(QString::number(LOGO_BASE_Default_DataDef.outputBuffer[6]));
     }
-    /*
     State = Find_TargetString_InBinFile(Bin_Buffer, LOGO_INDEX_DataDef);
-    for (int var = 0; var < 256; ++var)
+    State = Find_TargetString_InBinFile(Bin_Buffer, LOGO1_INDEX_DataDef);
+    for (int var = 0; var < 215; ++var)
     {
         qDebug() << LOGO_INDEX_DataDef.outputBuffer[var];
     }
+    /*
+
     State = Find_TargetString_InBinFile(Bin_Buffer, LOGO_DataDef);
     for (int var = 0; var < 10; ++var)
     {
@@ -306,18 +306,21 @@ void HK_BIN_Tool::on_Save_Bin_pushButton_clicked()
     Write_EDID(Bin_Buffer, Bin_EDID);
     /************* BIN *************/
     bool State = false;
+    bool ok;
     State = Find_TargetString_InBinFile(Bin_Buffer, BinData_BackLightDef);
-    State = Find_TargetString_InBinFile(Bin_Buffer, Key_Value_DataDef);
     if (State == true)
     {
-        bool ok;
         BinData_BackLightDef.outputBuffer[0] = ui->_BACKLIGHT_MIN->text().toInt(&ok, 16);
         BinData_BackLightDef.outputBuffer[1] = ui->_BACKLIGHT_DEF_PWM->text().toInt(&ok, 16);
         BinData_BackLightDef.outputBuffer[2] = ui->_BACKLIGHT_MAX->text().toInt(&ok, 16);
         BinData_BackLightDef.outputBuffer[3] = ui->_MPRT_PWM_MIN->text().toInt(&ok, 16);
         BinData_BackLightDef.outputBuffer[4] = ui->_MPRT_PWM_DEF->text().toInt(&ok, 16);
         BinData_BackLightDef.outputBuffer[5] = ui->_MPRT_PWM_MAX->text().toInt(&ok, 16);
-
+        State = Write_TargetString_InBinFile(Bin_Buffer, BinData_BackLightDef);
+    }
+    State = Find_TargetString_InBinFile(Bin_Buffer, Key_Value_DataDef);
+    if (State == true)
+    {
         Key_Value_DataDef.outputBuffer[0] = ui->POWER_KEY->text().toInt(&ok, 16);
         Key_Value_DataDef.outputBuffer[1] = ui->MENU_KEY->text().toInt(&ok, 16);
         Key_Value_DataDef.outputBuffer[2] = ui->EXIT_KEY->text().toInt(&ok, 16);
@@ -329,13 +332,25 @@ void HK_BIN_Tool::on_Save_Bin_pushButton_clicked()
         Key_Value_DataDef.outputBuffer[8] = ui->RIGHT_REG->text().toInt(&ok, 16);
         Key_Value_DataDef.outputBuffer[9] = ui->LEFT_REG->text().toInt(&ok, 16);
 
-        State = Write_TargetString_InBinFile(Bin_Buffer, BinData_BackLightDef);
         State = Write_TargetString_InBinFile(Bin_Buffer, Key_Value_DataDef);
         if (State == true)
             ui->Bin_Data_Flag_label->setText("Successful！");
         else
             ui->Bin_Data_Flag_label->setText("False！");
     }
+
+    State = Find_TargetString_InBinFile(Bin_Buffer, HKC_Osd_DataDef);
+    if(State == true)
+    {
+        HKC_Osd_DataDef.outputBuffer[4] = ui->HKC_BACKLIGHT_MIN->text().toInt(&ok, 16);
+        HKC_Osd_DataDef.outputBuffer[5] = ui->HKC_BACKLIGHT_DEF_PWM->text().toInt(&ok, 16);
+        HKC_Osd_DataDef.outputBuffer[6] = ui->HKC_BACKLIGHT_MAX->text().toInt(&ok, 16);
+        HKC_Osd_DataDef.outputBuffer[8] = ui->HKC_Language_DEF->text().toInt(&ok, 10);
+        HKC_Osd_DataDef.outputBuffer[10] = ui->HKC_Color_Temp_DEF->text().toInt(&ok, 10);
+        State = Write_TargetString_InBinFile(Bin_Buffer, HKC_Osd_DataDef);
+
+    }
+
     State = Find_TargetString_InBinFile(Bin_Buffer, LOGO_BASE_Default_DataDef);
     if(State == true)
     {
@@ -659,3 +674,17 @@ void HK_BIN_Tool::on_MA_pushButton_clicked()
         qDebug() << displayText;              // 调试输出
     }
 }
+
+void HK_BIN_Tool::on_LOGO_SIZE_COL_ROW_pushButton_clicked()
+{
+    bool ok;
+    int COL = ui->COL_lineEdit->text().toInt(&ok, 10);
+    int ROW = ui->ROW_lineEdit->text().toInt(&ok, 10);
+
+    int NEW_COL = COL/12 * 12;
+    int NEW_ROW = ROW/18 * 18;
+
+    ui->NEW_COL_lineEdit->setText(QString::number(NEW_COL));
+    ui->NEW_ROW_lineEdit->setText(QString::number(NEW_ROW));
+}
+

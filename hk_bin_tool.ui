@@ -82,7 +82,7 @@
      </rect>
     </property>
     <property name="currentIndex">
-     <number>0</number>
+     <number>1</number>
     </property>
     <widget class="QWidget" name="EDID">
      <attribute name="title">
@@ -629,382 +629,523 @@
       <property name="geometry">
        <rect>
         <x>10</x>
-        <y>10</y>
+        <y>0</y>
         <width>911</width>
         <height>31</height>
        </rect>
       </property>
       <property name="text">
-       <string>目前仅适用于2556，2785，2795</string>
+       <string>待加载BIN文件</string>
       </property>
      </widget>
-     <widget class="QLabel" name="label_12">
+     <widget class="QGroupBox" name="groupBox_6">
+      <property name="geometry">
+       <rect>
+        <x>310</x>
+        <y>30</y>
+        <width>451</width>
+        <height>171</height>
+       </rect>
+      </property>
+      <property name="title">
+       <string>2383E04</string>
+      </property>
+      <widget class="QLineEdit" name="HKC_BACKLIGHT_MIN">
+       <property name="geometry">
+        <rect>
+         <x>170</x>
+         <y>80</y>
+         <width>51</width>
+         <height>21</height>
+        </rect>
+       </property>
+      </widget>
+      <widget class="QLabel" name="label_52">
+       <property name="geometry">
+        <rect>
+         <x>10</x>
+         <y>50</y>
+         <width>161</width>
+         <height>21</height>
+        </rect>
+       </property>
+       <property name="text">
+        <string>HKC_BACKLIGHT_DEF_PWM</string>
+       </property>
+      </widget>
+      <widget class="QLabel" name="label_39">
+       <property name="geometry">
+        <rect>
+         <x>10</x>
+         <y>20</y>
+         <width>141</width>
+         <height>21</height>
+        </rect>
+       </property>
+       <property name="text">
+        <string>HKC_BACKLIGHT_MAX</string>
+       </property>
+      </widget>
+      <widget class="QLineEdit" name="HKC_BACKLIGHT_MAX">
+       <property name="geometry">
+        <rect>
+         <x>170</x>
+         <y>20</y>
+         <width>51</width>
+         <height>21</height>
+        </rect>
+       </property>
+      </widget>
+      <widget class="QLabel" name="label_51">
+       <property name="geometry">
+        <rect>
+         <x>10</x>
+         <y>80</y>
+         <width>141</width>
+         <height>21</height>
+        </rect>
+       </property>
+       <property name="text">
+        <string>HKC_BACKLIGHT_MIN</string>
+       </property>
+      </widget>
+      <widget class="QLineEdit" name="HKC_BACKLIGHT_DEF_PWM">
+       <property name="geometry">
+        <rect>
+         <x>170</x>
+         <y>50</y>
+         <width>51</width>
+         <height>21</height>
+        </rect>
+       </property>
+      </widget>
+      <widget class="QLabel" name="label_53">
+       <property name="geometry">
+        <rect>
+         <x>10</x>
+         <y>110</y>
+         <width>141</width>
+         <height>21</height>
+        </rect>
+       </property>
+       <property name="text">
+        <string>HKC_Language_DEF</string>
+       </property>
+      </widget>
+      <widget class="QLineEdit" name="HKC_Language_DEF">
+       <property name="geometry">
+        <rect>
+         <x>170</x>
+         <y>110</y>
+         <width>51</width>
+         <height>21</height>
+        </rect>
+       </property>
+      </widget>
+      <widget class="QLabel" name="label_54">
+       <property name="geometry">
+        <rect>
+         <x>10</x>
+         <y>140</y>
+         <width>141</width>
+         <height>21</height>
+        </rect>
+       </property>
+       <property name="text">
+        <string>HKC_Color_Temp_DEF</string>
+       </property>
+      </widget>
+      <widget class="QLineEdit" name="HKC_Color_Temp_DEF">
+       <property name="geometry">
+        <rect>
+         <x>170</x>
+         <y>140</y>
+         <width>51</width>
+         <height>21</height>
+        </rect>
+       </property>
+      </widget>
+     </widget>
+     <widget class="QGroupBox" name="groupBox_7">
       <property name="geometry">
        <rect>
         <x>10</x>
-        <y>50</y>
-        <width>81</width>
-        <height>21</height>
+        <y>30</y>
+        <width>281</width>
+        <height>381</height>
        </rect>
       </property>
-      <property name="text">
-       <string>MENU_KEY</string>
+      <property name="title">
+       <string>通用定义</string>
       </property>
-     </widget>
-     <widget class="QLineEdit" name="MENU_KEY">
-      <property name="geometry">
-       <rect>
-        <x>90</x>
-        <y>50</y>
-        <width>51</width>
-        <height>21</height>
-       </rect>
-      </property>
-     </widget>
-     <widget class="QLabel" name="label_13">
-      <property name="geometry">
-       <rect>
-        <x>10</x>
-        <y>80</y>
-        <width>81</width>
-        <height>21</height>
-       </rect>
-      </property>
-      <property name="text">
-       <string>RIGHT_KEY</string>
-      </property>
-     </widget>
-     <widget class="QLineEdit" name="RIGHT_KEY">
-      <property name="geometry">
-       <rect>
-        <x>90</x>
-        <y>80</y>
-        <width>51</width>
-        <height>21</height>
-       </rect>
-      </property>
-     </widget>
-     <widget class="QLabel" name="label_14">
-      <property name="geometry">
-       <rect>
-        <x>10</x>
-        <y>110</y>
-        <width>81</width>
-        <height>21</height>
-       </rect>
-      </property>
-      <property name="text">
-       <string>LEFT_KEY</string>
-      </property>
-     </widget>
-     <widget class="QLineEdit" name="LEFT_KEY">
-      <property name="geometry">
-       <rect>
-        <x>90</x>
-        <y>110</y>
-        <width>51</width>
-        <height>21</height>
-       </rect>
-      </property>
-     </widget>
-     <widget class="QLabel" name="label_15">
-      <property name="geometry">
-       <rect>
-        <x>10</x>
-        <y>140</y>
-        <width>81</width>
-        <height>21</height>
-       </rect>
-      </property>
-      <property name="text">
-       <string>EXIT_KEY</string>
-      </property>
-     </widget>
-     <widget class="QLineEdit" name="EXIT_KEY">
-      <property name="geometry">
-       <rect>
-        <x>90</x>
-        <y>140</y>
-        <width>51</width>
-        <height>21</height>
-       </rect>
-      </property>
-     </widget>
-     <widget class="QLabel" name="label_16">
-      <property name="geometry">
-       <rect>
-        <x>10</x>
-        <y>170</y>
-        <width>81</width>
-        <height>21</height>
-       </rect>
-      </property>
-      <property name="text">
-       <string>POWER_KEY</string>
-      </property>
-     </widget>
-     <widget class="QLineEdit" name="POWER_KEY">
-      <property name="geometry">
-       <rect>
-        <x>90</x>
-        <y>170</y>
-        <width>51</width>
-        <height>21</height>
-       </rect>
-      </property>
-     </widget>
-     <widget class="QLineEdit" name="RIGHT_REG">
-      <property name="geometry">
-       <rect>
-        <x>240</x>
-        <y>80</y>
-        <width>51</width>
-        <height>21</height>
-       </rect>
-      </property>
-     </widget>
-     <widget class="QLabel" name="label_17">
-      <property name="geometry">
-       <rect>
-        <x>160</x>
-        <y>50</y>
-        <width>81</width>
-        <height>21</height>
-       </rect>
-      </property>
-      <property name="text">
-       <string>MENU_REG</string>
-      </property>
-     </widget>
-     <widget class="QLineEdit" name="MENU_REG">
-      <property name="geometry">
-       <rect>
-        <x>240</x>
-        <y>50</y>
-        <width>51</width>
-        <height>21</height>
-       </rect>
-      </property>
-     </widget>
-     <widget class="QLineEdit" name="POWER_REG">
-      <property name="geometry">
-       <rect>
-        <x>240</x>
-        <y>170</y>
-        <width>51</width>
-        <height>21</height>
-       </rect>
-      </property>
-     </widget>
-     <widget class="QLabel" name="label_18">
-      <property name="geometry">
-       <rect>
-        <x>160</x>
-        <y>140</y>
-        <width>81</width>
-        <height>21</height>
-       </rect>
-      </property>
-      <property name="text">
-       <string>EXIT_REG</string>
-      </property>
-     </widget>
-     <widget class="QLabel" name="label_19">
-      <property name="geometry">
-       <rect>
-        <x>160</x>
-        <y>170</y>
-        <width>81</width>
-        <height>21</height>
-       </rect>
-      </property>
-      <property name="text">
-       <string>POWER_REG</string>
-      </property>
-     </widget>
-     <widget class="QLineEdit" name="EXIT_REG">
-      <property name="geometry">
-       <rect>
-        <x>240</x>
-        <y>140</y>
-        <width>51</width>
-        <height>21</height>
-       </rect>
-      </property>
-     </widget>
-     <widget class="QLabel" name="label_20">
-      <property name="geometry">
-       <rect>
-        <x>160</x>
-        <y>80</y>
-        <width>81</width>
-        <height>21</height>
-       </rect>
-      </property>
-      <property name="text">
-       <string>RIGHT_REG</string>
-      </property>
-     </widget>
-     <widget class="QLineEdit" name="LEFT_REG">
-      <property name="geometry">
-       <rect>
-        <x>240</x>
-        <y>110</y>
-        <width>51</width>
-        <height>21</height>
-       </rect>
-      </property>
-     </widget>
-     <widget class="QLabel" name="label_21">
-      <property name="geometry">
-       <rect>
-        <x>160</x>
-        <y>110</y>
-        <width>81</width>
-        <height>21</height>
-       </rect>
-      </property>
-      <property name="text">
-       <string>LEFT_REG</string>
-      </property>
-     </widget>
-     <widget class="QLabel" name="label_22">
-      <property name="geometry">
-       <rect>
-        <x>10</x>
-        <y>210</y>
-        <width>141</width>
-        <height>21</height>
-       </rect>
-      </property>
-      <property name="text">
-       <string>_BACKLIGHT_MAX</string>
-      </property>
-     </widget>
-     <widget class="QLabel" name="label_23">
-      <property name="geometry">
-       <rect>
-        <x>10</x>
-        <y>240</y>
-        <width>141</width>
-        <height>21</height>
-       </rect>
-      </property>
-      <property name="text">
-       <string>_BACKLIGHT_DEF_PWM</string>
-      </property>
-     </widget>
-     <widget class="QLabel" name="label_24">
-      <property name="geometry">
-       <rect>
-        <x>10</x>
-        <y>270</y>
-        <width>141</width>
-        <height>21</height>
-       </rect>
-      </property>
-      <property name="text">
-       <string>_BACKLIGHT_MIN</string>
-      </property>
-     </widget>
-     <widget class="QLineEdit" name="_BACKLIGHT_DEF_PWM">
-      <property name="geometry">
-       <rect>
-        <x>160</x>
-        <y>240</y>
-        <width>51</width>
-        <height>21</height>
-       </rect>
-      </property>
-     </widget>
-     <widget class="QLineEdit" name="_BACKLIGHT_MAX">
-      <property name="geometry">
-       <rect>
-        <x>160</x>
-        <y>210</y>
-        <width>51</width>
-        <height>21</height>
-       </rect>
-      </property>
-     </widget>
-     <widget class="QLineEdit" name="_BACKLIGHT_MIN">
-      <property name="geometry">
-       <rect>
-        <x>160</x>
-        <y>270</y>
-        <width>51</width>
-        <height>21</height>
-       </rect>
-      </property>
-     </widget>
-     <widget class="QLineEdit" name="_MPRT_PWM_DEF">
-      <property name="geometry">
-       <rect>
-        <x>160</x>
-        <y>340</y>
-        <width>51</width>
-        <height>21</height>
-       </rect>
-      </property>
-     </widget>
-     <widget class="QLabel" name="label_25">
-      <property name="geometry">
-       <rect>
-        <x>10</x>
-        <y>310</y>
-        <width>141</width>
-        <height>21</height>
-       </rect>
-      </property>
-      <property name="text">
-       <string>_MPRT_PWM_MAX</string>
-      </property>
-     </widget>
-     <widget class="QLineEdit" name="_MPRT_PWM_MIN">
-      <property name="geometry">
-       <rect>
-        <x>160</x>
-        <y>370</y>
-        <width>51</width>
-        <height>21</height>
-       </rect>
-      </property>
-     </widget>
-     <widget class="QLineEdit" name="_MPRT_PWM_MAX">
-      <property name="geometry">
-       <rect>
-        <x>160</x>
-        <y>310</y>
-        <width>51</width>
-        <height>21</height>
-       </rect>
-      </property>
-     </widget>
-     <widget class="QLabel" name="label_26">
-      <property name="geometry">
-       <rect>
-        <x>10</x>
-        <y>370</y>
-        <width>141</width>
-        <height>21</height>
-       </rect>
-      </property>
-      <property name="text">
-       <string>_MPRT_PWM_MIN</string>
-      </property>
-     </widget>
-     <widget class="QLabel" name="label_27">
-      <property name="geometry">
-       <rect>
-        <x>10</x>
-        <y>340</y>
-        <width>141</width>
-        <height>21</height>
-       </rect>
-      </property>
-      <property name="text">
-       <string>_MPRT_PWM_DEF</string>
-      </property>
+      <widget class="QLineEdit" name="POWER_KEY">
+       <property name="geometry">
+        <rect>
+         <x>80</x>
+         <y>140</y>
+         <width>51</width>
+         <height>21</height>
+        </rect>
+       </property>
+      </widget>
+      <widget class="QLineEdit" name="EXIT_KEY">
+       <property name="geometry">
+        <rect>
+         <x>80</x>
+         <y>110</y>
+         <width>51</width>
+         <height>21</height>
+        </rect>
+       </property>
+      </widget>
+      <widget class="QLabel" name="label_15">
+       <property name="geometry">
+        <rect>
+         <x>10</x>
+         <y>110</y>
+         <width>81</width>
+         <height>21</height>
+        </rect>
+       </property>
+       <property name="text">
+        <string>EXIT_KEY</string>
+       </property>
+      </widget>
+      <widget class="QLineEdit" name="POWER_REG">
+       <property name="geometry">
+        <rect>
+         <x>220</x>
+         <y>140</y>
+         <width>51</width>
+         <height>21</height>
+        </rect>
+       </property>
+      </widget>
+      <widget class="QLabel" name="label_20">
+       <property name="geometry">
+        <rect>
+         <x>150</x>
+         <y>50</y>
+         <width>81</width>
+         <height>21</height>
+        </rect>
+       </property>
+       <property name="text">
+        <string>RIGHT_REG</string>
+       </property>
+      </widget>
+      <widget class="QLineEdit" name="MENU_KEY">
+       <property name="geometry">
+        <rect>
+         <x>80</x>
+         <y>20</y>
+         <width>51</width>
+         <height>21</height>
+        </rect>
+       </property>
+      </widget>
+      <widget class="QLineEdit" name="EXIT_REG">
+       <property name="geometry">
+        <rect>
+         <x>220</x>
+         <y>110</y>
+         <width>51</width>
+         <height>21</height>
+        </rect>
+       </property>
+      </widget>
+      <widget class="QLabel" name="label_21">
+       <property name="geometry">
+        <rect>
+         <x>150</x>
+         <y>80</y>
+         <width>81</width>
+         <height>21</height>
+        </rect>
+       </property>
+       <property name="text">
+        <string>LEFT_REG</string>
+       </property>
+      </widget>
+      <widget class="QLineEdit" name="RIGHT_KEY">
+       <property name="geometry">
+        <rect>
+         <x>80</x>
+         <y>50</y>
+         <width>51</width>
+         <height>21</height>
+        </rect>
+       </property>
+      </widget>
+      <widget class="QLabel" name="label_19">
+       <property name="geometry">
+        <rect>
+         <x>150</x>
+         <y>140</y>
+         <width>81</width>
+         <height>21</height>
+        </rect>
+       </property>
+       <property name="text">
+        <string>POWER_REG</string>
+       </property>
+      </widget>
+      <widget class="QLineEdit" name="LEFT_REG">
+       <property name="geometry">
+        <rect>
+         <x>220</x>
+         <y>80</y>
+         <width>51</width>
+         <height>21</height>
+        </rect>
+       </property>
+      </widget>
+      <widget class="QLabel" name="label_18">
+       <property name="geometry">
+        <rect>
+         <x>150</x>
+         <y>110</y>
+         <width>81</width>
+         <height>21</height>
+        </rect>
+       </property>
+       <property name="text">
+        <string>EXIT_REG</string>
+       </property>
+      </widget>
+      <widget class="QLineEdit" name="RIGHT_REG">
+       <property name="geometry">
+        <rect>
+         <x>220</x>
+         <y>50</y>
+         <width>51</width>
+         <height>21</height>
+        </rect>
+       </property>
+      </widget>
+      <widget class="QLabel" name="label_13">
+       <property name="geometry">
+        <rect>
+         <x>10</x>
+         <y>50</y>
+         <width>81</width>
+         <height>21</height>
+        </rect>
+       </property>
+       <property name="text">
+        <string>RIGHT_KEY</string>
+       </property>
+      </widget>
+      <widget class="QLineEdit" name="MENU_REG">
+       <property name="geometry">
+        <rect>
+         <x>220</x>
+         <y>20</y>
+         <width>51</width>
+         <height>21</height>
+        </rect>
+       </property>
+      </widget>
+      <widget class="QLabel" name="label_14">
+       <property name="geometry">
+        <rect>
+         <x>10</x>
+         <y>80</y>
+         <width>81</width>
+         <height>21</height>
+        </rect>
+       </property>
+       <property name="text">
+        <string>LEFT_KEY</string>
+       </property>
+      </widget>
+      <widget class="QLabel" name="label_16">
+       <property name="geometry">
+        <rect>
+         <x>10</x>
+         <y>140</y>
+         <width>81</width>
+         <height>21</height>
+        </rect>
+       </property>
+       <property name="text">
+        <string>POWER_KEY</string>
+       </property>
+      </widget>
+      <widget class="QLineEdit" name="LEFT_KEY">
+       <property name="geometry">
+        <rect>
+         <x>80</x>
+         <y>80</y>
+         <width>51</width>
+         <height>21</height>
+        </rect>
+       </property>
+      </widget>
+      <widget class="QLabel" name="label_12">
+       <property name="geometry">
+        <rect>
+         <x>10</x>
+         <y>20</y>
+         <width>81</width>
+         <height>21</height>
+        </rect>
+       </property>
+       <property name="text">
+        <string>MENU_KEY</string>
+       </property>
+      </widget>
+      <widget class="QLabel" name="label_17">
+       <property name="geometry">
+        <rect>
+         <x>150</x>
+         <y>20</y>
+         <width>81</width>
+         <height>21</height>
+        </rect>
+       </property>
+       <property name="text">
+        <string>MENU_REG</string>
+       </property>
+      </widget>
+      <widget class="QLabel" name="label_22">
+       <property name="geometry">
+        <rect>
+         <x>10</x>
+         <y>170</y>
+         <width>141</width>
+         <height>21</height>
+        </rect>
+       </property>
+       <property name="text">
+        <string>_BACKLIGHT_MAX</string>
+       </property>
+      </widget>
+      <widget class="QLineEdit" name="_MPRT_PWM_MAX">
+       <property name="geometry">
+        <rect>
+         <x>160</x>
+         <y>270</y>
+         <width>51</width>
+         <height>21</height>
+        </rect>
+       </property>
+      </widget>
+      <widget class="QLineEdit" name="_MPRT_PWM_DEF">
+       <property name="geometry">
+        <rect>
+         <x>160</x>
+         <y>300</y>
+         <width>51</width>
+         <height>21</height>
+        </rect>
+       </property>
+      </widget>
+      <widget class="QLabel" name="label_25">
+       <property name="geometry">
+        <rect>
+         <x>10</x>
+         <y>270</y>
+         <width>141</width>
+         <height>21</height>
+        </rect>
+       </property>
+       <property name="text">
+        <string>_MPRT_PWM_MAX</string>
+       </property>
+      </widget>
+      <widget class="QLabel" name="label_24">
+       <property name="geometry">
+        <rect>
+         <x>10</x>
+         <y>230</y>
+         <width>141</width>
+         <height>21</height>
+        </rect>
+       </property>
+       <property name="text">
+        <string>_BACKLIGHT_MIN</string>
+       </property>
+      </widget>
+      <widget class="QLabel" name="label_26">
+       <property name="geometry">
+        <rect>
+         <x>10</x>
+         <y>330</y>
+         <width>141</width>
+         <height>21</height>
+        </rect>
+       </property>
+       <property name="text">
+        <string>_MPRT_PWM_MIN</string>
+       </property>
+      </widget>
+      <widget class="QLabel" name="label_23">
+       <property name="geometry">
+        <rect>
+         <x>10</x>
+         <y>200</y>
+         <width>141</width>
+         <height>21</height>
+        </rect>
+       </property>
+       <property name="text">
+        <string>_BACKLIGHT_DEF_PWM</string>
+       </property>
+      </widget>
+      <widget class="QLineEdit" name="_MPRT_PWM_MIN">
+       <property name="geometry">
+        <rect>
+         <x>160</x>
+         <y>330</y>
+         <width>51</width>
+         <height>21</height>
+        </rect>
+       </property>
+      </widget>
+      <widget class="QLabel" name="label_27">
+       <property name="geometry">
+        <rect>
+         <x>10</x>
+         <y>300</y>
+         <width>141</width>
+         <height>21</height>
+        </rect>
+       </property>
+       <property name="text">
+        <string>_MPRT_PWM_DEF</string>
+       </property>
+      </widget>
+      <widget class="QLineEdit" name="_BACKLIGHT_DEF_PWM">
+       <property name="geometry">
+        <rect>
+         <x>160</x>
+         <y>200</y>
+         <width>51</width>
+         <height>21</height>
+        </rect>
+       </property>
+      </widget>
+      <widget class="QLineEdit" name="_BACKLIGHT_MAX">
+       <property name="geometry">
+        <rect>
+         <x>160</x>
+         <y>170</y>
+         <width>51</width>
+         <height>21</height>
+        </rect>
+       </property>
+      </widget>
+      <widget class="QLineEdit" name="_BACKLIGHT_MIN">
+       <property name="geometry">
+        <rect>
+         <x>160</x>
+         <y>230</y>
+         <width>51</width>
+         <height>21</height>
+        </rect>
+       </property>
+      </widget>
      </widget>
     </widget>
     <widget class="QWidget" name="tab_2">
@@ -1686,6 +1827,133 @@
         <pointsize>10</pointsize>
        </font>
       </property>
+     </widget>
+     <widget class="QGroupBox" name="groupBox_5">
+      <property name="geometry">
+       <rect>
+        <x>590</x>
+        <y>10</y>
+        <width>331</width>
+        <height>121</height>
+       </rect>
+      </property>
+      <property name="title">
+       <string>LOGO大小计算器</string>
+      </property>
+      <widget class="QLineEdit" name="COL_lineEdit">
+       <property name="geometry">
+        <rect>
+         <x>90</x>
+         <y>20</y>
+         <width>41</width>
+         <height>20</height>
+        </rect>
+       </property>
+      </widget>
+      <widget class="QLabel" name="COL_label">
+       <property name="geometry">
+        <rect>
+         <x>10</x>
+         <y>20</y>
+         <width>91</width>
+         <height>21</height>
+        </rect>
+       </property>
+       <property name="text">
+        <string>原COL(长/12)</string>
+       </property>
+      </widget>
+      <widget class="QLabel" name="ROW_label">
+       <property name="geometry">
+        <rect>
+         <x>170</x>
+         <y>20</y>
+         <width>101</width>
+         <height>21</height>
+        </rect>
+       </property>
+       <property name="text">
+        <string>原ROW(宽/18)</string>
+       </property>
+      </widget>
+      <widget class="QLineEdit" name="ROW_lineEdit">
+       <property name="geometry">
+        <rect>
+         <x>260</x>
+         <y>20</y>
+         <width>41</width>
+         <height>20</height>
+        </rect>
+       </property>
+       <property name="text">
+        <string/>
+       </property>
+      </widget>
+      <widget class="QLineEdit" name="NEW_ROW_lineEdit">
+       <property name="geometry">
+        <rect>
+         <x>260</x>
+         <y>60</y>
+         <width>41</width>
+         <height>20</height>
+        </rect>
+       </property>
+       <property name="text">
+        <string/>
+       </property>
+      </widget>
+      <widget class="QLabel" name="COL_label_2">
+       <property name="geometry">
+        <rect>
+         <x>10</x>
+         <y>60</y>
+         <width>91</width>
+         <height>21</height>
+        </rect>
+       </property>
+       <property name="text">
+        <string>新COL(长/12)</string>
+       </property>
+      </widget>
+      <widget class="QLabel" name="ROW_label_2">
+       <property name="geometry">
+        <rect>
+         <x>170</x>
+         <y>60</y>
+         <width>101</width>
+         <height>21</height>
+        </rect>
+       </property>
+       <property name="text">
+        <string>新ROW(宽/18)</string>
+       </property>
+      </widget>
+      <widget class="QLineEdit" name="NEW_COL_lineEdit">
+       <property name="geometry">
+        <rect>
+         <x>90</x>
+         <y>60</y>
+         <width>41</width>
+         <height>20</height>
+        </rect>
+       </property>
+       <property name="text">
+        <string/>
+       </property>
+      </widget>
+      <widget class="QPushButton" name="LOGO_SIZE_COL_ROW_pushButton">
+       <property name="geometry">
+        <rect>
+         <x>230</x>
+         <y>90</y>
+         <width>91</width>
+         <height>21</height>
+        </rect>
+       </property>
+       <property name="text">
+        <string>计算</string>
+       </property>
+      </widget>
      </widget>
     </widget>
    </widget>

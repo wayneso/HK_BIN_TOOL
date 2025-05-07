@@ -129,19 +129,24 @@ EDID_Info Read_EDID(const QByteArray& edidBuffer) {
 
     // 查找显示器名称
     info.monitorName.clear();  // 确保 monitorName 初始为空
-    for (int i = 108; i <= 125; i += 18) {  // 遍历描述符块
-        if (edidBuffer[i] == 0x00 && edidBuffer[i + 1] == 0x00 &&
-            edidBuffer[i + 2] == 0x00 && static_cast<unsigned char>(edidBuffer[i + 3]) == 0xFC && edidBuffer[i + 4] == 0x00) {  // 名称标识符
-            QByteArray nameData = edidBuffer.mid(i + 5, 13);  // 名称数据区域
-            nameData = nameData.trimmed();  // 去掉末尾空格或 \0
-            if (!nameData.isEmpty()) {
-                info.monitorName = QString::fromUtf8(nameData);  // 使用 UTF-8 转换
-            }
+
+    for (int i = 54; i <= 125; i += 18) {
+        // 先判断 Descriptor Type == 0xFC (Monitor Name)
+        unsigned char b0 = static_cast<unsigned char>(edidBuffer[i]);
+        unsigned char b1 = static_cast<unsigned char>(edidBuffer[i+1]);
+        unsigned char b2 = static_cast<unsigned char>(edidBuffer[i+2]);
+        unsigned char b3 = static_cast<unsigned char>(edidBuffer[i+3]);
+        if (b0==0x00 && b1==0x00 && b2==0x00 && b3==0xFC) {
+            QByteArray nameData = edidBuffer.mid(i + 5, 13);  // 取文本区
+            // 截断到换行符（LF）
+            int lf = nameData.indexOf('\n');
+            if (lf >= 0) nameData.truncate(lf);
+            // 用 Latin1 解码以保留 ASCII 扩展
+            info.monitorName = QString::fromLatin1(nameData);
             break;
         }
     }
 
-    qDebug() << info.monitorName;
     return info;
 }
 
@@ -189,17 +194,31 @@ QByteArray Modify_EDID(QByteArray edidBuffer, const EDID_Info& edidInfo) {
     edidBuffer[22] = edidInfo.verticalSizeCm;
 
     // 修改显示器名称
-    QByteArray nameData = edidInfo.monitorName.toUtf8();  // 使用 UTF-8 转换
-    nameData = nameData.trimmed();  // 去除名称中的多余空格或 \0 字符
-    for (int i = 108; i <= 125; i += 18) {
-        if (edidBuffer[i] == 0x00 && edidBuffer[i + 1] == 0x00 &&
-            edidBuffer[i + 2] == 0x00 && static_cast<unsigned char>(edidBuffer[i + 3]) == 0xFC && edidBuffer[i + 4] == 0x00) {
-            edidBuffer.replace(i + 5, 13, QByteArray(13, ' '));  // 将原名称部分清零
-            // 然后插入新的显示器名称
-            edidBuffer.replace(i + 5, nameData.size(), nameData);  // 替换名称
+    QByteArray nameData = edidInfo.monitorName.toLatin1().trimmed();  // Latin1 保留原字节
+    if (nameData.size() > 12) nameData.truncate(12);
+
+    for (int i = 54; i <= 125; i += 18) {
+        unsigned char b0 = static_cast<unsigned char>(edidBuffer[i]);
+        unsigned char b1 = static_cast<unsigned char>(edidBuffer[i+1]);
+        unsigned char b2 = static_cast<unsigned char>(edidBuffer[i+2]);
+        unsigned char b3 = static_cast<unsigned char>(edidBuffer[i+3]);
+        if (b0==0x00 && b1==0x00 && b2==0x00 && b3==0xFC) {
+            // 构造 13 字节名称区：名称 + LF + SP 填充
+            QByteArray buf(13, '\x20');
+            buf.replace(0, nameData.size(), nameData);
+            buf[nameData.size()] = '\x0A';
+            edidBuffer.replace(i + 5, 13, buf);
             break;
         }
     }
+
+    // 更新校验和
+    unsigned char sum = 0;
+    for (int k = 0; k < 127; ++k) {
+        sum += static_cast<unsigned char>(edidBuffer[k]);
+    }
+    edidBuffer[127] = static_cast<char>((256 - sum) & 0xFF);
+
 
     // 更新校验和
     int checksum = 0;
