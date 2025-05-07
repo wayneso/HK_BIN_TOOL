@@ -377,10 +377,10 @@
      <widget class="QPushButton" name="Next_EDID_Button">
       <property name="geometry">
        <rect>
-        <x>810</x>
-        <y>370</y>
-        <width>111</width>
-        <height>31</height>
+        <x>760</x>
+        <y>360</y>
+        <width>161</width>
+        <height>41</height>
        </rect>
       </property>
       <property name="text">
@@ -509,7 +509,7 @@
       <property name="geometry">
        <rect>
         <x>10</x>
-        <y>380</y>
+        <y>340</y>
         <width>121</width>
         <height>31</height>
        </rect>
@@ -525,7 +525,7 @@
       <property name="geometry">
        <rect>
         <x>140</x>
-        <y>380</y>
+        <y>340</y>
         <width>131</width>
         <height>31</height>
        </rect>
@@ -608,7 +608,7 @@
       <property name="geometry">
        <rect>
         <x>279</x>
-        <y>380</y>
+        <y>340</y>
         <width>111</width>
         <height>31</height>
        </rect>
@@ -624,7 +624,7 @@
       <property name="geometry">
        <rect>
         <x>400</x>
-        <y>380</y>
+        <y>340</y>
         <width>161</width>
         <height>31</height>
        </rect>
@@ -830,6 +830,22 @@
       </property>
       <property name="text">
        <string>White_X</string>
+      </property>
+     </widget>
+     <widget class="QCheckBox" name="sRGB_DCI_P3_checkBox">
+      <property name="geometry">
+       <rect>
+        <x>10</x>
+        <y>380</y>
+        <width>331</width>
+        <height>31</height>
+       </rect>
+      </property>
+      <property name="text">
+       <string>选中使用标准sRGB色域值  取消选择使用DCI-P3色域值</string>
+      </property>
+      <property name="checked">
+       <bool>true</bool>
       </property>
      </widget>
     </widget>

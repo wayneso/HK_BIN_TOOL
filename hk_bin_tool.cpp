@@ -307,6 +307,28 @@ void HK_BIN_Tool::on_Save_Bin_pushButton_clicked()
     {
         ui->InputName_lineEdit->setText("Monitor");
     }
+    if (ui->sRGB_DCI_P3_checkBox->isChecked())
+    {
+        ui->Red_X_lineEdit->setText("0.6400");
+        ui->Red_Y_lineEdit->setText("0.3300");
+        ui->Green_X_lineEdit->setText("0.3000");
+        ui->Green_Y_lineEdit->setText("0.6000");
+        ui->Blue_X_lineEdit->setText("0.1500");
+        ui->Blue_Y_lineEdit->setText("0.0600");
+        ui->White_X_lineEdit->setText("0.3127");
+        ui->White_Y_lineEdit->setText("0.3290");
+    }
+    else
+    {
+        ui->Red_X_lineEdit->setText("0.6800");
+        ui->Red_Y_lineEdit->setText("0.3200");
+        ui->Green_X_lineEdit->setText("0.2650");
+        ui->Green_Y_lineEdit->setText("0.6900");
+        ui->Blue_X_lineEdit->setText("0.1500");
+        ui->Blue_Y_lineEdit->setText("0.0600");
+        ui->White_X_lineEdit->setText("0.3140");
+        ui->White_Y_lineEdit->setText("0.3510");
+    }
     EDID_Info edidInfo;
     edidInfo.horizontalSizeCm = ui->Measure_H_lineEdit->text().toFloat();
     edidInfo.verticalSizeCm = ui->Measure_V_lineEdit->text().toFloat();
