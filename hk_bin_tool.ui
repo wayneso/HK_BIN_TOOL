@@ -82,7 +82,7 @@
      </rect>
     </property>
     <property name="currentIndex">
-     <number>1</number>
+     <number>0</number>
     </property>
     <widget class="QWidget" name="EDID">
      <attribute name="title">
@@ -109,7 +109,7 @@
      <widget class="QLineEdit" name="EDID_lineEdit">
       <property name="geometry">
        <rect>
-        <x>170</x>
+        <x>190</x>
         <y>20</y>
         <width>113</width>
         <height>21</height>
@@ -152,7 +152,7 @@
      <widget class="QLineEdit" name="Factory_lineEdit">
       <property name="geometry">
        <rect>
-        <x>170</x>
+        <x>190</x>
         <y>50</y>
         <width>113</width>
         <height>21</height>
@@ -192,7 +192,7 @@
      <widget class="QLineEdit" name="CODE_lineEdit">
       <property name="geometry">
        <rect>
-        <x>170</x>
+        <x>190</x>
         <y>80</y>
         <width>113</width>
         <height>21</height>
@@ -232,7 +232,7 @@
      <widget class="QLineEdit" name="DATA_YEAR_lineEdit">
       <property name="geometry">
        <rect>
-        <x>170</x>
+        <x>190</x>
         <y>110</y>
         <width>113</width>
         <height>21</height>
@@ -272,7 +272,7 @@
      <widget class="QLineEdit" name="EDIDVER_lineEdit">
       <property name="geometry">
        <rect>
-        <x>170</x>
+        <x>190</x>
         <y>170</y>
         <width>113</width>
         <height>21</height>
@@ -299,7 +299,7 @@
        <rect>
         <x>10</x>
         <y>230</y>
-        <width>181</width>
+        <width>161</width>
         <height>21</height>
        </rect>
       </property>
@@ -315,7 +315,7 @@
      <widget class="QLineEdit" name="Measure_lineEdit">
       <property name="geometry">
        <rect>
-        <x>170</x>
+        <x>190</x>
         <y>230</y>
         <width>113</width>
         <height>21</height>
@@ -337,7 +337,7 @@
      <widget class="QLineEdit" name="InputName_lineEdit">
       <property name="geometry">
        <rect>
-        <x>170</x>
+        <x>190</x>
         <y>260</y>
         <width>113</width>
         <height>21</height>
@@ -390,7 +390,7 @@
      <widget class="QLineEdit" name="DATA_WEEK_lineEdit">
       <property name="geometry">
        <rect>
-        <x>170</x>
+        <x>190</x>
         <y>140</y>
         <width>113</width>
         <height>21</height>
@@ -448,7 +448,7 @@
      <widget class="QLineEdit" name="Measure_H_lineEdit">
       <property name="geometry">
        <rect>
-        <x>170</x>
+        <x>190</x>
         <y>200</y>
         <width>51</width>
         <height>21</height>
@@ -470,7 +470,7 @@
      <widget class="QLineEdit" name="Measure_V_lineEdit">
       <property name="geometry">
        <rect>
-        <x>230</x>
+        <x>250</x>
         <y>200</y>
         <width>51</width>
         <height>21</height>
@@ -494,7 +494,7 @@
        <rect>
         <x>100</x>
         <y>230</y>
-        <width>71</width>
+        <width>81</width>
         <height>22</height>
        </rect>
       </property>
@@ -540,10 +540,10 @@
      <widget class="QGroupBox" name="groupBox_2">
       <property name="geometry">
        <rect>
-        <x>300</x>
+        <x>630</x>
         <y>10</y>
-        <width>631</width>
-        <height>351</height>
+        <width>301</width>
+        <height>291</height>
        </rect>
       </property>
       <property name="title">
@@ -554,16 +554,16 @@
         <rect>
          <x>10</x>
          <y>20</y>
-         <width>611</width>
-         <height>281</height>
+         <width>281</width>
+         <height>191</height>
         </rect>
        </property>
       </widget>
       <widget class="QPushButton" name="Add_Edid_pushButton">
        <property name="geometry">
         <rect>
-         <x>390</x>
-         <y>310</y>
+         <x>10</x>
+         <y>250</y>
          <width>111</width>
          <height>31</height>
         </rect>
@@ -575,8 +575,8 @@
       <widget class="QCheckBox" name="Add_Edid_checkBox">
        <property name="geometry">
         <rect>
-         <x>280</x>
-         <y>310</y>
+         <x>10</x>
+         <y>220</y>
          <width>111</width>
          <height>31</height>
         </rect>
@@ -593,8 +593,8 @@
       <widget class="QPushButton" name="Save_Edid_pushButton">
        <property name="geometry">
         <rect>
-         <x>510</x>
-         <y>310</y>
+         <x>180</x>
+         <y>250</y>
          <width>111</width>
          <height>31</height>
         </rect>
@@ -618,6 +618,218 @@
       </property>
       <property name="checked">
        <bool>true</bool>
+      </property>
+     </widget>
+     <widget class="QCheckBox" name="Monitor_name_checkBox">
+      <property name="geometry">
+       <rect>
+        <x>400</x>
+        <y>380</y>
+        <width>161</width>
+        <height>31</height>
+       </rect>
+      </property>
+      <property name="text">
+       <string>默认显示器名称Monitor</string>
+      </property>
+      <property name="checked">
+       <bool>true</bool>
+      </property>
+     </widget>
+     <widget class="QLineEdit" name="Red_X_lineEdit">
+      <property name="geometry">
+       <rect>
+        <x>390</x>
+        <y>20</y>
+        <width>61</width>
+        <height>21</height>
+       </rect>
+      </property>
+     </widget>
+     <widget class="QLabel" name="label_55">
+      <property name="geometry">
+       <rect>
+        <x>320</x>
+        <y>20</y>
+        <width>71</width>
+        <height>21</height>
+       </rect>
+      </property>
+      <property name="text">
+       <string>Red_X</string>
+      </property>
+     </widget>
+     <widget class="QLabel" name="label_56">
+      <property name="geometry">
+       <rect>
+        <x>320</x>
+        <y>50</y>
+        <width>71</width>
+        <height>21</height>
+       </rect>
+      </property>
+      <property name="text">
+       <string>Red_Y</string>
+      </property>
+     </widget>
+     <widget class="QLineEdit" name="Red_Y_lineEdit">
+      <property name="geometry">
+       <rect>
+        <x>390</x>
+        <y>50</y>
+        <width>61</width>
+        <height>21</height>
+       </rect>
+      </property>
+      <property name="text">
+       <string/>
+      </property>
+     </widget>
+     <widget class="QLabel" name="label_57">
+      <property name="geometry">
+       <rect>
+        <x>320</x>
+        <y>110</y>
+        <width>71</width>
+        <height>21</height>
+       </rect>
+      </property>
+      <property name="text">
+       <string>Green_Y</string>
+      </property>
+     </widget>
+     <widget class="QLabel" name="label_58">
+      <property name="geometry">
+       <rect>
+        <x>320</x>
+        <y>80</y>
+        <width>71</width>
+        <height>21</height>
+       </rect>
+      </property>
+      <property name="text">
+       <string>Green_X</string>
+      </property>
+     </widget>
+     <widget class="QLineEdit" name="Green_X_lineEdit">
+      <property name="geometry">
+       <rect>
+        <x>390</x>
+        <y>80</y>
+        <width>61</width>
+        <height>21</height>
+       </rect>
+      </property>
+     </widget>
+     <widget class="QLineEdit" name="Green_Y_lineEdit">
+      <property name="geometry">
+       <rect>
+        <x>390</x>
+        <y>110</y>
+        <width>61</width>
+        <height>21</height>
+       </rect>
+      </property>
+      <property name="text">
+       <string/>
+      </property>
+     </widget>
+     <widget class="QLabel" name="label_59">
+      <property name="geometry">
+       <rect>
+        <x>320</x>
+        <y>170</y>
+        <width>71</width>
+        <height>21</height>
+       </rect>
+      </property>
+      <property name="text">
+       <string>Blue_Y</string>
+      </property>
+     </widget>
+     <widget class="QLabel" name="label_60">
+      <property name="geometry">
+       <rect>
+        <x>320</x>
+        <y>140</y>
+        <width>71</width>
+        <height>21</height>
+       </rect>
+      </property>
+      <property name="text">
+       <string>Blue_X</string>
+      </property>
+     </widget>
+     <widget class="QLineEdit" name="Blue_X_lineEdit">
+      <property name="geometry">
+       <rect>
+        <x>390</x>
+        <y>140</y>
+        <width>61</width>
+        <height>21</height>
+       </rect>
+      </property>
+     </widget>
+     <widget class="QLineEdit" name="Blue_Y_lineEdit">
+      <property name="geometry">
+       <rect>
+        <x>390</x>
+        <y>170</y>
+        <width>61</width>
+        <height>21</height>
+       </rect>
+      </property>
+      <property name="text">
+       <string/>
+      </property>
+     </widget>
+     <widget class="QLabel" name="label_61">
+      <property name="geometry">
+       <rect>
+        <x>320</x>
+        <y>230</y>
+        <width>71</width>
+        <height>21</height>
+       </rect>
+      </property>
+      <property name="text">
+       <string>White_Y</string>
+      </property>
+     </widget>
+     <widget class="QLineEdit" name="White_X_lineEdit">
+      <property name="geometry">
+       <rect>
+        <x>390</x>
+        <y>200</y>
+        <width>61</width>
+        <height>21</height>
+       </rect>
+      </property>
+     </widget>
+     <widget class="QLineEdit" name="White_Y_lineEdit">
+      <property name="geometry">
+       <rect>
+        <x>390</x>
+        <y>230</y>
+        <width>61</width>
+        <height>21</height>
+       </rect>
+      </property>
+      <property name="text">
+       <string/>
+      </property>
+     </widget>
+     <widget class="QLabel" name="label_62">
+      <property name="geometry">
+       <rect>
+        <x>320</x>
+        <y>200</y>
+        <width>71</width>
+        <height>21</height>
+       </rect>
+      </property>
+      <property name="text">
+       <string>White_X</string>
       </property>
      </widget>
     </widget>
@@ -1981,7 +2193,7 @@
     </rect>
    </property>
    <property name="text">
-    <string>Design By:深圳市海勤科技有限公司Wayne</string>
+    <string>Design By:深圳市海勤科技有限公司@WSY</string>
    </property>
    <property name="alignment">
     <set>Qt::AlignmentFlag::AlignCenter</set>

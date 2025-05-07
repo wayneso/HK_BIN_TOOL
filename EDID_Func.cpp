@@ -147,6 +147,46 @@ EDID_Info Read_EDID(const QByteArray& edidBuffer) {
         }
     }
 
+    // 提取色度坐标 (CIE 1931 xy)
+    unsigned char lsb1 = static_cast<unsigned char>(edidBuffer[0x19]); // 低位高 4 个值
+    unsigned char lsb2 = static_cast<unsigned char>(edidBuffer[0x1A]); // 低位低 4 个值
+    unsigned char msbRx = static_cast<unsigned char>(edidBuffer[0x1B]);
+    unsigned char msbRy = static_cast<unsigned char>(edidBuffer[0x1C]);
+    unsigned char msbGx = static_cast<unsigned char>(edidBuffer[0x1D]);
+    unsigned char msbGy = static_cast<unsigned char>(edidBuffer[0x1E]);
+    unsigned char msbBx = static_cast<unsigned char>(edidBuffer[0x1F]);
+    unsigned char msbBy = static_cast<unsigned char>(edidBuffer[0x20]);
+    unsigned char msbWx = static_cast<unsigned char>(edidBuffer[0x21]);
+    unsigned char msbWy = static_cast<unsigned char>(edidBuffer[0x22]);
+
+    // 分离 LSB
+    unsigned char rxLsb = (lsb1 >> 6) & 0x03;
+    unsigned char ryLsb = (lsb1 >> 4) & 0x03;
+    unsigned char gxLsb = (lsb1 >> 2) & 0x03;
+    unsigned char gyLsb =  lsb1        & 0x03;
+    unsigned char bxLsb = (lsb2 >> 6) & 0x03;
+    unsigned char byLsb = (lsb2 >> 4) & 0x03;
+    unsigned char wxLsb = (lsb2 >> 2) & 0x03;
+    unsigned char wyLsb =  lsb2        & 0x03;
+
+    // 合并 MSB 和 LSB，并归一化
+    auto toXY = [](unsigned char msb, unsigned char lsb) {
+        int raw = (msb << 2) | lsb;
+        return raw / 1024.0f;
+    };
+
+    info.redX   = toXY(msbRx, rxLsb);   // 红原色 x
+    info.redY   = toXY(msbRy, ryLsb);   // 红原色 y
+    info.greenX = toXY(msbGx, gxLsb);   // 绿原色 x
+    info.greenY = toXY(msbGy, gyLsb);   // 绿原色 y
+    info.blueX  = toXY(msbBx, bxLsb);   // 蓝原色 x
+    info.blueY  = toXY(msbBy, byLsb);   // 蓝原色 y
+    info.whiteX = toXY(msbWx, wxLsb);   // 白点   x
+    info.whiteY = toXY(msbWy, wyLsb);   // 白点   y
+
+
+    qDebug() << info.redX << info.redY;
+
     return info;
 }
 
@@ -212,12 +252,37 @@ QByteArray Modify_EDID(QByteArray edidBuffer, const EDID_Info& edidInfo) {
         }
     }
 
-    // 更新校验和
-    unsigned char sum = 0;
-    for (int k = 0; k < 127; ++k) {
-        sum += static_cast<unsigned char>(edidBuffer[k]);
-    }
-    edidBuffer[127] = static_cast<char>((256 - sum) & 0xFF);
+    // 修改色域坐标 (CIE 1931 xy)
+    auto packXY = [&](float x, float y) {
+        // 将浮点坐标转为 0-1023 之间的整数
+        int rawX = qRound(x * 1024);
+        int rawY = qRound(y * 1024);
+        unsigned char msbX = (rawX >> 2) & 0xFF;
+        unsigned char msbY = (rawY >> 2) & 0xFF;
+        unsigned char lsbX = rawX & 0x03;
+        unsigned char lsbY = rawY & 0x03;
+        return std::tuple<unsigned char,unsigned char,unsigned char,unsigned char>(msbX, msbY, lsbX, lsbY);
+    };
+    // 打包各色度
+    auto [msbRx, msbRy, rxLsb, ryLsb] = packXY(edidInfo.redX, edidInfo.redY);
+    auto [msbGx, msbGy, gxLsb, gyLsb] = packXY(edidInfo.greenX, edidInfo.greenY);
+    auto [msbBx, msbBy, bxLsb, byLsb] = packXY(edidInfo.blueX, edidInfo.blueY);
+    auto [msbWx, msbWy, wxLsb, wyLsb] = packXY(edidInfo.whiteX, edidInfo.whiteY);
+
+    // 写入低位字节
+    unsigned char byte19 = (rxLsb << 6) | (ryLsb << 4) | (gxLsb << 2) | gyLsb;
+    unsigned char byte1A = (bxLsb << 6) | (byLsb << 4) | (wxLsb << 2) | wyLsb;
+    edidBuffer[0x19] = static_cast<char>(byte19);
+    edidBuffer[0x1A] = static_cast<char>(byte1A);
+    // 写入高位字节
+    edidBuffer[0x1B] = static_cast<char>(msbRx);
+    edidBuffer[0x1C] = static_cast<char>(msbRy);
+    edidBuffer[0x1D] = static_cast<char>(msbGx);
+    edidBuffer[0x1E] = static_cast<char>(msbGy);
+    edidBuffer[0x1F] = static_cast<char>(msbBx);
+    edidBuffer[0x20] = static_cast<char>(msbBy);
+    edidBuffer[0x21] = static_cast<char>(msbWx);
+    edidBuffer[0x22] = static_cast<char>(msbWy);
 
 
     // 更新校验和

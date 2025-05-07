@@ -107,6 +107,14 @@ void HK_BIN_Tool::on_Add_Bin_pushButton_clicked()
     ui->Measure_V_lineEdit->setText(QString::number(edidInfo.verticalSizeCm));
     ui->Measure_lineEdit->setText(QString::number(edidInfo.diagonalSizeInches, 'f', 1));
     ui->InputName_lineEdit->setText(edidInfo.monitorName);
+    ui->Red_X_lineEdit->setText(QString::number(edidInfo.redX, 'f', 4));
+    ui->Red_Y_lineEdit->setText(QString::number(edidInfo.redY, 'f', 4));
+    ui->Green_X_lineEdit->setText(QString::number(edidInfo.greenX, 'f', 4));
+    ui->Green_Y_lineEdit->setText(QString::number(edidInfo.greenY, 'f', 4));
+    ui->Blue_X_lineEdit->setText(QString::number(edidInfo.blueX, 'f', 4));
+    ui->Blue_Y_lineEdit->setText(QString::number(edidInfo.blueY, 'f', 4));
+    ui->White_X_lineEdit->setText(QString::number(edidInfo.whiteX, 'f', 4));
+    ui->White_Y_lineEdit->setText(QString::number(edidInfo.whiteY, 'f', 4));
 
     /************* EDID *************/
 
@@ -176,6 +184,7 @@ void HK_BIN_Tool::on_Add_Bin_pushButton_clicked()
     }
     State = Find_TargetString_InBinFile(Bin_Buffer, LOGO_INDEX_DataDef);
     State = Find_TargetString_InBinFile(Bin_Buffer, LOGO1_INDEX_DataDef);
+    /*
     for (int var = 0; var < 215; ++var)
     {
         qDebug() << LOGO_INDEX_DataDef.outputBuffer[var];
@@ -233,6 +242,14 @@ void HK_BIN_Tool::on_Next_EDID_Button_clicked()
     ui->Measure_V_lineEdit->setText(QString::number(edidInfo.verticalSizeCm));
     ui->Measure_lineEdit->setText(QString::number(edidInfo.diagonalSizeInches, 'f', 1));
     ui->InputName_lineEdit->setText(edidInfo.monitorName);
+    ui->Red_X_lineEdit->setText(QString::number(edidInfo.redX, 'f', 4));
+    ui->Red_Y_lineEdit->setText(QString::number(edidInfo.redY, 'f', 4));
+    ui->Green_X_lineEdit->setText(QString::number(edidInfo.greenX, 'f', 4));
+    ui->Green_Y_lineEdit->setText(QString::number(edidInfo.greenY, 'f', 4));
+    ui->Blue_X_lineEdit->setText(QString::number(edidInfo.blueX, 'f', 4));
+    ui->Blue_Y_lineEdit->setText(QString::number(edidInfo.blueY, 'f', 4));
+    ui->White_X_lineEdit->setText(QString::number(edidInfo.whiteX, 'f', 4));
+    ui->White_Y_lineEdit->setText(QString::number(edidInfo.whiteY, 'f', 4));
 }
 
 /**
@@ -286,7 +303,10 @@ void HK_BIN_Tool::on_Save_Bin_pushButton_clicked()
     {
         ui->Factory_lineEdit->setText("HKM");
     }
-
+    if (ui->Monitor_name_checkBox->isChecked())
+    {
+        ui->InputName_lineEdit->setText("Monitor");
+    }
     EDID_Info edidInfo;
     edidInfo.horizontalSizeCm = ui->Measure_H_lineEdit->text().toFloat();
     edidInfo.verticalSizeCm = ui->Measure_V_lineEdit->text().toFloat();
@@ -297,6 +317,15 @@ void HK_BIN_Tool::on_Save_Bin_pushButton_clicked()
     edidInfo.productID = ui->CODE_lineEdit->text();
     edidInfo.monitorName = ui->InputName_lineEdit->text();
     edidInfo.version = ui->EDIDVER_lineEdit->text();
+    edidInfo.redX = ui->Red_X_lineEdit->text().toFloat();
+    edidInfo.redY = ui->Red_Y_lineEdit->text().toFloat();
+    edidInfo.greenX = ui->Green_X_lineEdit->text().toFloat();
+    edidInfo.greenY = ui->Green_Y_lineEdit->text().toFloat();
+    edidInfo.blueX = ui->Blue_X_lineEdit->text().toFloat();
+    edidInfo.blueY = ui->Blue_Y_lineEdit->text().toFloat();
+    edidInfo.whiteX = ui->White_X_lineEdit->text().toFloat();
+    edidInfo.whiteY = ui->White_Y_lineEdit->text().toFloat();
+
     // 修改每个 EDID（例如修改厂商信息）
     for (EDID &edid : Bin_EDID)
     {

@@ -20,12 +20,18 @@ typedef struct {
     QString version;           // EDID 版本号
     int manufactureWeek;       // 制造周
     int manufactureYear;       // 制造年份
-    float horizontalSizeCm;   // 水平物理尺寸（厘米）
-    float verticalSizeCm;     // 垂直物理尺寸（厘米）
-    float diagonalSizeInches; // 对角线尺寸（英寸）
+    float horizontalSizeCm;    // 水平物理尺寸（厘米）
+    float verticalSizeCm;      // 垂直物理尺寸（厘米）
+    float diagonalSizeInches;  // 对角线尺寸（英寸）
     QString monitorName;       // 显示器名字
 
+    float redX, redY;          // 红原色 x, y
+    float greenX, greenY;      // 绿原色 x, y
+    float blueX, blueY;        // 蓝原色 x, y
+    float whiteX, whiteY;      // 白点  x, y
+
 } EDID_Info;
+
 
 
 
