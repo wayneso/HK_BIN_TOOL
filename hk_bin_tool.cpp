@@ -25,7 +25,8 @@ QByteArray Add_EDID_Buffer = {};
 QString Bin_Filer = {};
 QString Add_EDID_fileName = {};
 int EDID_index = 0;
-
+QVector<int> indexArray;
+QVector<int> vlcArray;
 HK_BIN_Tool::HK_BIN_Tool(QWidget *parent) : QWidget(parent), ui(new Ui::HK_BIN_Tool)
 {
     ui->setupUi(this);
@@ -129,7 +130,10 @@ void HK_BIN_Tool::on_Add_Bin_pushButton_clicked()
         ui->_MPRT_PWM_MIN->setText(QString::number(BinData_BackLightDef.outputBuffer[3], 16).toUpper());
         ui->_MPRT_PWM_DEF->setText(QString::number(BinData_BackLightDef.outputBuffer[4], 16).toUpper());
         ui->_MPRT_PWM_MAX->setText(QString::number(BinData_BackLightDef.outputBuffer[5], 16).toUpper());
+        ui->FUNC_textEdit->append("支持修改MPRT!");
     }
+    else
+        ui->FUNC_textEdit->append("不支持修改MPRT!");
     State = Find_TargetString_InBinFile(Bin_Buffer, Key_Value_DataDef);
     if (State == true)
     {
@@ -143,12 +147,10 @@ void HK_BIN_Tool::on_Add_Bin_pushButton_clicked()
         ui->EXIT_REG->setText(QString::number(Key_Value_DataDef.outputBuffer[7], 16).toUpper());
         ui->RIGHT_REG->setText(QString::number(Key_Value_DataDef.outputBuffer[8], 16).toUpper());
         ui->LEFT_REG->setText(QString::number(Key_Value_DataDef.outputBuffer[9], 16).toUpper());
-        //ui->Bin_Data_Flag_label->setText("该BIN文件适用修改工具");
+        ui->FUNC_textEdit->append("支持修改按键!");
     }
     else
-    {
-        ui->Bin_Data_Flag_label->setText("该BIN文件不适用修改工具");
-    }
+        ui->FUNC_textEdit->append("不支持修改按键!");
     State = Find_TargetString_InBinFile(Bin_Buffer, HKC_Osd_DataDef);
     if(State == true)
     {
@@ -158,17 +160,28 @@ void HK_BIN_Tool::on_Add_Bin_pushButton_clicked()
         ui->HKC_BACKLIGHT_MAX->setText(QString::number(HKC_Osd_DataDef.outputBuffer[6], 16).toUpper());
         ui->HKC_Language_DEF->setText(QString::number(HKC_Osd_DataDef.outputBuffer[8], 10).toUpper());
         ui->HKC_Color_Temp_DEF->setText(QString::number(HKC_Osd_DataDef.outputBuffer[10], 10).toUpper());
-        for (int var = 0; var < 14; ++var) {
-            qDebug() << HKC_Osd_DataDef.outputBuffer[var];
-        }
+        ui->FUNC_textEdit->append("支持修改2383E04 OSD值!");
     }
-    /*
-    State = Find_TargetString_InBinFile(Bin_Buffer, Osd_DataDef);
-    for (int var = 0; var < 10; ++var)
+    else
+        ui->FUNC_textEdit->append("不支持修改2383E04 OSD值!!");
+    State = Find_TargetString_InBinFile(Bin_Buffer, HKC_TEMP_COLOR_DataDef);
+    if(State == true)
     {
-        qDebug() << Osd_DataDef.outputBuffer[var];
+        bool ok;
+        ui->_CT9300_RED->setText(QString::number(HKC_TEMP_COLOR_DataDef.outputBuffer[1], 10));
+        ui->_CT9300_GREEN->setText(QString::number(HKC_TEMP_COLOR_DataDef.outputBuffer[3], 10));
+        ui->_CT9300_BLUE->setText(QString::number(HKC_TEMP_COLOR_DataDef.outputBuffer[5], 10));
+        ui->_CT6500_RED->setText(QString::number(HKC_TEMP_COLOR_DataDef.outputBuffer[7], 10));
+        ui->_CT6500_GREEN->setText(QString::number(HKC_TEMP_COLOR_DataDef.outputBuffer[9], 10));
+        ui->_CT6500_BLUE->setText(QString::number(HKC_TEMP_COLOR_DataDef.outputBuffer[11], 10));
+        ui->_CTUSER_RED->setText(QString::number(HKC_TEMP_COLOR_DataDef.outputBuffer[13], 10));
+        ui->_CTUSER_GREEN->setText(QString::number(HKC_TEMP_COLOR_DataDef.outputBuffer[15], 10));
+        ui->_CTUSER_BLUE->setText(QString::number(HKC_TEMP_COLOR_DataDef.outputBuffer[17], 10));
+        ui->FUNC_textEdit->append("支持修改2383E04 色温值!");
     }
-    */
+    else
+        ui->FUNC_textEdit->append("不支持修改2383E04 色温值!");
+
     /******************************LOGO******************************/
     ui->LOGO_MESSAGE_textEdit->clear();
     State = Find_TargetString_InBinFile(Bin_Buffer, LOGO_BASE_Default_DataDef);
@@ -181,27 +194,14 @@ void HK_BIN_Tool::on_Add_Bin_pushButton_clicked()
         ui->_LOGO_BG_RED_lineEdit->setText(QString::number(LOGO_BASE_Default_DataDef.outputBuffer[4]));
         ui->_LOGO_BG_GREEN_lineEdit->setText(QString::number(LOGO_BASE_Default_DataDef.outputBuffer[5]));
         ui->_LOGO_BG_BLUE_lineEdit->setText(QString::number(LOGO_BASE_Default_DataDef.outputBuffer[6]));
+        ui->LOGO_MESSAGE_textEdit->append("支持修改LOGO!");
     }
-    State = Find_TargetString_InBinFile(Bin_Buffer, LOGO_INDEX_DataDef);
-    State = Find_TargetString_InBinFile(Bin_Buffer, LOGO1_INDEX_DataDef);
-    /*
-    for (int var = 0; var < 215; ++var)
-    {
-        qDebug() << LOGO_INDEX_DataDef.outputBuffer[var];
-    }
-    /*
-
-    State = Find_TargetString_InBinFile(Bin_Buffer, LOGO_DataDef);
-    for (int var = 0; var < 10; ++var)
-    {
-        qDebug() << LOGO_DataDef.outputBuffer[var];
-    }
-    */
-
-    if (State == true)
-        ui->BIN_LOGO_flag_label->setText("该BIN文件适用修改工具");
     else
-        ui->BIN_LOGO_flag_label->setText("该BIN文件不适用修改工具");
+        ui->LOGO_MESSAGE_textEdit->append("不支持修改LOGO!");
+
+    State = Find_TargetString_InBinFile(Bin_Buffer, LOGO_INDEX_DataDef);
+    State = Find_TargetString_InBinFile(Bin_Buffer, LOGO_DataDef);
+
     /******************************LOGO******************************/
 
 
@@ -368,6 +368,10 @@ void HK_BIN_Tool::on_Save_Bin_pushButton_clicked()
         BinData_BackLightDef.outputBuffer[4] = ui->_MPRT_PWM_DEF->text().toInt(&ok, 16);
         BinData_BackLightDef.outputBuffer[5] = ui->_MPRT_PWM_MAX->text().toInt(&ok, 16);
         State = Write_TargetString_InBinFile(Bin_Buffer, BinData_BackLightDef);
+        if (State == true)
+            ui->FUNC_textEdit->append("电流值修改成功");
+        else
+            ui->FUNC_textEdit->setText("电流值修改失败");
     }
     State = Find_TargetString_InBinFile(Bin_Buffer, Key_Value_DataDef);
     if (State == true)
@@ -385,9 +389,9 @@ void HK_BIN_Tool::on_Save_Bin_pushButton_clicked()
 
         State = Write_TargetString_InBinFile(Bin_Buffer, Key_Value_DataDef);
         if (State == true)
-            ui->Bin_Data_Flag_label->setText("Successful！");
+            ui->FUNC_textEdit->append("键值修改成功");
         else
-            ui->Bin_Data_Flag_label->setText("False！");
+            ui->FUNC_textEdit->setText("键值修改失败");
     }
 
     State = Find_TargetString_InBinFile(Bin_Buffer, HKC_Osd_DataDef);
@@ -399,7 +403,31 @@ void HK_BIN_Tool::on_Save_Bin_pushButton_clicked()
         HKC_Osd_DataDef.outputBuffer[8] = ui->HKC_Language_DEF->text().toInt(&ok, 10);
         HKC_Osd_DataDef.outputBuffer[10] = ui->HKC_Color_Temp_DEF->text().toInt(&ok, 10);
         State = Write_TargetString_InBinFile(Bin_Buffer, HKC_Osd_DataDef);
+        if (State == true)
+            ui->FUNC_textEdit->append("2383E04 OSD修改成功");
+        else
+            ui->FUNC_textEdit->setText("2383E04 OSD修改失败");
+    }
 
+    State = Find_TargetString_InBinFile(Bin_Buffer, HKC_TEMP_COLOR_DataDef);
+    if(State == true)
+    {
+        bool ok;
+        HKC_TEMP_COLOR_DataDef.outputBuffer[1] = ui->_CT9300_RED->text().toInt(&ok, 10);
+        HKC_TEMP_COLOR_DataDef.outputBuffer[3] = ui->_CT9300_GREEN->text().toInt(&ok, 10);
+        HKC_TEMP_COLOR_DataDef.outputBuffer[5] = ui->_CT9300_BLUE->text().toInt(&ok, 10);
+        HKC_TEMP_COLOR_DataDef.outputBuffer[7] =  ui->_CT6500_RED->text().toInt(&ok, 10);
+        HKC_TEMP_COLOR_DataDef.outputBuffer[9] =  ui->_CT6500_RED->text().toInt(&ok, 10);
+        HKC_TEMP_COLOR_DataDef.outputBuffer[11] = ui->_CT6500_RED->text().toInt(&ok, 10);
+        HKC_TEMP_COLOR_DataDef.outputBuffer[13] = ui->_CTUSER_RED->text().toInt(&ok, 10);
+        HKC_TEMP_COLOR_DataDef.outputBuffer[15] = ui->_CTUSER_RED->text().toInt(&ok, 10);
+        HKC_TEMP_COLOR_DataDef.outputBuffer[17] = ui->_CTUSER_RED->text().toInt(&ok, 10);
+
+        State = Write_TargetString_InBinFile(Bin_Buffer, HKC_TEMP_COLOR_DataDef);
+        if (State == true)
+            ui->FUNC_textEdit->append("色温值修改成功");
+        else
+            ui->FUNC_textEdit->setText("色温值修改失败");
     }
 
     State = Find_TargetString_InBinFile(Bin_Buffer, LOGO_BASE_Default_DataDef);
@@ -415,11 +443,23 @@ void HK_BIN_Tool::on_Save_Bin_pushButton_clicked()
         LOGO_BASE_Default_DataDef.outputBuffer[6] = ui->_LOGO_BG_BLUE_lineEdit->text().toInt(&ok, 10);
         State = Write_TargetString_InBinFile(Bin_Buffer, LOGO_BASE_Default_DataDef);
         if (State == true)
-            ui->BIN_LOGO_flag_label->setText("Successful！");
+            ui->LOGO_MESSAGE_textEdit->append("替换LOGO成功");
         else
-            ui->BIN_LOGO_flag_label->setText("False！");
+            ui->LOGO_MESSAGE_textEdit->append("替换LOGO失败");
     }
 
+
+    State = Find_TargetString_InBinFile(Bin_Buffer, LOGO_INDEX_DataDef);
+    if(State == true)
+    {
+        State = Write_TargetString_InBinFile(Bin_Buffer, LOGO_INDEX_DataDef);
+    }
+
+    State = Find_TargetString_InBinFile(Bin_Buffer, LOGO_DataDef);
+    if(State == true)
+    {
+        State = Write_TargetString_InBinFile(Bin_Buffer, LOGO_DataDef);
+    }
     /************* BIN *************/
     // 写入数据并关闭文件
     file.write(Bin_Buffer);
@@ -737,5 +777,62 @@ void HK_BIN_Tool::on_LOGO_SIZE_COL_ROW_pushButton_clicked()
 
     ui->NEW_COL_lineEdit->setText(QString::number(NEW_COL));
     ui->NEW_ROW_lineEdit->setText(QString::number(NEW_ROW));
+}
+
+
+void HK_BIN_Tool::on_Add_LOGO_Data_pushButton_clicked()
+{
+    // 选择 C 文件
+    QString filePath = QFileDialog::getOpenFileName(
+        this,
+        tr("选择 C 文件"),
+        QString(),
+        tr("C 文件 (*.c);;所有文件 (*)")
+        );
+    if (filePath.isEmpty()) return;
+
+
+    if (!Add_LOGO_DATA(filePath, indexArray, vlcArray)) {
+        return; // 读取失败
+    }
+
+    // 输出结果
+    qDebug() << tr("Index:") << indexArray;
+    qDebug() << tr("VLC:") << vlcArray;
+}
+
+
+void HK_BIN_Tool::on_Replace_LOGO_pushButton_clicked()
+{
+    bool State = false;
+    State = Find_TargetString_InBinFile(Bin_Buffer, LOGO_INDEX_DataDef);
+    if(State == true)
+    {
+        for (int var = 0; var < LOGO_INDEX_DataDef.outputBufferSize; ++var)
+        {
+            LOGO_INDEX_DataDef.outputBuffer[var] = 0;
+        }
+        for (int var = 0; var < LOGO_INDEX_DataDef.outputBufferSize; ++var)
+        {
+            LOGO_INDEX_DataDef.outputBuffer[var] = indexArray[var];
+        }
+        State = Write_TargetString_InBinFile(Bin_Buffer, LOGO_INDEX_DataDef);
+    }
+
+    State = Find_TargetString_InBinFile(Bin_Buffer, LOGO_DataDef);
+    if(State == true)
+    {
+        for (int var = 0; var < LOGO_DataDef.outputBufferSize; ++var)
+        {
+            LOGO_DataDef.outputBuffer[var] = 0;
+        }
+        for (int var = 0; var < LOGO_DataDef.outputBufferSize; ++var)
+        {
+            LOGO_DataDef.outputBuffer[var] = vlcArray[var];
+        }
+        State = Write_TargetString_InBinFile(Bin_Buffer, LOGO_DataDef);
+    }
+
+
 }
 

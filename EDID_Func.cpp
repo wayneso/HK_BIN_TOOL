@@ -184,9 +184,6 @@ EDID_Info Read_EDID(const QByteArray& edidBuffer) {
     info.whiteX = toXY(msbWx, wxLsb);   // 白点   x
     info.whiteY = toXY(msbWy, wyLsb);   // 白点   y
 
-
-    qDebug() << info.redX << info.redY;
-
     return info;
 }
 

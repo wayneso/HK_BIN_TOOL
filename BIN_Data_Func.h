@@ -17,6 +17,7 @@
 #include <string.h>
 
 #define STRLEN_INCL_NULL(s)  ( (int)(strlen(s) + 1) )
+#define ARRAY_LENGTH(arr) (sizeof(arr) / sizeof(arr[0]))
 
 typedef struct
 {
@@ -45,13 +46,18 @@ extern Bin_Data_String BinData_BackLightDef;
 extern Bin_Data_String Key_Value_DataDef;
 extern Bin_Data_String Osd_DataDef;
 extern Bin_Data_String HKC_Osd_DataDef;
+extern Bin_Data_String HKC_TEMP_COLOR_DataDef;
+
+extern Bin_Data_String LOGO_BASE_Default_DataDef;
 extern Bin_Data_String LOGO_INDEX_DataDef;
+extern Bin_Data_String LOGO_INDEX_END_DataDef;
 extern Bin_Data_String LOGO_DataDef;
+extern Bin_Data_String LOGO_END_DataDef;
 extern Bin_Data_String LOGO1_INDEX_DataDef;
 extern Bin_Data_String LOGO1_DataDef;
-extern Bin_Data_String LOGO_BASE_Default_DataDef;
 bool Find_TargetString_InBinFile(const QByteArray Bin_Buffer, Bin_Data_String &Bin_Data);
 bool Write_TargetString_InBinFile(QByteArray &Bin_Buffer, Bin_Data_String &Bin_Data);
+bool Add_LOGO_DATA(const QString &filePath, QVector<int> &indexArray, QVector<int> &vlcArray);
 
 
 #endif

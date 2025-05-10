@@ -52,6 +52,10 @@ private slots:
 
     void on_LOGO_SIZE_COL_ROW_pushButton_clicked();
 
+    void on_Add_LOGO_Data_pushButton_clicked();
+
+    void on_Replace_LOGO_pushButton_clicked();
+
 private:
     Ui::HK_BIN_Tool *ui;
 };

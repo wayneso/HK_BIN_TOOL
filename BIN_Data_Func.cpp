@@ -12,7 +12,14 @@
  * Copyright (c) 2025 by ${git_name_email}, All Rights Reserved.
  */
 #include "BIN_Data_Func.h"
+#include <QFileDialog>
+#include <QFile>
+#include <QRegularExpression>
+#include <QVector>
+#include <QStringList>
+#include <QDebug>
 
+/*背光电流定位结构体*/
 uchar BacklightDef_Data_Buffer[6] = {0};
 const char *BacklightDef_string = "This is BacklightDef Flag!";
 int BacklightDef_string_len = STRLEN_INCL_NULL(BacklightDef_string);
@@ -23,7 +30,7 @@ Bin_Data_String BinData_BackLightDef = {
     BacklightDef_Data_Buffer, // 输出缓冲区
     6                         // 输出缓冲区大小
 };
-
+/*键值定位结构体*/
 uchar Key_Value_Data_Buffer[10] = {0};
 const char *Key_Value_Data_string = "This is Keyboardflag Flag!";
 int Key_Value_Data_string_len = STRLEN_INCL_NULL(Key_Value_Data_string);
@@ -34,7 +41,7 @@ Bin_Data_String Key_Value_DataDef = {
     Key_Value_Data_Buffer,     // 输出缓冲区
     10                         // 输出缓冲区大小
 };
-
+/*OSD常用设置定位结构体*/
 uchar Osd_Data_Buffer[10] = {0};
 const char *Osd_Data_string = "HK_OSD_Default Flag";
 int Osd_Data_string_len = STRLEN_INCL_NULL(Osd_Data_string);
@@ -45,7 +52,7 @@ Bin_Data_String Osd_DataDef = {
     Osd_Data_Buffer,     // 输出缓冲区
     10                   // 输出缓冲区大小
 };
-
+/*HKC_OSD常用设置定位结构体*/
 uchar HKC_Osd_Data_Buffer[24] = {0};
 const char *HKC_Osd_Data_string = "HK_HKC_OSD_Default Flag";
 int HKC_Osd_Data_string_len = STRLEN_INCL_NULL(HKC_Osd_Data_string);
@@ -57,6 +64,18 @@ Bin_Data_String HKC_Osd_DataDef = {
     24                   // 输出缓冲区大小
 };
 
+/*HKC色温定位结构体*/
+uchar HKC_TEMP_COLOR_Data_Buffer[18] = {0};
+const char *HKC_TEMP_COLOR_Data_string = "HK_HKC_TEMP_COLOR_Default Flag";
+int HKC_TEMP_COLOR_Data_string_len = STRLEN_INCL_NULL(HKC_TEMP_COLOR_Data_string);
+Bin_Data_String HKC_TEMP_COLOR_DataDef = {
+    HKC_TEMP_COLOR_Data_string,     // 目标字符串
+    0,                   // 字符串初始位置
+    HKC_TEMP_COLOR_Data_string_len, // 偏移量
+    HKC_TEMP_COLOR_Data_Buffer,     // 输出缓冲区
+    18                   // 输出缓冲区大小
+};
+/*LOGO基础定义数据定位结构体*/
 uchar LOGO_BASE_Default_Buffer[7] = {0};
 const char *LOGO_BASE_Default_string = "HK_LOGO_BASE_Default Flag";
 int LOGO_BASE_Default_string_len = STRLEN_INCL_NULL(LOGO_BASE_Default_string);
@@ -68,17 +87,8 @@ Bin_Data_String LOGO_BASE_Default_DataDef = {
     7                    // 输出缓冲区大小
 };
 
-uchar LOGO_Data_Buffer[4096] = {0};
-const char *LOGO_target_string = "HK_LOGO0_VLC_DATA Flag";
-int LOGO_target_string_len = STRLEN_INCL_NULL(LOGO_target_string);
-Bin_Data_String LOGO_DataDef = {
-    LOGO_target_string,     // 目标字符串
-    0,                      // 字符串初始位置
-    LOGO_target_string_len, // 偏移量
-    LOGO_Data_Buffer,       // 输出缓冲区
-    4096                    // 输出缓冲区大小
-};
-uchar LOGO_INDEX_Data_Buffer[4096] = {0};
+/*LOGO_INDEX数据定位结构体*/
+uchar LOGO_INDEX_Data_Buffer[1024] = {0};
 const char *LOGO_INDEX_target_string = "HK_LOGO_INDEX_VLC_DATA Flag";
 int LOGO_INDEX_target_string_len = STRLEN_INCL_NULL(LOGO_INDEX_target_string);
 Bin_Data_String LOGO_INDEX_DataDef = {
@@ -86,8 +96,35 @@ Bin_Data_String LOGO_INDEX_DataDef = {
     0,                            // 字符串初始位置
     LOGO_INDEX_target_string_len, // 偏移量
     LOGO_INDEX_Data_Buffer,       // 输出缓冲区
-    4096                          // 输出缓冲区大小
+    1024                          // 输出缓冲区大小
 };
+/*LOGO_VLC数据定位结构体*/
+uchar LOGO_Data_Buffer[2048] = {0};
+const char *LOGO_target_string = "HK_LOGO0_VLC_DATA Flag";
+int LOGO_target_string_len = STRLEN_INCL_NULL(LOGO_target_string);
+Bin_Data_String LOGO_DataDef = {
+    LOGO_target_string,     // 目标字符串
+    0,                      // 字符串初始位置
+    LOGO_target_string_len, // 偏移量
+    LOGO_Data_Buffer,       // 输出缓冲区
+    2048                    // 输出缓冲区大小
+};
+
+
+uchar LOGO_Data_END_Buffer[4096] = {0};
+const char *LOGO_target_END_string = "HK_LOGO0_VLC_DATA_END Flag";
+int LOGO_target_END_string_len = STRLEN_INCL_NULL(LOGO_target_END_string);
+Bin_Data_String LOGO_END_DataDef = {
+    LOGO_target_END_string,     // 目标字符串
+    0,                      // 字符串初始位置
+    STRLEN_INCL_NULL(LOGO_target_END_string), // 偏移量
+    LOGO_Data_END_Buffer,       // 输出缓冲区
+    4096                    // 输出缓冲区大小
+};
+
+
+
+
 uchar LOGO1_Data_Buffer[4096] = {0};
 const char *LOGO1_target_string = "HK_LOGO1_VLC_DATA Flag";
 int LOGO1_target_string_len = STRLEN_INCL_NULL(LOGO1_target_string);
@@ -171,3 +208,42 @@ bool Write_TargetString_InBinFile(QByteArray &Bin_Buffer, Bin_Data_String &Bin_D
 
     return State;
 }
+
+bool Add_LOGO_DATA(const QString &filePath, QVector<int> &indexArray, QVector<int> &vlcArray)
+{
+    QFile file(filePath);
+    if (!file.open(QFile::ReadOnly | QFile::Text)) {
+        qWarning() << QObject::tr("无法打开文件:") << filePath;
+        return false;
+    }
+    QString content = QString::fromUtf8(file.readAll());
+    file.close();
+
+    // 替换占位符
+    content.replace("_NEXT_", "0xFE");
+    content.replace("_END_",  "0xFF");
+
+    // 内部函数：解析数组内容，使用捕获组匹配
+    auto parseArray = [&](const QString &name, QVector<int> &outArray) {
+        // 构造正则：匹配 name[] = { ... }
+        QString pattern = QString("%1\\s*\\[\\s*\\]\\s*=\\s*\\{([^}]*)\\}").arg(name);
+        QRegularExpression re(pattern);
+        re.setPatternOptions(QRegularExpression::MultilineOption | QRegularExpression::DotMatchesEverythingOption);
+        QRegularExpressionMatch match = re.match(content);
+        if (!match.hasMatch()) {
+            qWarning() << QObject::tr("未找到 %1 数组").arg(name);
+            return;
+        }
+        QString raw = match.captured(1);
+        QStringList vals = raw.split(',', Qt::SkipEmptyParts);
+        for (const QString &v : vals) {
+            outArray.append(v.trimmed().toInt(nullptr, 0));
+        }
+    };
+
+    parseArray("Index", indexArray);
+    parseArray("VLC",   vlcArray);
+
+    return true;
+}
+
