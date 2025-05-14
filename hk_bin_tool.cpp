@@ -417,11 +417,13 @@ void HK_BIN_Tool::on_Save_Bin_pushButton_clicked()
         HKC_TEMP_COLOR_DataDef.outputBuffer[3] = ui->_CT9300_GREEN->text().toInt(&ok, 10);
         HKC_TEMP_COLOR_DataDef.outputBuffer[5] = ui->_CT9300_BLUE->text().toInt(&ok, 10);
         HKC_TEMP_COLOR_DataDef.outputBuffer[7] =  ui->_CT6500_RED->text().toInt(&ok, 10);
-        HKC_TEMP_COLOR_DataDef.outputBuffer[9] =  ui->_CT6500_RED->text().toInt(&ok, 10);
-        HKC_TEMP_COLOR_DataDef.outputBuffer[11] = ui->_CT6500_RED->text().toInt(&ok, 10);
+        HKC_TEMP_COLOR_DataDef.outputBuffer[9] =  ui->_CT6500_GREEN->text().toInt(&ok, 10);
+        HKC_TEMP_COLOR_DataDef.outputBuffer[11] = ui->_CT6500_BLUE->text().toInt(&ok, 10);
         HKC_TEMP_COLOR_DataDef.outputBuffer[13] = ui->_CTUSER_RED->text().toInt(&ok, 10);
-        HKC_TEMP_COLOR_DataDef.outputBuffer[15] = ui->_CTUSER_RED->text().toInt(&ok, 10);
-        HKC_TEMP_COLOR_DataDef.outputBuffer[17] = ui->_CTUSER_RED->text().toInt(&ok, 10);
+        HKC_TEMP_COLOR_DataDef.outputBuffer[15] = ui->_CTUSER_GREEN->text().toInt(&ok, 10);
+        HKC_TEMP_COLOR_DataDef.outputBuffer[17] = ui->_CTUSER_BLUE->text().toInt(&ok, 10);
+
+
 
         State = Write_TargetString_InBinFile(Bin_Buffer, HKC_TEMP_COLOR_DataDef);
         if (State == true)
