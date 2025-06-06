@@ -56,6 +56,12 @@ private slots:
 
     void on_Replace_LOGO_pushButton_clicked();
 
+    void on_Add_Key_H_pushButton_clicked();
+
+    void on_Key_H_List_comboBox_currentTextChanged(const QString &arg1);
+
+    void on_Key_Convert_pushButton_clicked();
+
 private:
     Ui::HK_BIN_Tool *ui;
 };

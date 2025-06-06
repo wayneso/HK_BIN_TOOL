@@ -232,7 +232,7 @@ QByteArray Modify_EDID(QByteArray edidBuffer, const EDID_Info& edidInfo) {
 
     // 修改显示器名称
     QByteArray nameData = edidInfo.monitorName.toLatin1().trimmed();  // Latin1 保留原字节
-    if (nameData.size() > 12) nameData.truncate(12);
+    if (nameData.size() > 13) nameData.truncate(13);
 
     for (int i = 54; i <= 125; i += 18) {
         unsigned char b0 = static_cast<unsigned char>(edidBuffer[i]);

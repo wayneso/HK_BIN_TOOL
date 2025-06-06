@@ -42,16 +42,19 @@ Bin_Data_String Key_Value_DataDef = {
     10                         // 输出缓冲区大小
 };
 /*OSD常用设置定位结构体*/
-uchar Osd_Data_Buffer[10] = {0};
-const char *Osd_Data_string = "HK_OSD_Default Flag";
+uchar Osd_Data_Buffer[128] = {0};
+const char *Osd_Data_string = "HK_OSD_Default Flag!";
 int Osd_Data_string_len = STRLEN_INCL_NULL(Osd_Data_string);
 Bin_Data_String Osd_DataDef = {
     Osd_Data_string,     // 目标字符串
     0,                   // 字符串初始位置
     Osd_Data_string_len, // 偏移量
     Osd_Data_Buffer,     // 输出缓冲区
-    10                   // 输出缓冲区大小
+    128                   // 输出缓冲区大小
 };
+
+
+
 /*HKC_OSD常用设置定位结构体*/
 uchar HKC_Osd_Data_Buffer[24] = {0};
 const char *HKC_Osd_Data_string = "HK_HKC_OSD_Default Flag";
@@ -121,10 +124,6 @@ Bin_Data_String LOGO_END_DataDef = {
     LOGO_Data_END_Buffer,       // 输出缓冲区
     4096                    // 输出缓冲区大小
 };
-
-
-
-
 uchar LOGO1_Data_Buffer[4096] = {0};
 const char *LOGO1_target_string = "HK_LOGO1_VLC_DATA Flag";
 int LOGO1_target_string_len = STRLEN_INCL_NULL(LOGO1_target_string);
@@ -177,11 +176,11 @@ bool Write_TargetString_InBinFile(QByteArray &Bin_Buffer, Bin_Data_String &Bin_D
     bool State = false;
 
     // 打印调试信息
-    qDebug() << "目标字符串:" << Bin_Data.target_string;
-    qDebug() << "起始位置:" << Bin_Data.positions;
-    qDebug() << "偏移量:" << Bin_Data.offset;
-    qDebug() << "输出缓冲区大小:" << Bin_Data.outputBufferSize;
-    qDebug() << "缓冲区大小:" << Bin_Buffer.size();
+    // qDebug() << "目标字符串:" << Bin_Data.target_string;
+    // qDebug() << "起始位置:" << Bin_Data.positions;
+    // qDebug() << "偏移量:" << Bin_Data.offset;
+    // qDebug() << "输出缓冲区大小:" << Bin_Data.outputBufferSize;
+    // qDebug() << "缓冲区大小:" << Bin_Buffer.size();
 
     // 检查目标字符串的起始位置是否有效
     if (Bin_Data.positions != -1)

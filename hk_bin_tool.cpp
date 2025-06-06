@@ -27,6 +27,8 @@ QString Add_EDID_fileName = {};
 int EDID_index = 0;
 QVector<int> indexArray;
 QVector<int> vlcArray;
+QMap<QString, QMap<QString, QString>> keyConditionData;
+QStringList keyConditionOrder;  // 按照出现顺序记录条件
 HK_BIN_Tool::HK_BIN_Tool(QWidget *parent) : QWidget(parent), ui(new Ui::HK_BIN_Tool)
 {
     ui->setupUi(this);
@@ -151,6 +153,20 @@ void HK_BIN_Tool::on_Add_Bin_pushButton_clicked()
     }
     else
         ui->FUNC_textEdit->append("不支持修改按键!");
+
+    State = Find_TargetString_InBinFile(Bin_Buffer, Osd_DataDef);
+    if(State == true)
+    {
+        bool ok;
+        for (int var = 0; var < 10; ++var) {
+            qDebug()<< Osd_DataDef.outputBuffer[var];
+        }
+
+    }
+
+
+
+
     State = Find_TargetString_InBinFile(Bin_Buffer, HKC_Osd_DataDef);
     if(State == true)
     {
@@ -643,29 +659,7 @@ void HK_BIN_Tool::on_Save_Edid_pushButton_clicked()
 
 void HK_BIN_Tool::on_checkBox_clicked(bool checked)
 {
-    if (checked == true)
-    {
-        if (ui->Resolution_comboBox->currentText() == "FHD")
-        {
-            ui->HBANK_lineEdit->setText("160");
-            ui->VBANK_lineEdit->setText("41");
-        }
-        else if (ui->Resolution_comboBox->currentText() == "QHD")
-        {
-            ui->HBANK_lineEdit->setText("160");
-            ui->VBANK_lineEdit->setText("41");
-        }
-        else if (ui->Resolution_comboBox->currentText() == "UHD")
-        {
-            ui->HBANK_lineEdit->setText("260");
-            ui->VBANK_lineEdit->setText("45");
-        }
-    }
-    else
-    {
-        ui->HBANK_lineEdit->clear();
-        ui->VBANK_lineEdit->clear();
-    }
+        ui->HBANK_lineEdit->setText("160");
 }
 
 void HK_BIN_Tool::on_Resolution_comboBox_currentTextChanged(const QString &arg1)
@@ -677,7 +671,7 @@ void HK_BIN_Tool::on_Resolution_comboBox_currentTextChanged(const QString &arg1)
         if (ui->H_V_checkBox->isChecked())
         {
             ui->HBANK_lineEdit->setText("160");
-            ui->VBANK_lineEdit->setText("41");
+            //ui->VBANK_lineEdit->setText("41");
         }
     }
     else if (arg1 == "QHD")
@@ -687,7 +681,7 @@ void HK_BIN_Tool::on_Resolution_comboBox_currentTextChanged(const QString &arg1)
         if (ui->H_V_checkBox->isChecked())
         {
             ui->HBANK_lineEdit->setText("160");
-            ui->VBANK_lineEdit->setText("41");
+            //ui->VBANK_lineEdit->setText("41");
         }
     }
     else if (arg1 == "UHD")
@@ -696,8 +690,8 @@ void HK_BIN_Tool::on_Resolution_comboBox_currentTextChanged(const QString &arg1)
         ui->V_lineEdit->setText("2160");
         if (ui->H_V_checkBox->isChecked())
         {
-            ui->HBANK_lineEdit->setText("280");
-            ui->VBANK_lineEdit->setText("45");
+            ui->HBANK_lineEdit->setText("160");
+            //ui->VBANK_lineEdit->setText("41");
         }
     }
     else
@@ -712,23 +706,69 @@ void HK_BIN_Tool::on_Resolution_comboBox_currentTextChanged(const QString &arg1)
 void HK_BIN_Tool::on_calculate_pushButton_clicked()
 {
     ui->Clock_textEdit->clear();
-    int H = ui->H_lineEdit->text().toInt();
-    int V = ui->V_lineEdit->text().toInt();
-    int H_BANK = ui->HBANK_lineEdit->text().toInt();
-    int V_BANK = ui->VBANK_lineEdit->text().toInt();
-    int FPS = ui->FPS_lineEdit->text().toInt();
-    float NUM = ((H + H_BANK) * (V + V_BANK)) * FPS / 1000000.00;
-    ui->BANDWIDTH_lineEdit->setText(QString::number(NUM, 'f', 2));
+    static const int HZ_Array[] = {
+        48, 50, 60, 75, 100, 120, 144, 160, 165, 180,
+        240, 280, 300, 320, 360, 400, 480, 500, 540, 600
+    };
 
-    int HZ_Aarray[] = {50, 60, 75, 100, 120, 144, 165, 180, 240, 280, 300, 320, 360, 400, 480, 500, 540, 600};
-    for (int var = 0; var < 18; ++var)
-    {
-        float NUM_Clock = ((H + H_BANK) * (V + V_BANK)) * HZ_Aarray[var] / 1000000.00;
-        QString HZ_NUM = QString::number(HZ_Aarray[var]);
-        QString NUM_Clock_Str = QString::number(NUM_Clock, 'f', 2);
-        QString ALL = HZ_NUM + "HZ" + " = " + NUM_Clock_Str + "MHz";
-        ui->Clock_textEdit->append(ALL);
+    bool okH, okV, okHB, okFPS;
+    int H      = ui->H_lineEdit->text().toInt(&okH, 10);
+    float V    = ui->V_lineEdit->text().toInt(&okV, 10);
+    int H_BANK = ui->HBANK_lineEdit->text().toInt(&okHB, 10);
+    int FPS    = ui->FPS_lineEdit->text().toInt(&okFPS, 10);
+    if (!okH || !okV || !okHB || !okFPS) {
+        qWarning() << "输入格式错误，请输入有效的整数";
+        return;
     }
+
+    // 判断是否用标准 H/VBank
+    if (ui->H_V_checkBox->checkState())
+    {
+        // 原始 VBank 计算后进一位取整
+        double rawVBank = (23.0 * FPS * V) / (50000 - 23.0 * FPS);
+        int V_BANK = static_cast<int>(std::ceil(rawVBank));
+        ui->VBANK_lineEdit->setText(QString::number(V_BANK)); // 显示取整后的 VBank
+
+        double pixels = double(H + H_BANK) * double(V + V_BANK);
+        double bandwidthMHz = pixels * FPS / 1e6;
+        ui->BANDWIDTH_lineEdit->setText(QString::number(bandwidthMHz, 'f', 2));
+
+        // 遍历所有刷新率，计算并显示对应 VBank 和时钟频率
+        for (int var = 0; var < sizeof(HZ_Array)/sizeof(HZ_Array[0]); ++var)
+        {
+            float refresh = HZ_Array[var];
+            rawVBank = (23.0 * refresh * V) / (50000 - 23.0 * refresh);
+            int curVBank = static_cast<int>(std::ceil(rawVBank));
+            pixels = double(H + H_BANK) * double(V + curVBank);
+            double clkMHz = pixels * refresh / 1e6;
+            ui->Clock_textEdit->append(
+                QString("%1 Hz = %2 MHz    ( VBank = %3 )")
+                    .arg(refresh)
+                    .arg(QString::number(clkMHz, 'f', 2))
+                    .arg(curVBank)
+                );
+        }
+    }
+    else
+    {
+        // 手动输入 VBank
+        int V_BANK = ui->VBANK_lineEdit->text().toInt();
+        double pixels = double(H + H_BANK) * double(V + V_BANK);
+        double bandwidthMHz = pixels * FPS / 1e6;
+        ui->BANDWIDTH_lineEdit->setText(QString::number(bandwidthMHz, 'f', 2));
+
+        for (int hz : HZ_Array)
+        {
+            double clkMHz = pixels * hz / 1e6;
+            ui->Clock_textEdit->append(
+                QString("%1 Hz = %2 MHz    ( VBank = %3 )")
+                    .arg(hz)
+                    .arg(QString::number(clkMHz, 'f', 2))
+                    .arg(V_BANK)
+                );
+        }
+    }
+
 }
 
 void HK_BIN_Tool::on_MA_pushButton_clicked()
@@ -837,4 +877,152 @@ void HK_BIN_Tool::on_Replace_LOGO_pushButton_clicked()
 
 
 }
+
+void HK_BIN_Tool::on_Add_Key_H_pushButton_clicked()
+{
+    QString fileName = QFileDialog::getOpenFileName(this, tr("选择C源文件"), "", tr("C源文件 (*.c)"));
+    if (fileName.isEmpty()) return;
+
+    QFile file(fileName);
+    if (!file.open(QIODevice::ReadOnly | QIODevice::Text))
+    {
+        QMessageBox::warning(this, tr("错误"), tr("无法打开文件: %1").arg(fileName));
+        return;
+    }
+
+    QTextStream in(&file);
+    QString currentCondition;
+    keyConditionData.clear();
+    keyConditionOrder.clear();  // 清空顺序记录
+
+    while (!in.atEnd())
+    {
+        QString line = in.readLine().trimmed();
+
+        // 条件编译语句
+        if (line.startsWith("#if") || line.startsWith("#elif"))
+        {
+            QRegularExpression re(R"#((KEY_MODE\s*==\s*\w+))#");
+            QRegularExpressionMatch match = re.match(line);
+            if (match.hasMatch())
+            {
+                currentCondition = match.captured(1);
+                if (!keyConditionData.contains(currentCondition)) {
+                    keyConditionOrder.append(currentCondition); // 记录顺序
+                    keyConditionData[currentCondition] = QMap<QString, QString>();
+                }
+            }
+        }
+        // 宏定义语句
+        else if (line.startsWith("#define") && !currentCondition.isEmpty())
+        {
+            QStringList parts = line.split(QRegularExpression(R"(\s+)"), Qt::SkipEmptyParts);
+            if (parts.size() >= 3)
+            {
+                QString key = parts[1];
+                QString value = parts[2];
+                keyConditionData[currentCondition][key] = value;
+            }
+        }
+    }
+    file.close();
+
+    // 按顺序添加到 comboBox
+    ui->Key_H_List_comboBox->clear();
+    for (const QString &condition : keyConditionOrder)
+    {
+        ui->Key_H_List_comboBox->addItem(condition);
+    }
+}
+
+
+void HK_BIN_Tool::on_Key_H_List_comboBox_currentTextChanged(const QString &condition)
+{
+    if (!keyConditionData.contains(condition)) return;
+
+    const auto &dataMap = keyConditionData[condition];
+
+    // 设置按键值
+    ui->POWER_KEY->setText(dataMap.value("POWER_KEY", ""));
+    ui->MENU_KEY->setText(dataMap.value("MENU_KEY", ""));
+    ui->EXIT_KEY->setText(dataMap.value("EXIT_KEY", ""));
+    ui->RIGHT_KEY->setText(dataMap.value("RIGHT_KEY", ""));
+    ui->LEFT_KEY->setText(dataMap.value("LEFT_KEY", ""));
+
+    // 设置寄存器值
+    ui->POWER_REG->setText(dataMap.value("POWER_REG", ""));
+    ui->MENU_REG->setText(dataMap.value("MENU_REG", ""));
+    ui->EXIT_REG->setText(dataMap.value("EXIT_REG", ""));
+    ui->RIGHT_REG->setText(dataMap.value("RIGHT_REG", ""));
+    ui->LEFT_REG->setText(dataMap.value("LEFT_REG", ""));
+}
+
+void HK_BIN_Tool::on_Key_Convert_pushButton_clicked()
+{
+    // 定义按键标识与对应控件映射（大小写都处理）
+    QMap<QString, QString> keyNameMap = {
+        {"P", "POWER"},
+        {"M", "MENU"},
+        {"E", "EXIT"},
+        {"R", "RIGHT"},
+        {"L", "LEFT"}
+    };
+
+    // 获取 Key_1 到 Key_5
+    QStringList sourceOrder;
+    for (int i = 1; i <= 5; ++i)
+    {
+        QString value = findChild<QLineEdit*>("Key_" + QString::number(i) + "_lineEdit")->text().trimmed().toUpper();
+        if (keyNameMap.contains(value))
+            sourceOrder << keyNameMap[value];
+        else
+        {
+            QMessageBox::warning(this, "错误", QString("第 %1 个原始按键输入无效（%2）").arg(i).arg(value));
+            return;
+        }
+    }
+
+    // 获取 Key_6 到 Key_10
+    QStringList targetOrder;
+    for (int i = 6; i <= 10; ++i)
+    {
+        QString value = findChild<QLineEdit*>("Key_" + QString::number(i) + "_lineEdit")->text().trimmed().toUpper();
+        if (keyNameMap.contains(value))
+            targetOrder << keyNameMap[value];
+        else
+        {
+            QMessageBox::warning(this, "错误", QString("第 %1 个目标按键输入无效（%2）").arg(i).arg(value));
+            return;
+        }
+    }
+
+    // 读取原始 KEY 值和 REG 值
+    QMap<QString, QString> keyValues, regValues;
+    for (const QString& name : keyNameMap.values())
+    {
+        QLineEdit* keyEdit = findChild<QLineEdit*>(name + "_KEY");
+        QLineEdit* regEdit = findChild<QLineEdit*>(name + "_REG");
+        if (keyEdit && regEdit)
+        {
+            keyValues[name] = keyEdit->text();
+            regValues[name] = regEdit->text();
+        }
+    }
+
+    // 按照新顺序设置对应 KEY 和 REG 值
+    for (int i = 0; i < 5; ++i)
+    {
+        QString from = sourceOrder[i];  // 原始功能
+        QString to = targetOrder[i];    // 目标功能
+
+        QLineEdit* keyEdit = findChild<QLineEdit*>(to + "_KEY");
+        QLineEdit* regEdit = findChild<QLineEdit*>(to + "_REG");
+        if (keyEdit && regEdit)
+        {
+            keyEdit->setText(keyValues[from]);
+            regEdit->setText(regValues[from]);
+        }
+    }
+}
+
 
