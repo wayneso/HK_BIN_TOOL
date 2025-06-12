@@ -18,6 +18,8 @@
 #include <QVector>
 #include <QStringList>
 #include <QDebug>
+#include <QStack>
+
 
 /*背光电流定位结构体*/
 uchar BacklightDef_Data_Buffer[6] = {0};
@@ -79,7 +81,7 @@ Bin_Data_String HKC_TEMP_COLOR_DataDef = {
     18                   // 输出缓冲区大小
 };
 /*LOGO基础定义数据定位结构体*/
-uchar LOGO_BASE_Default_Buffer[7] = {0};
+uchar LOGO_BASE_Default_Buffer[11] = {0};
 const char *LOGO_BASE_Default_string = "HK_LOGO_BASE_Default Flag";
 int LOGO_BASE_Default_string_len = STRLEN_INCL_NULL(LOGO_BASE_Default_string);
 Bin_Data_String LOGO_BASE_Default_DataDef = {
@@ -87,7 +89,31 @@ Bin_Data_String LOGO_BASE_Default_DataDef = {
     0,                      // 字符串初始位置
     LOGO_BASE_Default_string_len, // 偏移量
     LOGO_BASE_Default_Buffer,       // 输出缓冲区
-    7                    // 输出缓冲区大小
+    11                    // 输出缓冲区大小
+};
+
+/*LOGO色盘定义数据定位结构体*/
+uchar LOGO_Palette_Buffer[48] = {0};
+const char *LOGO_Palette_string = "HK_LOGO_Palette Flag";
+int LOGO_Palette_string_len = STRLEN_INCL_NULL(LOGO_Palette_string);
+Bin_Data_String LOGO_Palette_DataDef = {
+    LOGO_Palette_string,     // 目标字符串
+    0,                      // 字符串初始位置
+    LOGO_Palette_string_len, // 偏移量
+    LOGO_Palette_Buffer,       // 输出缓冲区
+    48                    // 输出缓冲区大小
+};
+
+/*LOGO数据定位结构体*/
+uchar LOGO_Data_Buffer[1024 * 8] = {0};
+const char *LOGO_target_string = "HK_LOGO_Data Flag";
+int LOGO_target_string_len = STRLEN_INCL_NULL(LOGO_target_string);
+Bin_Data_String LOGO_DataDef = {
+    LOGO_target_string,     // 目标字符串
+    0,                      // 字符串初始位置
+    LOGO_target_string_len, // 偏移量
+    LOGO_Data_Buffer,       // 输出缓冲区
+    1024 * 8                    // 输出缓冲区大小
 };
 
 /*LOGO_INDEX数据定位结构体*/
@@ -101,17 +127,7 @@ Bin_Data_String LOGO_INDEX_DataDef = {
     LOGO_INDEX_Data_Buffer,       // 输出缓冲区
     1024                          // 输出缓冲区大小
 };
-/*LOGO_VLC数据定位结构体*/
-uchar LOGO_Data_Buffer[2048] = {0};
-const char *LOGO_target_string = "HK_LOGO0_VLC_DATA Flag";
-int LOGO_target_string_len = STRLEN_INCL_NULL(LOGO_target_string);
-Bin_Data_String LOGO_DataDef = {
-    LOGO_target_string,     // 目标字符串
-    0,                      // 字符串初始位置
-    LOGO_target_string_len, // 偏移量
-    LOGO_Data_Buffer,       // 输出缓冲区
-    2048                    // 输出缓冲区大小
-};
+
 
 
 uchar LOGO_Data_END_Buffer[4096] = {0};
@@ -246,3 +262,313 @@ bool Add_LOGO_DATA(const QString &filePath, QVector<int> &indexArray, QVector<in
     return true;
 }
 
+
+QMap<QString, QString> parseHeaderMacros(const QString &filePath,
+                                         const QStringList &activeDefines,
+                                         const QStringList &targetMacros)
+{
+    QMap<QString, QString> macros;
+
+    QFile file(filePath);
+    if (!file.open(QIODevice::ReadOnly | QIODevice::Text))
+    {
+        qDebug() << "无法打开文件:" << filePath;
+        return macros;
+    }
+
+    QTextStream in(&file);
+    QStringList lines;
+    while (!in.atEnd())
+    {
+        lines << in.readLine();
+    }
+    file.close();
+
+    QStack<bool> ifStack;
+    bool currentActive = true;
+
+    for (const QString &line : lines)
+    {
+        QString trimmed = line.trimmed();
+
+        if (trimmed.startsWith("#if"))
+        {
+            QRegularExpression re(R"#(#if\s*\(\s*(\S+)\s*==\s*(\S+)\s*\))#");
+            QRegularExpressionMatch match = re.match(trimmed);
+
+            ifStack.push(currentActive);
+
+            if (match.hasMatch())
+            {
+                QString left = match.captured(1).trimmed();
+                QString right = match.captured(2).trimmed();
+                bool matchFound = activeDefines.contains(left + "=" + right);
+                currentActive = currentActive && matchFound;
+            }
+            else
+            {
+                currentActive = false;
+            }
+        }
+        else if (trimmed.startsWith("#else"))
+        {
+            if (!ifStack.isEmpty())
+            {
+                bool parentActive = ifStack.top();
+                currentActive = parentActive && !currentActive;
+            }
+        }
+        else if (trimmed.startsWith("#endif"))
+        {
+            if (!ifStack.isEmpty())
+            {
+                currentActive = ifStack.pop();
+            }
+        }
+        else if (currentActive && trimmed.startsWith("#define"))
+        {
+            QStringList parts = trimmed.split(QRegularExpression("\\s+"), Qt::SkipEmptyParts);
+            if (parts.size() >= 3)
+            {
+                QString macroName = parts[1];
+                QString macroValue = parts[2];
+
+                if (targetMacros.contains(macroName))
+                {
+                    macros[macroName] = macroValue;
+                }
+            }
+        }
+    }
+
+    return macros;
+}
+
+QVector<quint8> extractDrawLogoArray(const QString &filePath, const QStringList &activeDefines)
+{
+    QVector<quint8> logoData;
+
+    QFile file(filePath);
+    if (!file.open(QIODevice::ReadOnly | QIODevice::Text))
+    {
+        qDebug() << "无法打开文件:" << filePath;
+        return logoData;
+    }
+
+    QTextStream in(&file);
+    QStringList lines;
+    while (!in.atEnd())
+    {
+        lines << in.readLine();
+    }
+    file.close();
+
+    QStack<bool> ifStack;
+    bool currentActive = true;
+    bool insideArray = false;
+
+    for (const QString &lineRaw : lines)
+    {
+        QString line = lineRaw.trimmed();
+
+        // 条件判断开始
+        if (line.startsWith("#if"))
+        {
+            ifStack.push(currentActive);
+
+            QRegularExpression re(R"#(#if\s*\((.+)\))#");
+            QRegularExpressionMatch match = re.match(line);
+            if (match.hasMatch())
+            {
+                QString condition = match.captured(1).trimmed();
+                QStringList orConditions = condition.split("||", Qt::SkipEmptyParts);
+
+                bool matchFound = false;
+                for (QString cond : orConditions)
+                {
+                    QRegularExpression singleRe(R"#((\S+)\s*==\s*(\S+))#");
+                    QRegularExpressionMatch m = singleRe.match(cond.trimmed());
+                    if (m.hasMatch())
+                    {
+                        QString key = m.captured(1).trimmed();
+                        QString val = m.captured(2).trimmed();
+                        if (activeDefines.contains(key + "=" + val))
+                        {
+                            matchFound = true;
+                            break;
+                        }
+                    }
+                }
+
+                currentActive = currentActive && matchFound;
+            }
+            else
+            {
+                currentActive = false;
+            }
+        }
+        else if (line.startsWith("#else"))
+        {
+            if (!ifStack.isEmpty())
+            {
+                bool parent = ifStack.top();
+                currentActive = parent && !currentActive;
+            }
+        }
+        else if (line.startsWith("#endif"))
+        {
+            if (!ifStack.isEmpty())
+            {
+                currentActive = ifStack.pop();
+            }
+        }
+        else if (currentActive)
+        {
+            // 开始进入数组
+            if (!insideArray && line.contains("BYTE") && line.contains("tDRAW_LOGO") && line.contains("["))
+            {
+                insideArray = true;
+                continue;
+            }
+
+            // 提取数组内容
+            if (insideArray)
+            {
+                if (line.contains("};"))
+                {
+                    break;
+                }
+
+                QString clean = line;
+                clean.remove(QRegularExpression("//.*"));  // 去除注释
+                clean.remove("{");
+                clean.remove("}");
+                clean.replace(",", " ");
+                QStringList tokens = clean.split(QRegularExpression("\\s+"), Qt::SkipEmptyParts);
+
+                for (const QString &tok : tokens)
+                {
+                    bool ok;
+                    int val = tok.trimmed().toInt(&ok, 16);
+                    if (ok)
+                        logoData.append(static_cast<quint8>(val));
+                }
+            }
+        }
+    }
+
+    return logoData;
+}
+
+QVector<quint8> extractByteArray(const QString &filePath,
+                                 const QStringList &activeDefines,
+                                 const QString &arrayName)
+{
+    QVector<quint8> data;
+    QFile file(filePath);
+    if (!file.open(QIODevice::ReadOnly | QIODevice::Text))
+    {
+        qDebug() << "无法打开文件:" << filePath;
+        return data;
+    }
+
+    QTextStream in(&file);
+    QStringList lines;
+    while (!in.atEnd())
+    {
+        lines << in.readLine();
+    }
+    file.close();
+
+    QStack<bool> ifStack;
+    bool currentActive = true;
+    bool insideArray = false;
+
+    for (const QString &lineRaw : lines)
+    {
+        QString line = lineRaw.trimmed();
+
+        // 条件判断处理
+        if (line.startsWith("#if"))
+        {
+            ifStack.push(currentActive);
+            QRegularExpression re(R"#(#if\s*\((.+)\))#");
+            QRegularExpressionMatch match = re.match(line);
+            if (match.hasMatch())
+            {
+                QString condition = match.captured(1).trimmed();
+                QStringList orConditions = condition.split("||", Qt::SkipEmptyParts);
+
+                bool matchFound = false;
+                for (QString cond : orConditions)
+                {
+                    QRegularExpression condRe(R"#((\S+)\s*==\s*(\S+))#");
+                    QRegularExpressionMatch m = condRe.match(cond.trimmed());
+                    if (m.hasMatch())
+                    {
+                        QString key = m.captured(1).trimmed();
+                        QString val = m.captured(2).trimmed();
+                        if (activeDefines.contains(key + "=" + val))
+                        {
+                            matchFound = true;
+                            break;
+                        }
+                    }
+                }
+                currentActive = currentActive && matchFound;
+            }
+            else
+            {
+                currentActive = false;
+            }
+        }
+        else if (line.startsWith("#else"))
+        {
+            if (!ifStack.isEmpty())
+            {
+                bool parent = ifStack.top();
+                currentActive = parent && !currentActive;
+            }
+        }
+        else if (line.startsWith("#endif"))
+        {
+            if (!ifStack.isEmpty())
+            {
+                currentActive = ifStack.pop();
+            }
+        }
+        else if (currentActive)
+        {
+            if (!insideArray && line.contains(arrayName) && line.contains("BYTE") && line.contains("["))
+            {
+                insideArray = true;
+                continue;
+            }
+
+            if (insideArray)
+            {
+                if (line.contains("};"))
+                {
+                    break;
+                }
+
+                QString clean = line;
+                clean.remove(QRegularExpression("//.*"));
+                clean.remove("{");
+                clean.remove("}");
+                clean.replace(",", " ");
+                QStringList tokens = clean.split(QRegularExpression("\\s+"), Qt::SkipEmptyParts);
+
+                for (const QString &tok : tokens)
+                {
+                    bool ok;
+                    int val = tok.toInt(&ok, 16);
+                    if (ok)
+                        data.append(static_cast<quint8>(val));
+                }
+            }
+        }
+    }
+
+    return data;
+}

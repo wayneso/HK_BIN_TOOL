@@ -17,6 +17,8 @@
 #include <QDateTime>
 #include <QFileDialog>
 #include <QMessageBox>
+#include <QRegularExpression>
+#include <QStack>
 
 QVector<EDID> Bin_EDID = {};
 QVector<EDID_Info> Bin_EDID_Info = {};
@@ -29,6 +31,8 @@ QVector<int> indexArray;
 QVector<int> vlcArray;
 QMap<QString, QMap<QString, QString>> keyConditionData;
 QStringList keyConditionOrder;  // 按照出现顺序记录条件
+QMap<QString, QString> Logo_Base_Default;
+QList<QString> Logo_Base_Default_valueList;
 HK_BIN_Tool::HK_BIN_Tool(QWidget *parent) : QWidget(parent), ui(new Ui::HK_BIN_Tool)
 {
     ui->setupUi(this);
@@ -155,17 +159,14 @@ void HK_BIN_Tool::on_Add_Bin_pushButton_clicked()
         ui->FUNC_textEdit->append("不支持修改按键!");
 
     State = Find_TargetString_InBinFile(Bin_Buffer, Osd_DataDef);
-    if(State == true)
-    {
-        bool ok;
-        for (int var = 0; var < 10; ++var) {
-            qDebug()<< Osd_DataDef.outputBuffer[var];
-        }
+    // if(State == true)
+    // {
+    //     bool ok;
+    //     for (int var = 0; var < 10; ++var) {
+    //         qDebug()<< Osd_DataDef.outputBuffer[var];
+    //     }
 
-    }
-
-
-
+    // }
 
     State = Find_TargetString_InBinFile(Bin_Buffer, HKC_Osd_DataDef);
     if(State == true)
@@ -203,20 +204,36 @@ void HK_BIN_Tool::on_Add_Bin_pushButton_clicked()
     State = Find_TargetString_InBinFile(Bin_Buffer, LOGO_BASE_Default_DataDef);
     if(State == true)
     {
-        ui->_LOGO_FG_COLOR_lineEdit->setText(QString::number(LOGO_BASE_Default_DataDef.outputBuffer[0]));
-        ui->_LOGO_BG_COLOR_lineEdit->setText(QString::number(LOGO_BASE_Default_DataDef.outputBuffer[1]));
-        ui->_LOGO_COL_lineEdit->setText(QString::number(LOGO_BASE_Default_DataDef.outputBuffer[2]));
-        ui->_LOGO_ROW_lineEdit->setText(QString::number(LOGO_BASE_Default_DataDef.outputBuffer[3]));
-        ui->_LOGO_BG_RED_lineEdit->setText(QString::number(LOGO_BASE_Default_DataDef.outputBuffer[4]));
-        ui->_LOGO_BG_GREEN_lineEdit->setText(QString::number(LOGO_BASE_Default_DataDef.outputBuffer[5]));
-        ui->_LOGO_BG_BLUE_lineEdit->setText(QString::number(LOGO_BASE_Default_DataDef.outputBuffer[6]));
+        qDebug() << "LOGO_BASE_Default_DataDef";
+        for (int var = 0; var < LOGO_BASE_Default_DataDef.outputBufferSize; ++var) {
+            qDebug() << LOGO_BASE_Default_DataDef.outputBuffer[var];
+        }
         ui->LOGO_MESSAGE_textEdit->append("支持修改LOGO!");
     }
     else
         ui->LOGO_MESSAGE_textEdit->append("不支持修改LOGO!");
 
-    State = Find_TargetString_InBinFile(Bin_Buffer, LOGO_INDEX_DataDef);
+    State = Find_TargetString_InBinFile(Bin_Buffer, LOGO_Palette_DataDef);
+    if(State == true)
+    {
+
+        ui->LOGO_MESSAGE_textEdit->append("支持修改LOGO色盘!");
+    }
+    else
+        ui->LOGO_MESSAGE_textEdit->append("支持修改LOGO色盘!");
+
     State = Find_TargetString_InBinFile(Bin_Buffer, LOGO_DataDef);
+    if(State == true)
+    {
+        // for (int var = 4900; var < 4915; ++var) {
+        //     qDebug() << LOGO_DataDef.outputBuffer[var];
+        // }
+        ui->LOGO_MESSAGE_textEdit->append("支持修改LOGO_Data!");
+    }
+    else
+        ui->LOGO_MESSAGE_textEdit->append("支持修改LOGO_Data!");
+
+    //State = Find_TargetString_InBinFile(Bin_Buffer, LOGO_INDEX_DataDef);
 
     /******************************LOGO******************************/
 
@@ -659,7 +676,7 @@ void HK_BIN_Tool::on_Save_Edid_pushButton_clicked()
 
 void HK_BIN_Tool::on_checkBox_clicked(bool checked)
 {
-        ui->HBANK_lineEdit->setText("160");
+    ui->HBANK_lineEdit->setText("160");
 }
 
 void HK_BIN_Tool::on_Resolution_comboBox_currentTextChanged(const QString &arg1)
@@ -822,61 +839,7 @@ void HK_BIN_Tool::on_LOGO_SIZE_COL_ROW_pushButton_clicked()
 }
 
 
-void HK_BIN_Tool::on_Add_LOGO_Data_pushButton_clicked()
-{
-    // 选择 C 文件
-    QString filePath = QFileDialog::getOpenFileName(
-        this,
-        tr("选择 C 文件"),
-        QString(),
-        tr("C 文件 (*.c);;所有文件 (*)")
-        );
-    if (filePath.isEmpty()) return;
 
-
-    if (!Add_LOGO_DATA(filePath, indexArray, vlcArray)) {
-        return; // 读取失败
-    }
-
-    // 输出结果
-    qDebug() << tr("Index:") << indexArray;
-    qDebug() << tr("VLC:") << vlcArray;
-}
-
-
-void HK_BIN_Tool::on_Replace_LOGO_pushButton_clicked()
-{
-    bool State = false;
-    State = Find_TargetString_InBinFile(Bin_Buffer, LOGO_INDEX_DataDef);
-    if(State == true)
-    {
-        for (int var = 0; var < LOGO_INDEX_DataDef.outputBufferSize; ++var)
-        {
-            LOGO_INDEX_DataDef.outputBuffer[var] = 0;
-        }
-        for (int var = 0; var < LOGO_INDEX_DataDef.outputBufferSize; ++var)
-        {
-            LOGO_INDEX_DataDef.outputBuffer[var] = indexArray[var];
-        }
-        State = Write_TargetString_InBinFile(Bin_Buffer, LOGO_INDEX_DataDef);
-    }
-
-    State = Find_TargetString_InBinFile(Bin_Buffer, LOGO_DataDef);
-    if(State == true)
-    {
-        for (int var = 0; var < LOGO_DataDef.outputBufferSize; ++var)
-        {
-            LOGO_DataDef.outputBuffer[var] = 0;
-        }
-        for (int var = 0; var < LOGO_DataDef.outputBufferSize; ++var)
-        {
-            LOGO_DataDef.outputBuffer[var] = vlcArray[var];
-        }
-        State = Write_TargetString_InBinFile(Bin_Buffer, LOGO_DataDef);
-    }
-
-
-}
 
 void HK_BIN_Tool::on_Add_Key_H_pushButton_clicked()
 {
@@ -1025,4 +988,163 @@ void HK_BIN_Tool::on_Key_Convert_pushButton_clicked()
     }
 }
 
+void HK_BIN_Tool::on_Add_LOGO_Define_pushButton_clicked()
+{
+    QString filePath = QFileDialog::getOpenFileName(this, "选择头文件", "", "Header Files (*.h);;All Files (*)");
+    if (filePath.isEmpty())
+    {
+        qDebug() << "用户取消选择";
+        return;
+    }
 
+    QStringList activeDefines;
+    QString osdFont = ui->_OSD_EXTEND_256_2BIT_FONTS_lineEdit->text().trimmed();
+    QString osdGen  = ui->_OSD_REG_MAPPING_GEN_lineEdit->text().trimmed();
+    if (!osdFont.isEmpty())
+        activeDefines << "_OSD_EXTEND_256_2BIT_FONTS=" + osdFont;
+
+    if (!osdGen.isEmpty())
+        activeDefines << "_OSD_REG_MAPPING_GEN=" + osdGen;
+    // 要提取的宏列表（由你自定义）
+    QStringList targetMacros = {
+        "_OSD_LOGO_2BIT_OFFSET",
+        "_OSD_LOGO_4BIT_OFFSET",
+        "_OSD_LOGOA_WIDTH",
+        "_OSD_LOGOA_HEIGHT",
+        "_OSD_LOGOB_WIDTH",
+        "_OSD_LOGOB_HEIGHT",
+        "_OSD_LOGOA_ADDRESS_ROWCOMMAND",
+        "_OSD_LOGOA_ADDRESS_CHARCOMMAND",
+        "_OSD_LOGO_FONT_BASE_ADDRESS",
+    };
+
+    // 调用解析函数
+    Logo_Base_Default = parseHeaderMacros(filePath, activeDefines, targetMacros);
+
+    QString result;
+    for (const QString &key : targetMacros)
+    {
+        QString value = Logo_Base_Default.value(key, "[未找到]");
+        QString processedValue = value;
+
+        bool ok = false;
+        int numericValue = value.startsWith("0x", Qt::CaseInsensitive)
+                               ? value.toInt(&ok, 16)
+                               : value.toInt(&ok, 10);
+
+        if (ok)
+        {
+            if (key.contains("WIDTH"))
+            {
+                numericValue /= 12;
+            }
+            else if (key.contains("HEIGHT"))
+            {
+                numericValue /= 18;
+            }
+            processedValue = QString::number(numericValue);
+        }
+        else
+        {
+            processedValue = "[非法数值]";
+        }
+
+        result += key + " = " + processedValue + "\n";
+        qDebug() << key << "=" << processedValue;
+        Logo_Base_Default_valueList.append(processedValue);
+    }
+    ui->LOGO_MESSAGE_textEdit->append(result);
+}
+
+void HK_BIN_Tool::on_Add_LOGO_Palette_pushButton_clicked()
+{
+    QString filePath = QFileDialog::getOpenFileName(this, "选择 Logo 调色板头文件", "", "Header Files (*.h);;All Files (*)");
+    if (filePath.isEmpty())
+        return;
+
+    QStringList activeDefines;
+    QString osdFont = ui->_OSD_EXTEND_256_2BIT_FONTS_lineEdit->text().trimmed();
+
+    if (!osdFont.isEmpty())
+        activeDefines << "_OSD_EXTEND_256_2BIT_FONTS=" + osdFont;
+
+    QVector<quint8> paletteData = extractByteArray(filePath, activeDefines, "tPALETTE_LOGO");
+
+    qDebug() << "调色板字节总数:" << paletteData.size();
+
+    // 构造显示内容
+    QString result = QString("调色板字节总数: %1\n\n").arg(paletteData.size());
+    for (int i = 0; i < paletteData.size(); ++i)
+    {
+        result += QString("0x%1 ").arg(paletteData[i], 2, 16, QLatin1Char('0')).toUpper();
+        if ((i + 1) % 3 == 0) result += "\n"; // 每3字节换行
+    }
+
+    ui->LOGO_MESSAGE_textEdit->append(result);
+}
+
+
+void HK_BIN_Tool::on_Add_LOGO_Draw_pushButton_clicked()
+{
+    QString filePath = QFileDialog::getOpenFileName(this, "选择 Logo Draw头文件", "", "Header Files (*.h);;All Files (*)");
+    if (filePath.isEmpty())
+    {
+        qDebug() << "用户取消选择";
+        return;
+    }
+
+    // 设置条件宏定义
+    QStringList activeDefines;
+    QString osdFont = ui->_OSD_EXTEND_256_2BIT_FONTS_lineEdit->text().trimmed();
+    QString osdGen  = ui->_OSD_REG_MAPPING_GEN_lineEdit->text().trimmed();
+
+    if (!osdFont.isEmpty())
+        activeDefines << "_OSD_EXTEND_256_2BIT_FONTS=" + osdFont;
+
+    if (!osdGen.isEmpty())
+        activeDefines << "_OSD_REG_MAPPING_GEN=" + osdGen;
+
+    QVector<quint8> logoData = extractDrawLogoArray(filePath, activeDefines);
+
+    qDebug() << "提取到的 LOGO 数据字节数:" << logoData.size();
+    QString result = QString("提取到的 LOGO 数据字节数: %1\n\n").arg(logoData.size());
+    ui->LOGO_MESSAGE_textEdit->append(result);
+
+}
+
+void HK_BIN_Tool::on_Replace_LOGO_pushButton_clicked()
+{
+    bool State = false;
+
+    State = Find_TargetString_InBinFile(Bin_Buffer, LOGO_BASE_Default_DataDef);
+    if(State == true)
+    {
+        // 将宏值写入 uchar 类型的 outputBuffer
+        for (int i = 0; i < Logo_Base_Default_valueList.size() && i < LOGO_BASE_Default_DataDef.outputBufferSize; ++i)
+        {
+            bool ok = false;
+            uchar val = Logo_Base_Default_valueList[i].startsWith("0x", Qt::CaseInsensitive)
+                           ? Logo_Base_Default_valueList[i].toUInt(&ok, 16)
+                           : Logo_Base_Default_valueList[i].toUInt(&ok, 10);
+
+            if (ok)
+                LOGO_BASE_Default_DataDef.outputBuffer[i] = static_cast<uchar>(val);
+            else
+                LOGO_BASE_Default_DataDef.outputBuffer[i] = 0xFF;  // 转换失败时设置默认值
+        }
+        Write_TargetString_InBinFile(Bin_Buffer, LOGO_BASE_Default_DataDef);
+        ui->LOGO_MESSAGE_textEdit->append("Successful!");
+
+    }
+    else
+        ui->LOGO_MESSAGE_textEdit->append("false!");
+
+    State = Find_TargetString_InBinFile(Bin_Buffer, LOGO_DataDef);
+    if(State == true)
+    {
+
+        //State = Write_TargetString_InBinFile(Bin_Buffer, LOGO_DataDef);
+    }
+
+
+}

@@ -52,8 +52,6 @@ private slots:
 
     void on_LOGO_SIZE_COL_ROW_pushButton_clicked();
 
-    void on_Add_LOGO_Data_pushButton_clicked();
-
     void on_Replace_LOGO_pushButton_clicked();
 
     void on_Add_Key_H_pushButton_clicked();
@@ -61,6 +59,12 @@ private slots:
     void on_Key_H_List_comboBox_currentTextChanged(const QString &arg1);
 
     void on_Key_Convert_pushButton_clicked();
+
+    void on_Add_LOGO_Define_pushButton_clicked();
+
+    void on_Add_LOGO_Palette_pushButton_clicked();
+
+    void on_Add_LOGO_Draw_pushButton_clicked();
 
 private:
     Ui::HK_BIN_Tool *ui;

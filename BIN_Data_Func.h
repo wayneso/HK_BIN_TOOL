@@ -50,6 +50,8 @@ extern Bin_Data_String HKC_Osd_DataDef;
 extern Bin_Data_String HKC_TEMP_COLOR_DataDef;
 
 extern Bin_Data_String LOGO_BASE_Default_DataDef;
+extern Bin_Data_String LOGO_Palette_DataDef;
+
 extern Bin_Data_String LOGO_INDEX_DataDef;
 extern Bin_Data_String LOGO_INDEX_END_DataDef;
 extern Bin_Data_String LOGO_DataDef;
@@ -59,6 +61,11 @@ extern Bin_Data_String LOGO1_DataDef;
 bool Find_TargetString_InBinFile(const QByteArray Bin_Buffer, Bin_Data_String &Bin_Data);
 bool Write_TargetString_InBinFile(QByteArray &Bin_Buffer, Bin_Data_String &Bin_Data);
 bool Add_LOGO_DATA(const QString &filePath, QVector<int> &indexArray, QVector<int> &vlcArray);
-
-
+QMap<QString, QString> parseHeaderMacros(const QString &filePath,
+                                         const QStringList &activeDefines,
+                                         const QStringList &targetMacros);
+QVector<quint8> extractDrawLogoArray(const QString &filePath, const QStringList &activeDefines);
+QVector<quint8> extractByteArray(const QString &filePath,
+                                 const QStringList &activeDefines,
+                                 const QString &arrayName);
 #endif

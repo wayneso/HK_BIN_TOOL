@@ -82,7 +82,7 @@
      </rect>
     </property>
     <property name="currentIndex">
-     <number>1</number>
+     <number>2</number>
     </property>
     <widget class="QWidget" name="EDID">
      <attribute name="title">
@@ -1794,10 +1794,10 @@
      <widget class="QTextEdit" name="LOGO_MESSAGE_textEdit">
       <property name="geometry">
        <rect>
-        <x>660</x>
+        <x>640</x>
         <y>10</y>
-        <width>261</width>
-        <height>351</height>
+        <width>311</width>
+        <height>411</height>
        </rect>
       </property>
      </widget>
@@ -2067,30 +2067,82 @@
        <string>_LOGO_FG_COLOR1</string>
       </property>
      </widget>
-     <widget class="QPushButton" name="Add_LOGO_Data_pushButton">
+     <widget class="QPushButton" name="Add_LOGO_Define_pushButton">
       <property name="geometry">
        <rect>
-        <x>660</x>
-        <y>370</y>
-        <width>121</width>
+        <x>380</x>
+        <y>80</y>
+        <width>241</width>
         <height>31</height>
        </rect>
       </property>
       <property name="text">
-       <string>加载logo文件</string>
+       <string>加载DefaultOsdLogoDefine.h</string>
       </property>
      </widget>
      <widget class="QPushButton" name="Replace_LOGO_pushButton">
       <property name="geometry">
        <rect>
-        <x>800</x>
-        <y>370</y>
-        <width>121</width>
+        <x>380</x>
+        <y>200</y>
+        <width>241</width>
         <height>31</height>
        </rect>
       </property>
       <property name="text">
        <string>替换logo</string>
+      </property>
+     </widget>
+     <widget class="QPushButton" name="Add_LOGO_Palette_pushButton">
+      <property name="geometry">
+       <rect>
+        <x>380</x>
+        <y>120</y>
+        <width>241</width>
+        <height>31</height>
+       </rect>
+      </property>
+      <property name="text">
+       <string>加载DefaultOsdLogoPalette.h</string>
+      </property>
+     </widget>
+     <widget class="QPushButton" name="Add_LOGO_Draw_pushButton">
+      <property name="geometry">
+       <rect>
+        <x>380</x>
+        <y>160</y>
+        <width>241</width>
+        <height>31</height>
+       </rect>
+      </property>
+      <property name="text">
+       <string>加载DefaultOsdLogoDraw.h</string>
+      </property>
+     </widget>
+     <widget class="QLineEdit" name="_OSD_EXTEND_256_2BIT_FONTS_lineEdit">
+      <property name="geometry">
+       <rect>
+        <x>380</x>
+        <y>10</y>
+        <width>241</width>
+        <height>20</height>
+       </rect>
+      </property>
+      <property name="text">
+       <string>_ENABLE</string>
+      </property>
+     </widget>
+     <widget class="QLineEdit" name="_OSD_REG_MAPPING_GEN_lineEdit">
+      <property name="geometry">
+       <rect>
+        <x>380</x>
+        <y>50</y>
+        <width>241</width>
+        <height>20</height>
+       </rect>
+      </property>
+      <property name="text">
+       <string>_USER_OSD_GEN_2</string>
       </property>
      </widget>
     </widget>
