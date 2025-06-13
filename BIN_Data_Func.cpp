@@ -89,7 +89,7 @@ Bin_Data_String LOGO_BASE_Default_DataDef = {
     0,                      // 字符串初始位置
     LOGO_BASE_Default_string_len, // 偏移量
     LOGO_BASE_Default_Buffer,       // 输出缓冲区
-    11                    // 输出缓冲区大小
+    11                   // 输出缓冲区大小
 };
 
 /*LOGO色盘定义数据定位结构体*/
@@ -105,7 +105,7 @@ Bin_Data_String LOGO_Palette_DataDef = {
 };
 
 /*LOGO数据定位结构体*/
-uchar LOGO_Data_Buffer[1024 * 8] = {0};
+uchar LOGO_Data_Buffer[1024 * 6] = {0};
 const char *LOGO_target_string = "HK_LOGO_Data Flag";
 int LOGO_target_string_len = STRLEN_INCL_NULL(LOGO_target_string);
 Bin_Data_String LOGO_DataDef = {
@@ -113,7 +113,7 @@ Bin_Data_String LOGO_DataDef = {
     0,                      // 字符串初始位置
     LOGO_target_string_len, // 偏移量
     LOGO_Data_Buffer,       // 输出缓冲区
-    1024 * 8                    // 输出缓冲区大小
+    1024 * 6                    // 输出缓冲区大小
 };
 
 /*LOGO_INDEX数据定位结构体*/
@@ -171,6 +171,7 @@ bool Find_TargetString_InBinFile(const QByteArray Bin_Buffer, Bin_Data_String &B
     if (Bin_Data.positions != -1)
     {
         qDebug() << "找到目标字符串, 起始位置:" << Bin_Data.positions;
+        qDebug() << "目标字符串:" << Bin_Data.target_string;
         // 拷贝目标字符串到输出缓冲区
         std::memcpy(Bin_Data.outputBuffer,
                     Bin_Buffer.mid(Bin_Data.positions + Bin_Data.offset, Bin_Data.outputBufferSize).data(),
