@@ -2097,7 +2097,7 @@
       <property name="geometry">
        <rect>
         <x>380</x>
-        <y>120</y>
+        <y>160</y>
         <width>241</width>
         <height>31</height>
        </rect>
@@ -2110,7 +2110,7 @@
       <property name="geometry">
        <rect>
         <x>380</x>
-        <y>160</y>
+        <y>120</y>
         <width>241</width>
         <height>31</height>
        </rect>
@@ -2143,6 +2143,19 @@
       </property>
       <property name="text">
        <string>_USER_OSD_GEN_2</string>
+      </property>
+     </widget>
+     <widget class="QCheckBox" name="RTD2383_Project_checkBox">
+      <property name="geometry">
+       <rect>
+        <x>380</x>
+        <y>240</y>
+        <width>241</width>
+        <height>21</height>
+       </rect>
+      </property>
+      <property name="text">
+       <string>2383/2281代码工程需要勾选</string>
       </property>
      </widget>
     </widget>

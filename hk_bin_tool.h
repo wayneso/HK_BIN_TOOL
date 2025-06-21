@@ -2,6 +2,8 @@
 #define HK_BIN_TOOL_H
 
 #include <QWidget>
+#include <QLineEdit>
+#include <QTextEdit>
 #include "BIN_Data_Func.h"
 
 QT_BEGIN_NAMESPACE
@@ -18,7 +20,18 @@ public:
     HK_BIN_Tool(QWidget *parent = nullptr);
     ~HK_BIN_Tool();
 
+
+
 private slots:
+    bool BIN_Find_Func(const QByteArray &bin,
+                                    Bin_Data_String &Bin_Data_String,
+                                    QLineEdit *edit,
+                                    int index,
+                                    QTextEdit *msgEdit,
+                                    const QString &successMsg,
+                                    const QString &failMsg,
+                                    int base);
+
     void on_Add_Bin_pushButton_clicked();
 
     void on_Save_Bin_pushButton_clicked();
@@ -41,8 +54,6 @@ private slots:
     void on_Add_Edid_pushButton_clicked();
 
     void on_Save_Edid_pushButton_clicked();
-
-    void on_checkBox_clicked(bool checked);
 
     void on_Resolution_comboBox_currentTextChanged(const QString &arg1);
 

@@ -49,7 +49,11 @@ extern Bin_Data_String Osd_DataDef;
 extern Bin_Data_String HKC_Osd_DataDef;
 extern Bin_Data_String HKC_TEMP_COLOR_DataDef;
 
+extern Bin_Data_String LOGO_2383_BASE_Default_DataDef;
+extern Bin_Data_String LOGO_2383_BASE_Default1_DataDef;
 extern Bin_Data_String LOGO_BASE_Default_DataDef;
+
+
 extern Bin_Data_String LOGO_Palette_DataDef;
 
 extern Bin_Data_String LOGO_INDEX_DataDef;

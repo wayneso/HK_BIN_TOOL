@@ -27,14 +27,13 @@ QByteArray Add_EDID_Buffer = {};
 QString Bin_Filer = {};
 QString Add_EDID_fileName = {};
 int EDID_index = 0;
-QVector<int> indexArray;
-QVector<int> vlcArray;
 QMap<QString, QMap<QString, QString>> keyConditionData;
 QStringList keyConditionOrder;  // 按照出现顺序记录条件
 QMap<QString, QString> Logo_Base_Default;
 QList<QString> Logo_Base_Default_valueList;
 QVector<quint8> Logo_paletteData;
 QVector<quint8> Logo_Data;
+
 HK_BIN_Tool::HK_BIN_Tool(QWidget *parent) : QWidget(parent), ui(new Ui::HK_BIN_Tool)
 {
     ui->setupUi(this);
@@ -62,6 +61,7 @@ HK_BIN_Tool::HK_BIN_Tool(QWidget *parent) : QWidget(parent), ui(new Ui::HK_BIN_T
 
     ui->Resolution_comboBox->addItem("FHD");
     ui->Resolution_comboBox->addItem("QHD");
+    ui->Resolution_comboBox->addItem("WQHD");
     ui->Resolution_comboBox->addItem("UHD");
     ui->Resolution_comboBox->addItem("特殊分辨率");
 
@@ -72,6 +72,35 @@ HK_BIN_Tool::~HK_BIN_Tool()
 {
     delete ui;
 }
+bool HK_BIN_Tool::BIN_Find_Func(const QByteArray &bin,
+                                Bin_Data_String &Bin_Data_String,
+                                QLineEdit *edit,
+                                int index,
+                                QTextEdit *msgEdit,
+                                const QString &successMsg,
+                                const QString &failMsg,
+                                int base)
+{
+    if (Find_TargetString_InBinFile(bin, Bin_Data_String))
+    {
+        if (edit && index < Bin_Data_String.outputBufferSize)
+            edit->setText(QString::number(static_cast<int>(Bin_Data_String.outputBuffer[index]), base).toUpper());
+
+        if (msgEdit && !successMsg.isEmpty())
+            msgEdit->append(successMsg);
+
+        return true;
+    }
+    else
+    {
+        if (msgEdit && !failMsg.isEmpty())
+            msgEdit->append(failMsg);
+
+        return false;
+    }
+}
+
+
 
 /**
  * @description: 加载bin文件按键
@@ -128,37 +157,26 @@ void HK_BIN_Tool::on_Add_Bin_pushButton_clicked()
     /************* EDID *************/
 
     /************* BIN *************/
+    bool State = false;
+    //背光值
+    BIN_Find_Func(Bin_Buffer, BinData_BackLightDef, ui->_BACKLIGHT_MIN, 0, ui->FUNC_textEdit, "支持修改电流", "不支持修改电流", 16);
+    BIN_Find_Func(Bin_Buffer, BinData_BackLightDef, ui->_BACKLIGHT_DEF_PWM, 1, ui->FUNC_textEdit, "", "", 16);
+    BIN_Find_Func(Bin_Buffer, BinData_BackLightDef, ui->_BACKLIGHT_MAX, 2, ui->FUNC_textEdit, "", "", 16);
+    BIN_Find_Func(Bin_Buffer, BinData_BackLightDef, ui->_MPRT_PWM_MIN, 3, ui->FUNC_textEdit, "支持修改MPRT", "不支持修改MPRT", 16);
+    BIN_Find_Func(Bin_Buffer, BinData_BackLightDef, ui->_MPRT_PWM_DEF, 4, ui->FUNC_textEdit, "", "", 16);
+    BIN_Find_Func(Bin_Buffer, BinData_BackLightDef, ui->_MPRT_PWM_MAX, 5, ui->FUNC_textEdit, "", "", 16);
+    //按键
+    BIN_Find_Func(Bin_Buffer, Key_Value_DataDef, ui->POWER_KEY, 0, ui->FUNC_textEdit, "支持修改按键", "不支持修改按键", 16);
+    BIN_Find_Func(Bin_Buffer, Key_Value_DataDef, ui->MENU_KEY, 1, ui->FUNC_textEdit, "", "", 16);
+    BIN_Find_Func(Bin_Buffer, Key_Value_DataDef, ui->EXIT_KEY, 2, ui->FUNC_textEdit, "", "", 16);
+    BIN_Find_Func(Bin_Buffer, Key_Value_DataDef, ui->RIGHT_KEY, 3, ui->FUNC_textEdit, "", "", 16);
+    BIN_Find_Func(Bin_Buffer, Key_Value_DataDef, ui->LEFT_KEY, 4, ui->FUNC_textEdit, "", "", 16);
 
-    bool State = Find_TargetString_InBinFile(Bin_Buffer, BinData_BackLightDef);
-    if (State == true)
-    {
-        ui->_BACKLIGHT_MIN->setText(QString::number(BinData_BackLightDef.outputBuffer[0], 16).toUpper());
-        ui->_BACKLIGHT_DEF_PWM->setText(QString::number(BinData_BackLightDef.outputBuffer[1], 16).toUpper());
-        ui->_BACKLIGHT_MAX->setText(QString::number(BinData_BackLightDef.outputBuffer[2], 16).toUpper());
-        ui->_MPRT_PWM_MIN->setText(QString::number(BinData_BackLightDef.outputBuffer[3], 16).toUpper());
-        ui->_MPRT_PWM_DEF->setText(QString::number(BinData_BackLightDef.outputBuffer[4], 16).toUpper());
-        ui->_MPRT_PWM_MAX->setText(QString::number(BinData_BackLightDef.outputBuffer[5], 16).toUpper());
-        ui->FUNC_textEdit->append("支持修改MPRT!");
-    }
-    else
-        ui->FUNC_textEdit->append("不支持修改MPRT!");
-    State = Find_TargetString_InBinFile(Bin_Buffer, Key_Value_DataDef);
-    if (State == true)
-    {
-        ui->POWER_KEY->setText(QString::number(Key_Value_DataDef.outputBuffer[0], 16).toUpper());
-        ui->MENU_KEY->setText(QString::number(Key_Value_DataDef.outputBuffer[1], 16).toUpper());
-        ui->EXIT_KEY->setText(QString::number(Key_Value_DataDef.outputBuffer[2], 16).toUpper());
-        ui->RIGHT_KEY->setText(QString::number(Key_Value_DataDef.outputBuffer[3], 16).toUpper());
-        ui->LEFT_KEY->setText(QString::number(Key_Value_DataDef.outputBuffer[4], 16).toUpper());
-        ui->POWER_REG->setText(QString::number(Key_Value_DataDef.outputBuffer[5], 16).toUpper());
-        ui->MENU_REG->setText(QString::number(Key_Value_DataDef.outputBuffer[6], 16).toUpper());
-        ui->EXIT_REG->setText(QString::number(Key_Value_DataDef.outputBuffer[7], 16).toUpper());
-        ui->RIGHT_REG->setText(QString::number(Key_Value_DataDef.outputBuffer[8], 16).toUpper());
-        ui->LEFT_REG->setText(QString::number(Key_Value_DataDef.outputBuffer[9], 16).toUpper());
-        ui->FUNC_textEdit->append("支持修改按键!");
-    }
-    else
-        ui->FUNC_textEdit->append("不支持修改按键!");
+    BIN_Find_Func(Bin_Buffer, Key_Value_DataDef, ui->POWER_REG, 5, ui->FUNC_textEdit, "", "", 16);
+    BIN_Find_Func(Bin_Buffer, Key_Value_DataDef, ui->MENU_REG, 6, ui->FUNC_textEdit, "", "", 16);
+    BIN_Find_Func(Bin_Buffer, Key_Value_DataDef, ui->EXIT_REG, 7, ui->FUNC_textEdit, "", "", 16);
+    BIN_Find_Func(Bin_Buffer, Key_Value_DataDef, ui->RIGHT_REG, 8, ui->FUNC_textEdit, "", "", 16);
+    BIN_Find_Func(Bin_Buffer, Key_Value_DataDef, ui->LEFT_REG, 9, ui->FUNC_textEdit, "", "", 16);
 
     State = Find_TargetString_InBinFile(Bin_Buffer, Osd_DataDef);
     // if(State == true)
@@ -170,73 +188,38 @@ void HK_BIN_Tool::on_Add_Bin_pushButton_clicked()
 
     // }
 
-    State = Find_TargetString_InBinFile(Bin_Buffer, HKC_Osd_DataDef);
-    if(State == true)
-    {
-        bool ok;
-        ui->HKC_BACKLIGHT_MIN->setText(QString::number(HKC_Osd_DataDef.outputBuffer[4], 16).toUpper());
-        ui->HKC_BACKLIGHT_DEF_PWM->setText(QString::number(HKC_Osd_DataDef.outputBuffer[5], 16).toUpper());
-        ui->HKC_BACKLIGHT_MAX->setText(QString::number(HKC_Osd_DataDef.outputBuffer[6], 16).toUpper());
-        ui->HKC_Language_DEF->setText(QString::number(HKC_Osd_DataDef.outputBuffer[8], 10).toUpper());
-        ui->HKC_Color_Temp_DEF->setText(QString::number(HKC_Osd_DataDef.outputBuffer[10], 10).toUpper());
-        ui->FUNC_textEdit->append("支持修改2383E04 OSD值!");
-    }
-    else
-        ui->FUNC_textEdit->append("不支持修改2383E04 OSD值!!");
-    State = Find_TargetString_InBinFile(Bin_Buffer, HKC_TEMP_COLOR_DataDef);
-    if(State == true)
-    {
-        bool ok;
-        ui->_CT9300_RED->setText(QString::number(HKC_TEMP_COLOR_DataDef.outputBuffer[1], 10));
-        ui->_CT9300_GREEN->setText(QString::number(HKC_TEMP_COLOR_DataDef.outputBuffer[3], 10));
-        ui->_CT9300_BLUE->setText(QString::number(HKC_TEMP_COLOR_DataDef.outputBuffer[5], 10));
-        ui->_CT6500_RED->setText(QString::number(HKC_TEMP_COLOR_DataDef.outputBuffer[7], 10));
-        ui->_CT6500_GREEN->setText(QString::number(HKC_TEMP_COLOR_DataDef.outputBuffer[9], 10));
-        ui->_CT6500_BLUE->setText(QString::number(HKC_TEMP_COLOR_DataDef.outputBuffer[11], 10));
-        ui->_CTUSER_RED->setText(QString::number(HKC_TEMP_COLOR_DataDef.outputBuffer[13], 10));
-        ui->_CTUSER_GREEN->setText(QString::number(HKC_TEMP_COLOR_DataDef.outputBuffer[15], 10));
-        ui->_CTUSER_BLUE->setText(QString::number(HKC_TEMP_COLOR_DataDef.outputBuffer[17], 10));
-        ui->FUNC_textEdit->append("支持修改2383E04 色温值!");
-    }
-    else
-        ui->FUNC_textEdit->append("不支持修改2383E04 色温值!");
+    BIN_Find_Func(Bin_Buffer, HKC_Osd_DataDef, ui->HKC_BACKLIGHT_MIN, 4, ui->FUNC_textEdit, "支持修改2383电流", "不支持修改2383电流", 16);
+    BIN_Find_Func(Bin_Buffer, HKC_Osd_DataDef, ui->HKC_BACKLIGHT_DEF_PWM, 5, ui->FUNC_textEdit, "", "", 16);
+    BIN_Find_Func(Bin_Buffer, HKC_Osd_DataDef, ui->HKC_BACKLIGHT_MAX, 6, ui->FUNC_textEdit, "", "", 16);
+
+    BIN_Find_Func(Bin_Buffer, HKC_Osd_DataDef, ui->HKC_Language_DEF, 8, ui->FUNC_textEdit, "支持修改2383语言", "不支持修改2383语言", 10);
+    BIN_Find_Func(Bin_Buffer, HKC_Osd_DataDef, ui->HKC_Color_Temp_DEF, 10, ui->FUNC_textEdit, "支持修改2383色温定义", "不支持修改2383色温定义", 10);
+
+    BIN_Find_Func(Bin_Buffer, HKC_TEMP_COLOR_DataDef, ui->_CT9300_RED, 1, ui->FUNC_textEdit, "支持修改2383色温值", "不支持修改2383色温值", 10);
+    BIN_Find_Func(Bin_Buffer, HKC_TEMP_COLOR_DataDef, ui->_CT9300_GREEN, 3, ui->FUNC_textEdit, "", "", 10);
+    BIN_Find_Func(Bin_Buffer, HKC_TEMP_COLOR_DataDef, ui->_CT9300_BLUE, 5, ui->FUNC_textEdit, "", "", 10);
+    BIN_Find_Func(Bin_Buffer, HKC_TEMP_COLOR_DataDef, ui->_CT6500_RED, 7, ui->FUNC_textEdit, "", "", 10);
+    BIN_Find_Func(Bin_Buffer, HKC_TEMP_COLOR_DataDef, ui->_CT6500_GREEN, 9, ui->FUNC_textEdit, "", "", 10);
+    BIN_Find_Func(Bin_Buffer, HKC_TEMP_COLOR_DataDef, ui->_CT6500_BLUE, 11, ui->FUNC_textEdit, "", "", 10);
+    BIN_Find_Func(Bin_Buffer, HKC_TEMP_COLOR_DataDef, ui->_CTUSER_RED, 13, ui->FUNC_textEdit, "", "", 10);
+    BIN_Find_Func(Bin_Buffer, HKC_TEMP_COLOR_DataDef, ui->_CTUSER_GREEN, 15, ui->FUNC_textEdit, "", "", 10);
+    BIN_Find_Func(Bin_Buffer, HKC_TEMP_COLOR_DataDef, ui->_CTUSER_BLUE, 17, ui->FUNC_textEdit, "", "", 10);
+
 
     /******************************LOGO******************************/
     ui->LOGO_MESSAGE_textEdit->clear();
-    State = Find_TargetString_InBinFile(Bin_Buffer, LOGO_BASE_Default_DataDef);
+    BIN_Find_Func(Bin_Buffer, LOGO_BASE_Default_DataDef, nullptr, 0, ui->LOGO_MESSAGE_textEdit, "支持修改LOGO!", "不支持修改LOGO!", 16);
+
+    State = BIN_Find_Func(Bin_Buffer, LOGO_2383_BASE_Default_DataDef, nullptr, 0, ui->LOGO_MESSAGE_textEdit, "支持修改2383LOGO!", "不支持修改2383LOGO!", 16);
+    BIN_Find_Func(Bin_Buffer, LOGO_2383_BASE_Default1_DataDef, nullptr, 0, ui->LOGO_MESSAGE_textEdit, "", "", 16);
     if(State == true)
     {
-        for (int var = 0; var < LOGO_BASE_Default_DataDef.outputBufferSize; ++var) {
-            qDebug() << LOGO_BASE_Default_DataDef.outputBuffer[var];
-        }
-        ui->LOGO_MESSAGE_textEdit->append("支持修改LOGO!");
+        ui->RTD2383_Project_checkBox->setCheckState(Qt::Checked);
+        ui->_OSD_REG_MAPPING_GEN_lineEdit->setText("_USER_OSD_GEN_1");
     }
-    else
-        ui->LOGO_MESSAGE_textEdit->append("不支持修改LOGO!");
 
-    State = Find_TargetString_InBinFile(Bin_Buffer, LOGO_Palette_DataDef);
-    if(State == true)
-    {
-        // for (int var = 0; var < LOGO_Palette_DataDef.outputBufferSize; ++var) {
-        //     qDebug() << LOGO_Palette_DataDef.outputBuffer[var];
-        // }
-        ui->LOGO_MESSAGE_textEdit->append("支持修改LOGO色盘!");
-    }
-    else
-        ui->LOGO_MESSAGE_textEdit->append("支持修改LOGO色盘!");
-
-    State = Find_TargetString_InBinFile(Bin_Buffer, LOGO_DataDef);
-    if(State == true)
-    {
-        // for (int var = 0; var < 5; ++var) {
-        //     qDebug() << LOGO_DataDef.outputBuffer[var];
-        // }
-        ui->LOGO_MESSAGE_textEdit->append("支持修改LOGO_Data!");
-    }
-    else
-        ui->LOGO_MESSAGE_textEdit->append("支持修改LOGO_Data!");
-
-    //State = Find_TargetString_InBinFile(Bin_Buffer, LOGO_INDEX_DataDef);
+    BIN_Find_Func(Bin_Buffer, LOGO_Palette_DataDef, nullptr, 0, ui->LOGO_MESSAGE_textEdit, "支持修改LOGO色盘", "不支持修改LOGO色盘", 16);
+    BIN_Find_Func(Bin_Buffer, LOGO_DataDef, nullptr, 0, ui->LOGO_MESSAGE_textEdit, "支持修改LOGO_Data", "不支持修改LOGO_Data", 16);
 
     /******************************LOGO******************************/
 
@@ -394,35 +377,73 @@ void HK_BIN_Tool::on_Save_Bin_pushButton_clicked()
     /************* BIN *************/
     bool State = false;
     bool ok;
-    State = Find_TargetString_InBinFile(Bin_Buffer, BinData_BackLightDef);
+    // State = Find_TargetString_InBinFile(Bin_Buffer, BinData_BackLightDef);
+    // if (State == true)
+    // {
+    //     BinData_BackLightDef.outputBuffer[0] = ui->_BACKLIGHT_MIN->text().toInt(&ok, 16);
+    //     BinData_BackLightDef.outputBuffer[1] = ui->_BACKLIGHT_DEF_PWM->text().toInt(&ok, 16);
+    //     BinData_BackLightDef.outputBuffer[2] = ui->_BACKLIGHT_MAX->text().toInt(&ok, 16);
+    //     BinData_BackLightDef.outputBuffer[3] = ui->_MPRT_PWM_MIN->text().toInt(&ok, 16);
+    //     BinData_BackLightDef.outputBuffer[4] = ui->_MPRT_PWM_DEF->text().toInt(&ok, 16);
+    //     BinData_BackLightDef.outputBuffer[5] = ui->_MPRT_PWM_MAX->text().toInt(&ok, 16);
+    //     State = Write_TargetString_InBinFile(Bin_Buffer, BinData_BackLightDef);
+    //     if (State == true)
+    //         ui->FUNC_textEdit->append("电流值修改成功");
+    //     else
+    //         ui->FUNC_textEdit->setText("电流值修改失败");
+    // }
+    // State = Find_TargetString_InBinFile(Bin_Buffer, Key_Value_DataDef);
+    // if (State == true)
+    // {
+    //     Key_Value_DataDef.outputBuffer[0] = ui->POWER_KEY->text().toInt(&ok, 16);
+    //     Key_Value_DataDef.outputBuffer[1] = ui->MENU_KEY->text().toInt(&ok, 16);
+    //     Key_Value_DataDef.outputBuffer[2] = ui->EXIT_KEY->text().toInt(&ok, 16);
+    //     Key_Value_DataDef.outputBuffer[3] = ui->RIGHT_KEY->text().toInt(&ok, 16);
+    //     Key_Value_DataDef.outputBuffer[4] = ui->LEFT_KEY->text().toInt(&ok, 16);
+
+    //     Key_Value_DataDef.outputBuffer[5] = ui->POWER_REG->text().toInt(&ok, 16);
+    //     Key_Value_DataDef.outputBuffer[6] = ui->MENU_REG->text().toInt(&ok, 16);
+    //     Key_Value_DataDef.outputBuffer[7] = ui->EXIT_REG->text().toInt(&ok, 16);
+    //     Key_Value_DataDef.outputBuffer[8] = ui->RIGHT_REG->text().toInt(&ok, 16);
+    //     Key_Value_DataDef.outputBuffer[9] = ui->LEFT_REG->text().toInt(&ok, 16);
+
+    //     State = Write_TargetString_InBinFile(Bin_Buffer, Key_Value_DataDef);
+    //     if (State == true)
+    //         ui->FUNC_textEdit->append("键值修改成功");
+    //     else
+    //         ui->FUNC_textEdit->setText("键值修改失败");
+    // }
+
+    //背光值
+    State = BIN_Find_Func(Bin_Buffer, BinData_BackLightDef, ui->_BACKLIGHT_MIN, 0, ui->FUNC_textEdit, "", "", 16);
+    BIN_Find_Func(Bin_Buffer, BinData_BackLightDef, ui->_BACKLIGHT_DEF_PWM, 1, ui->FUNC_textEdit, "", "", 16);
+    BIN_Find_Func(Bin_Buffer, BinData_BackLightDef, ui->_BACKLIGHT_MAX, 2, ui->FUNC_textEdit, "", "", 16);
+    BIN_Find_Func(Bin_Buffer, BinData_BackLightDef, ui->_MPRT_PWM_MIN, 3, ui->FUNC_textEdit, "", "", 16);
+    BIN_Find_Func(Bin_Buffer, BinData_BackLightDef, ui->_MPRT_PWM_DEF, 4, ui->FUNC_textEdit, "", "", 16);
+    BIN_Find_Func(Bin_Buffer, BinData_BackLightDef, ui->_MPRT_PWM_MAX, 5, ui->FUNC_textEdit, "", "", 16);
     if (State == true)
     {
-        BinData_BackLightDef.outputBuffer[0] = ui->_BACKLIGHT_MIN->text().toInt(&ok, 16);
-        BinData_BackLightDef.outputBuffer[1] = ui->_BACKLIGHT_DEF_PWM->text().toInt(&ok, 16);
-        BinData_BackLightDef.outputBuffer[2] = ui->_BACKLIGHT_MAX->text().toInt(&ok, 16);
-        BinData_BackLightDef.outputBuffer[3] = ui->_MPRT_PWM_MIN->text().toInt(&ok, 16);
-        BinData_BackLightDef.outputBuffer[4] = ui->_MPRT_PWM_DEF->text().toInt(&ok, 16);
-        BinData_BackLightDef.outputBuffer[5] = ui->_MPRT_PWM_MAX->text().toInt(&ok, 16);
         State = Write_TargetString_InBinFile(Bin_Buffer, BinData_BackLightDef);
         if (State == true)
             ui->FUNC_textEdit->append("电流值修改成功");
         else
             ui->FUNC_textEdit->setText("电流值修改失败");
     }
-    State = Find_TargetString_InBinFile(Bin_Buffer, Key_Value_DataDef);
+    //按键
+    State = BIN_Find_Func(Bin_Buffer, Key_Value_DataDef, ui->POWER_KEY, 0, ui->FUNC_textEdit, "", "", 16);
+    BIN_Find_Func(Bin_Buffer, Key_Value_DataDef, ui->MENU_KEY, 1, ui->FUNC_textEdit, "", "", 16);
+    BIN_Find_Func(Bin_Buffer, Key_Value_DataDef, ui->EXIT_KEY, 2, ui->FUNC_textEdit, "", "", 16);
+    BIN_Find_Func(Bin_Buffer, Key_Value_DataDef, ui->RIGHT_KEY, 3, ui->FUNC_textEdit, "", "", 16);
+    BIN_Find_Func(Bin_Buffer, Key_Value_DataDef, ui->LEFT_KEY, 4, ui->FUNC_textEdit, "", "", 16);
+
+    BIN_Find_Func(Bin_Buffer, Key_Value_DataDef, ui->POWER_REG, 5, ui->FUNC_textEdit, "", "", 16);
+    BIN_Find_Func(Bin_Buffer, Key_Value_DataDef, ui->MENU_REG, 6, ui->FUNC_textEdit, "", "", 16);
+    BIN_Find_Func(Bin_Buffer, Key_Value_DataDef, ui->EXIT_REG, 7, ui->FUNC_textEdit, "", "", 16);
+    BIN_Find_Func(Bin_Buffer, Key_Value_DataDef, ui->RIGHT_REG, 8, ui->FUNC_textEdit, "", "", 16);
+    BIN_Find_Func(Bin_Buffer, Key_Value_DataDef, ui->LEFT_REG, 9, ui->FUNC_textEdit, "", "", 16);
+
     if (State == true)
     {
-        Key_Value_DataDef.outputBuffer[0] = ui->POWER_KEY->text().toInt(&ok, 16);
-        Key_Value_DataDef.outputBuffer[1] = ui->MENU_KEY->text().toInt(&ok, 16);
-        Key_Value_DataDef.outputBuffer[2] = ui->EXIT_KEY->text().toInt(&ok, 16);
-        Key_Value_DataDef.outputBuffer[3] = ui->RIGHT_KEY->text().toInt(&ok, 16);
-        Key_Value_DataDef.outputBuffer[4] = ui->LEFT_KEY->text().toInt(&ok, 16);
-        Key_Value_DataDef.outputBuffer[5] = ui->POWER_REG->text().toInt(&ok, 16);
-        Key_Value_DataDef.outputBuffer[6] = ui->MENU_REG->text().toInt(&ok, 16);
-        Key_Value_DataDef.outputBuffer[7] = ui->EXIT_REG->text().toInt(&ok, 16);
-        Key_Value_DataDef.outputBuffer[8] = ui->RIGHT_REG->text().toInt(&ok, 16);
-        Key_Value_DataDef.outputBuffer[9] = ui->LEFT_REG->text().toInt(&ok, 16);
-
         State = Write_TargetString_InBinFile(Bin_Buffer, Key_Value_DataDef);
         if (State == true)
             ui->FUNC_textEdit->append("键值修改成功");
@@ -458,46 +479,12 @@ void HK_BIN_Tool::on_Save_Bin_pushButton_clicked()
         HKC_TEMP_COLOR_DataDef.outputBuffer[13] = ui->_CTUSER_RED->text().toInt(&ok, 10);
         HKC_TEMP_COLOR_DataDef.outputBuffer[15] = ui->_CTUSER_GREEN->text().toInt(&ok, 10);
         HKC_TEMP_COLOR_DataDef.outputBuffer[17] = ui->_CTUSER_BLUE->text().toInt(&ok, 10);
-
-
-
         State = Write_TargetString_InBinFile(Bin_Buffer, HKC_TEMP_COLOR_DataDef);
         if (State == true)
             ui->FUNC_textEdit->append("色温值修改成功");
         else
             ui->FUNC_textEdit->setText("色温值修改失败");
     }
-
-    // State = Find_TargetString_InBinFile(Bin_Buffer, LOGO_BASE_Default_DataDef);
-    // if(State == true)
-    // {
-    //     bool ok;
-    //     LOGO_BASE_Default_DataDef.outputBuffer[0] = ui->_LOGO_FG_COLOR_lineEdit->text().toInt(&ok, 10);
-    //     LOGO_BASE_Default_DataDef.outputBuffer[1] = ui->_LOGO_BG_COLOR_lineEdit->text().toInt(&ok, 10);
-    //     LOGO_BASE_Default_DataDef.outputBuffer[2] = ui->_LOGO_COL_lineEdit->text().toInt(&ok, 10);
-    //     LOGO_BASE_Default_DataDef.outputBuffer[3] = ui->_LOGO_ROW_lineEdit->text().toInt(&ok, 10);
-    //     LOGO_BASE_Default_DataDef.outputBuffer[4] = ui->_LOGO_BG_RED_lineEdit->text().toInt(&ok, 10);
-    //     LOGO_BASE_Default_DataDef.outputBuffer[5] = ui->_LOGO_BG_GREEN_lineEdit->text().toInt(&ok, 10);
-    //     LOGO_BASE_Default_DataDef.outputBuffer[6] = ui->_LOGO_BG_BLUE_lineEdit->text().toInt(&ok, 10);
-    //     State = Write_TargetString_InBinFile(Bin_Buffer, LOGO_BASE_Default_DataDef);
-    //     if (State == true)
-    //         ui->LOGO_MESSAGE_textEdit->append("替换LOGO成功");
-    //     else
-    //         ui->LOGO_MESSAGE_textEdit->append("替换LOGO失败");
-    // }
-
-
-    // State = Find_TargetString_InBinFile(Bin_Buffer, LOGO_INDEX_DataDef);
-    // if(State == true)
-    // {
-    //     State = Write_TargetString_InBinFile(Bin_Buffer, LOGO_INDEX_DataDef);
-    // }
-
-    // State = Find_TargetString_InBinFile(Bin_Buffer, LOGO_DataDef);
-    // if(State == true)
-    // {
-    //     State = Write_TargetString_InBinFile(Bin_Buffer, LOGO_DataDef);
-    // }
     /************* BIN *************/
     // 写入数据并关闭文件
     file.write(Bin_Buffer);
@@ -677,11 +664,6 @@ void HK_BIN_Tool::on_Save_Edid_pushButton_clicked()
     QMessageBox::information(this, tr("成功"), tr("文件已保存到:\n%1").arg(newFileName));
 }
 
-void HK_BIN_Tool::on_checkBox_clicked(bool checked)
-{
-    ui->HBANK_lineEdit->setText("160");
-}
-
 void HK_BIN_Tool::on_Resolution_comboBox_currentTextChanged(const QString &arg1)
 {
     if (arg1 == "FHD")
@@ -697,6 +679,16 @@ void HK_BIN_Tool::on_Resolution_comboBox_currentTextChanged(const QString &arg1)
     else if (arg1 == "QHD")
     {
         ui->H_lineEdit->setText("2560");
+        ui->V_lineEdit->setText("1440");
+        if (ui->H_V_checkBox->isChecked())
+        {
+            ui->HBANK_lineEdit->setText("160");
+            //ui->VBANK_lineEdit->setText("41");
+        }
+    }
+    else if (arg1 == "WQHD")
+    {
+        ui->H_lineEdit->setText("3440");
         ui->V_lineEdit->setText("1440");
         if (ui->H_V_checkBox->isChecked())
         {
@@ -843,7 +835,6 @@ void HK_BIN_Tool::on_LOGO_SIZE_COL_ROW_pushButton_clicked()
 
 
 
-
 void HK_BIN_Tool::on_Add_Key_H_pushButton_clicked()
 {
     QString fileName = QFileDialog::getOpenFileName(this, tr("选择C源文件"), "", tr("C源文件 (*.c)"));
@@ -887,6 +878,10 @@ void HK_BIN_Tool::on_Add_Key_H_pushButton_clicked()
             {
                 QString key = parts[1];
                 QString value = parts[2];
+                // 如果值以 "0x" 或 "0X" 开头，则去掉前缀
+                if (value.startsWith("0x", Qt::CaseInsensitive)) {
+                    value = value.mid(2);  // 去掉前两个字符
+                }
                 keyConditionData[currentCondition][key] = value;
             }
         }
@@ -1058,8 +1053,6 @@ void HK_BIN_Tool::on_Add_LOGO_Define_pushButton_clicked()
         }
 
         result += key + " = " + processedValue + "\n";
-        qDebug() << key << "=" << processedValue;
-        qDebug() << Logo_Base_Default_valueList;
     }
 
     ui->LOGO_MESSAGE_textEdit->append(result);
@@ -1107,7 +1100,7 @@ void HK_BIN_Tool::on_Add_LOGO_Draw_pushButton_clicked()
     // 设置条件宏定义
     QStringList activeDefines;
     QString osdFont = ui->_OSD_EXTEND_256_2BIT_FONTS_lineEdit->text().trimmed();
-    QString osdGen  = ui->_OSD_REG_MAPPING_GEN_lineEdit->text().trimmed();
+    QString osdGen  = ui->_OSD_REG_MAPPING_GEN_lineEdit->text(). trimmed();
 
     if (!osdFont.isEmpty())
         activeDefines << "_OSD_EXTEND_256_2BIT_FONTS=" + osdFont;
@@ -1126,65 +1119,125 @@ void HK_BIN_Tool::on_Add_LOGO_Draw_pushButton_clicked()
 void HK_BIN_Tool::on_Replace_LOGO_pushButton_clicked()
 {
     bool State = false;
-
-    State = Find_TargetString_InBinFile(Bin_Buffer, LOGO_BASE_Default_DataDef);
-    if(State == true)
+    if(ui->RTD2383_Project_checkBox->isChecked())
     {
-        QVector<uchar> ucharList;
-        for (const QString& str : Logo_Base_Default_valueList) {
-            bool ok;
-            int value = str.toInt(&ok, 10); // 按十进制解析
-            if (ok) {
-                if (value <= 255) {
-                    ucharList.append(static_cast<uchar>(value));
-                } else if (value <= 65535) {
-                    // 大端模式：高位在前，低位在后
-                    uchar high = static_cast<uchar>((value >> 8) & 0xFF);
-                    uchar low  = static_cast<uchar>(value & 0xFF);
-                    ucharList.append(high);
-                    ucharList.append(low);
+        State = Find_TargetString_InBinFile(Bin_Buffer, LOGO_2383_BASE_Default_DataDef);
+        if(State == true)
+        {
+            QVector<uchar> ucharList;  // 用于存储转换后的 uchar 数据
+            for (int i = 0; i < Logo_Base_Default_valueList.size(); ++i) {
+                const QString& str = Logo_Base_Default_valueList[i];
+                bool ok;
+                int value = str.toInt(&ok, 10); // 按十进制将字符串转换为整数
+                if (ok) {
+                    if (i == 6 || i == 7 || i == 8) {
+                        // 第6,第7和第8项为word数据，按大端模式转换为两个字节
+                        if (value <= 65535) {
+                            uchar high = static_cast<uchar>((value >> 8) & 0xFF);  // 取高字节
+                            uchar low  = static_cast<uchar>(value & 0xFF);         // 取低字节
+                            ucharList.append(high);  // 先添加高字节
+                            ucharList.append(low);   // 再添加低字节
+                        } else {
+                            qWarning() << "word数值超出范围：" << value;
+                        }
+                    } else {
+                        // 其他项按byte处理
+                        if (value <= 255) {
+                            ucharList.append(static_cast<uchar>(value));
+                        } else {
+                            qWarning() << "byte数值超出范围：" << value;
+                        }
+                    }
+
                 } else {
-                    qWarning() << "数值超出 ushort 范围：" << value;
+                    qWarning() << "转换失败:" << str;
                 }
-            } else {
-                qWarning() << "转换失败:" << str;
+                for (int var = 0; var < LOGO_2383_BASE_Default_DataDef.outputBufferSize; ++var) {
+                    LOGO_2383_BASE_Default_DataDef.outputBuffer[var] = ucharList[var];
+                }
+                for (int var = 0; var < LOGO_2383_BASE_Default1_DataDef.outputBufferSize; ++var) {
+                    LOGO_2383_BASE_Default1_DataDef.outputBuffer[var] = ucharList[var + 6];
+                }
             }
+            State = Write_TargetString_InBinFile(Bin_Buffer, LOGO_2383_BASE_Default_DataDef);
+            State = Write_TargetString_InBinFile(Bin_Buffer, LOGO_2383_BASE_Default1_DataDef);
+            if(State == true)
+                ui->LOGO_MESSAGE_textEdit->append("LOGO_2383_BASE_Default_DataDef Successful!");
+            else
+                ui->LOGO_MESSAGE_textEdit->append("LOGO_2383_BASE_Default_DataDef false!");
         }
-        if (ucharList.size() > 7) {
-            // 判断第8个元素的值（uchar最大255）
-            if (ucharList[7] <= 0xFF) {
-                // 在索引7位置插入0，插入后原第8个元素变成第9个
-                ucharList.insert(7, 0);
-            }
-        }
-        for (int i = 0; i < LOGO_BASE_Default_DataDef.outputBufferSize; ++i) {
-            LOGO_BASE_Default_DataDef.outputBuffer[i] = ucharList[i];
-        }
-
-        Write_TargetString_InBinFile(Bin_Buffer, LOGO_BASE_Default_DataDef);
-        ui->LOGO_MESSAGE_textEdit->append("LOGO_BASE_Default_DataDef Successful!");
-
+        else
+            ui->LOGO_MESSAGE_textEdit->append("Find LOGO_2383_BASE_Default_DataDef false!");
     }
     else
-        ui->LOGO_MESSAGE_textEdit->append("false!");
+    {
+        State = Find_TargetString_InBinFile(Bin_Buffer, LOGO_BASE_Default_DataDef);
+        if(State == true)
+        {
+            QVector<uchar> ucharList;  // 用于存储转换后的 uchar 数据
+            for (int i = 0; i < Logo_Base_Default_valueList.size(); ++i) {
+                const QString& str = Logo_Base_Default_valueList[i];
+                bool ok;
+                int value = str.toInt(&ok, 10); // 按十进制将字符串转换为整数
+                if (ok) {
+                    if (i == 7 || i == 8) {
+                        // 第7和第8项为word数据，按大端模式转换为两个字节
+                        if (value <= 65535) {
+                            uchar high = static_cast<uchar>((value >> 8) & 0xFF);  // 取高字节
+                            uchar low  = static_cast<uchar>(value & 0xFF);         // 取低字节
+                            ucharList.append(high);  // 先添加高字节
+                            ucharList.append(low);   // 再添加低字节
+                        } else {
+                            qWarning() << "word数值超出范围：" << value;
+                        }
+                    } else {
+                        // 其他项按byte处理
+                        if (value <= 255) {
+                            ucharList.append(static_cast<uchar>(value));
+                        } else {
+                            qWarning() << "byte数值超出范围：" << value;
+                        }
+                    }
+
+                } else {
+                    qWarning() << "转换失败:" << str;
+                }
+            }
+
+            for (int var = 0; var < ucharList.size(); ++var) {
+                qDebug() << ucharList[var];
+            }
+
+            memcpy(LOGO_BASE_Default_DataDef.outputBuffer, ucharList.data(), ucharList.size());
+            State = Write_TargetString_InBinFile(Bin_Buffer, LOGO_BASE_Default_DataDef);
+            if(State == true)
+                ui->LOGO_MESSAGE_textEdit->append("LOGO_BASE_Default_DataDef Successful!");
+            else
+                ui->LOGO_MESSAGE_textEdit->append("LOGO_BASE_Default_DataDef false!");
+        }
+        else
+            ui->LOGO_MESSAGE_textEdit->append("Find LOGO_BASE_Default_DataDef false!");
+    }
+
+
 
     State = Find_TargetString_InBinFile(Bin_Buffer, LOGO_Palette_DataDef);
     if(State == true)
     {
-        for (int var = 0; var < LOGO_Palette_DataDef.outputBufferSize; ++var) {
-            LOGO_Palette_DataDef.outputBuffer[var] = Logo_paletteData[var];
-        }
+        memcpy(LOGO_Palette_DataDef.outputBuffer, Logo_paletteData.data(), Logo_paletteData.size());
         State = Write_TargetString_InBinFile(Bin_Buffer, LOGO_Palette_DataDef);
-        ui->LOGO_MESSAGE_textEdit->append("LOGO_Palette_DataDef Successful!");
-
+        if(State == true)
+            ui->LOGO_MESSAGE_textEdit->append("LOGO_Palette_DataDef Successful!");
+        else
+            ui->LOGO_MESSAGE_textEdit->append("LOGO_Palette_DataDef false!");
     }
+    else
+        ui->LOGO_MESSAGE_textEdit->append("Find LOGO_Palette_DataDef false!");
 
     State = Find_TargetString_InBinFile(Bin_Buffer, LOGO_DataDef);
     if(State == true)
     {
-        for (int var = 0; var < LOGO_DataDef.outputBufferSize; ++var) {
-            LOGO_DataDef.outputBuffer[var] = Logo_Data[var];
-        }
+        memcpy(LOGO_DataDef.outputBuffer, Logo_Data.data(), Logo_Data.size());
         State = Write_TargetString_InBinFile(Bin_Buffer, LOGO_DataDef);
         ui->LOGO_MESSAGE_textEdit->append("LOGO_DataDef Successful!");
 

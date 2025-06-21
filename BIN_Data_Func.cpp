@@ -81,6 +81,28 @@ Bin_Data_String HKC_TEMP_COLOR_DataDef = {
     18                   // 输出缓冲区大小
 };
 /*LOGO基础定义数据定位结构体*/
+uchar LOGO_2383_BASE_Default_Buffer[6] = {0};
+const char *LOGO_2383_BASE_Default_string = "HK_2383_LOGO_BASE_Default Flag";
+int LOGO_2383_BASE_Default_string_len = STRLEN_INCL_NULL(LOGO_2383_BASE_Default_string);
+Bin_Data_String LOGO_2383_BASE_Default_DataDef = {
+    LOGO_2383_BASE_Default_string,     // 目标字符串
+    0,                      // 字符串初始位置
+    LOGO_2383_BASE_Default_string_len, // 偏移量
+    LOGO_2383_BASE_Default_Buffer,       // 输出缓冲区
+    6                   // 输出缓冲区大小
+};
+
+uchar LOGO_2383_BASE_Default1_Buffer[6] = {0};
+const char *LOGO_2383_BASE_Default1_string = "HK_2383_LOGO_BASE_Default1 Flag";
+int LOGO_2383_BASE_Default1_string_len = STRLEN_INCL_NULL(LOGO_2383_BASE_Default1_string);
+Bin_Data_String LOGO_2383_BASE_Default1_DataDef = {
+    LOGO_2383_BASE_Default1_string,     // 目标字符串
+    0,                      // 字符串初始位置
+    LOGO_2383_BASE_Default1_string_len, // 偏移量
+    LOGO_2383_BASE_Default1_Buffer,       // 输出缓冲区
+    6                   // 输出缓冲区大小
+};
+
 uchar LOGO_BASE_Default_Buffer[11] = {0};
 const char *LOGO_BASE_Default_string = "HK_LOGO_BASE_Default Flag";
 int LOGO_BASE_Default_string_len = STRLEN_INCL_NULL(LOGO_BASE_Default_string);
@@ -91,6 +113,7 @@ Bin_Data_String LOGO_BASE_Default_DataDef = {
     LOGO_BASE_Default_Buffer,       // 输出缓冲区
     11                   // 输出缓冲区大小
 };
+
 
 /*LOGO色盘定义数据定位结构体*/
 uchar LOGO_Palette_Buffer[48] = {0};
@@ -105,7 +128,7 @@ Bin_Data_String LOGO_Palette_DataDef = {
 };
 
 /*LOGO数据定位结构体*/
-uchar LOGO_Data_Buffer[1024 * 6] = {0};
+uchar LOGO_Data_Buffer[1024 * 10] = {0};
 const char *LOGO_target_string = "HK_LOGO_Data Flag";
 int LOGO_target_string_len = STRLEN_INCL_NULL(LOGO_target_string);
 Bin_Data_String LOGO_DataDef = {
@@ -113,53 +136,10 @@ Bin_Data_String LOGO_DataDef = {
     0,                      // 字符串初始位置
     LOGO_target_string_len, // 偏移量
     LOGO_Data_Buffer,       // 输出缓冲区
-    1024 * 6                    // 输出缓冲区大小
-};
-
-/*LOGO_INDEX数据定位结构体*/
-uchar LOGO_INDEX_Data_Buffer[1024] = {0};
-const char *LOGO_INDEX_target_string = "HK_LOGO_INDEX_VLC_DATA Flag";
-int LOGO_INDEX_target_string_len = STRLEN_INCL_NULL(LOGO_INDEX_target_string);
-Bin_Data_String LOGO_INDEX_DataDef = {
-    LOGO_INDEX_target_string,     // 目标字符串
-    0,                            // 字符串初始位置
-    LOGO_INDEX_target_string_len, // 偏移量
-    LOGO_INDEX_Data_Buffer,       // 输出缓冲区
-    1024                          // 输出缓冲区大小
+    1024 * 10                    // 输出缓冲区大小
 };
 
 
-
-uchar LOGO_Data_END_Buffer[4096] = {0};
-const char *LOGO_target_END_string = "HK_LOGO0_VLC_DATA_END Flag";
-int LOGO_target_END_string_len = STRLEN_INCL_NULL(LOGO_target_END_string);
-Bin_Data_String LOGO_END_DataDef = {
-    LOGO_target_END_string,     // 目标字符串
-    0,                      // 字符串初始位置
-    STRLEN_INCL_NULL(LOGO_target_END_string), // 偏移量
-    LOGO_Data_END_Buffer,       // 输出缓冲区
-    4096                    // 输出缓冲区大小
-};
-uchar LOGO1_Data_Buffer[4096] = {0};
-const char *LOGO1_target_string = "HK_LOGO1_VLC_DATA Flag";
-int LOGO1_target_string_len = STRLEN_INCL_NULL(LOGO1_target_string);
-Bin_Data_String LOGO1_DataDef = {
-    LOGO1_target_string,     // 目标字符串
-    0,                       // 字符串初始位置
-    LOGO1_target_string_len, // 偏移量
-    LOGO1_Data_Buffer,       // 输出缓冲区
-    4096                     // 输出缓冲区大小
-};
-uchar LOGO1_INDEX_Data_Buffer[4096] = {0};
-const char *LOGO1_INDEX_target_string = "HK_LOGO1_INDEX_VLC_DATA Flag";
-int LOGO1_INDEX_target_string_len = STRLEN_INCL_NULL(LOGO1_INDEX_target_string);
-Bin_Data_String LOGO1_INDEX_DataDef = {
-    LOGO1_INDEX_target_string,     // 目标字符串
-    0,                             // 字符串初始位置
-    LOGO1_INDEX_target_string_len, // 偏移量
-    LOGO1_INDEX_Data_Buffer,       // 输出缓冲区
-    4096                           // 输出缓冲区大小
-};
 bool Find_TargetString_InBinFile(const QByteArray Bin_Buffer, Bin_Data_String &Bin_Data)
 {
     bool State;
@@ -573,3 +553,5 @@ QVector<quint8> extractByteArray(const QString &filePath,
 
     return data;
 }
+
+
