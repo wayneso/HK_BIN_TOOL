@@ -44,7 +44,7 @@ Bin_Data_String Key_Value_DataDef = {
     10                         // 输出缓冲区大小
 };
 /*OSD常用设置定位结构体*/
-uchar Osd_Data_Buffer[128] = {0};
+uchar Osd_Data_Buffer[64] = {0};
 const char *Osd_Data_string = "HK_OSD_Default Flag!";
 int Osd_Data_string_len = STRLEN_INCL_NULL(Osd_Data_string);
 Bin_Data_String Osd_DataDef = {
@@ -52,10 +52,19 @@ Bin_Data_String Osd_DataDef = {
     0,                   // 字符串初始位置
     Osd_Data_string_len, // 偏移量
     Osd_Data_Buffer,     // 输出缓冲区
-    128                   // 输出缓冲区大小
+    64                   // 输出缓冲区大小
 };
 
-
+uchar ColorTemp_Data_Buffer[36] = {0};
+const char *ColorTemp_Data_string = "HK_ColorTemp Flag!";
+int ColorTemp_Data_string_len = STRLEN_INCL_NULL(ColorTemp_Data_string);
+Bin_Data_String ColorTemp_DataDef = {
+    ColorTemp_Data_string,     // 目标字符串
+    0,                   // 字符串初始位置
+    ColorTemp_Data_string_len, // 偏移量
+    ColorTemp_Data_Buffer,     // 输出缓冲区
+    36                   // 输出缓冲区大小
+};
 
 /*HKC_OSD常用设置定位结构体*/
 uchar HKC_Osd_Data_Buffer[24] = {0};
@@ -139,6 +148,28 @@ Bin_Data_String LOGO_DataDef = {
     1024 * 10                    // 输出缓冲区大小
 };
 
+// 从 byte 中提取指定掩码和偏移的值
+uchar Find_Byte_With_Mask_Offset(uchar byte, uchar mask, uchar offset)
+{
+    return (byte & mask) >> offset;
+}
+
+// 将字段值写入 byte 中，保留其它位不变
+uchar Write_Byte_With_Mask_Offset(uchar byte, uchar value, uchar mask, uchar offset)
+{
+    byte &= ~mask;                      // 清除对应位
+    byte |= (value << offset) & mask;    // 设置新值
+    return byte;
+}
+
+void Combine_High_Low_4BIT(QLineEdit* edit, uchar* buffer)
+{
+    bool ok = false;
+    int value = edit->text().toInt(&ok);
+    buffer[0] = GET_HIGH_4BIT(value);
+    buffer[1] = GET_LOW_4BIT(value);
+}
+
 
 bool Find_TargetString_InBinFile(const QByteArray Bin_Buffer, Bin_Data_String &Bin_Data)
 {
@@ -150,8 +181,8 @@ bool Find_TargetString_InBinFile(const QByteArray Bin_Buffer, Bin_Data_String &B
     // 如果找到目标字符串
     if (Bin_Data.positions != -1)
     {
-        qDebug() << "找到目标字符串, 起始位置:" << Bin_Data.positions;
-        qDebug() << "目标字符串:" << Bin_Data.target_string;
+        //qDebug() << "找到目标字符串, 起始位置:" << Bin_Data.positions;
+        //qDebug() << "目标字符串:" << Bin_Data.target_string;
         // 拷贝目标字符串到输出缓冲区
         std::memcpy(Bin_Data.outputBuffer,
                     Bin_Buffer.mid(Bin_Data.positions + Bin_Data.offset, Bin_Data.outputBufferSize).data(),
@@ -162,7 +193,7 @@ bool Find_TargetString_InBinFile(const QByteArray Bin_Buffer, Bin_Data_String &B
     else
     {
         State = false;
-        qDebug() << "未找到目标字符串";
+        //qDebug() << "未找到目标字符串";
     }
     return State;
 }

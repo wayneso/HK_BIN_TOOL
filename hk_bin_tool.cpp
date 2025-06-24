@@ -34,9 +34,12 @@ QList<QString> Logo_Base_Default_valueList;
 QVector<quint8> Logo_paletteData;
 QVector<quint8> Logo_Data;
 
+
+
 HK_BIN_Tool::HK_BIN_Tool(QWidget *parent) : QWidget(parent), ui(new Ui::HK_BIN_Tool)
 {
     ui->setupUi(this);
+    this->setWindowTitle("HiKEEN_BIN_Tool V1.0");
     ui->Measure_comboBox->addItem("快捷选项");
     ui->Measure_comboBox->addItem("19.0");
     ui->Measure_comboBox->addItem("21.0");
@@ -178,15 +181,34 @@ void HK_BIN_Tool::on_Add_Bin_pushButton_clicked()
     BIN_Find_Func(Bin_Buffer, Key_Value_DataDef, ui->RIGHT_REG, 8, ui->FUNC_textEdit, "", "", 16);
     BIN_Find_Func(Bin_Buffer, Key_Value_DataDef, ui->LEFT_REG, 9, ui->FUNC_textEdit, "", "", 16);
 
-    State = Find_TargetString_InBinFile(Bin_Buffer, Osd_DataDef);
-    // if(State == true)
-    // {
-    //     bool ok;
-    //     for (int var = 0; var < 10; ++var) {
-    //         qDebug()<< Osd_DataDef.outputBuffer[var];
-    //     }
+    State = BIN_Find_Func(Bin_Buffer, Osd_DataDef, nullptr, 0, ui->FUNC_textEdit, "支持修改OSD值", "不支持修改OSD值", 16);
+    if(State == true)
+    {
+        uchar RTD_2795_OSD_COLOR_TEMP_DEF;
+        uchar RTD_2795_OSD_LANGUAGE_DEF;
+        RTD_2795_OSD_COLOR_TEMP_DEF = Find_Byte_With_Mask_Offset(Osd_DataDef.outputBuffer[1], _RTD2795_OSD_COLOR_TEMP_MAKS, _RTD2795_OSD_COLOR_TEMP_MAKS_OFFSET);
+        RTD_2795_OSD_LANGUAGE_DEF = Find_Byte_With_Mask_Offset(Osd_DataDef.outputBuffer[1], _RTD2795_OSD_LANGUAGE_MAKS, _RTD2795_OSD_LANGUAGE_MAKS_OFFSET);
+        ui->RTD_Color_Temp_DEF->setText(QString::number(RTD_2795_OSD_COLOR_TEMP_DEF));
+        ui->RTD_Language_DEF->setText(QString::number(RTD_2795_OSD_LANGUAGE_DEF));
+    }
 
-    // }
+    State =  BIN_Find_Func(Bin_Buffer, ColorTemp_DataDef, nullptr, 0, ui->FUNC_textEdit, "支持修改色温值", "不支持修改色温值", 10);
+    if(State == true)
+    {
+        QVector<ColorEditItem> RTD_Color_Temp = {
+            {ui->RTD_CT9300_RED, 0}, {ui->RTD_CT9300_GREEN, 2}, {ui->RTD_CT9300_BLUE, 4},
+            {ui->RTD_CT7500_RED, 6}, {ui->RTD_CT7500_GREEN, 8}, {ui->RTD_CT7500_BLUE, 10},
+            {ui->RTD_CT6500_RED, 12}, {ui->RTD_CT6500_GREEN, 14}, {ui->RTD_CT6500_BLUE, 16},
+            {ui->RTD_CT5800_RED, 18}, {ui->RTD_CT5800_GREEN, 20}, {ui->RTD_CT5800_BLUE, 22},
+            {ui->RTD_CTSRGB_RED, 24}, {ui->RTD_CTSRGB_GREEN, 26}, {ui->RTD_CTSRGB_BLUE, 28},
+            {ui->RTD_CTUSER_RED, 30}, {ui->RTD_CTUSER_GREEN, 32}, {ui->RTD_CTUSER_BLUE, 34}
+        };
+
+        for (const ColorEditItem& item : RTD_Color_Temp) {
+            int value = COMBINE_4BIT_HIGH_LOW(ColorTemp_DataDef.outputBuffer[item.index], ColorTemp_DataDef.outputBuffer[item.index + 1]);
+            item.edit->setText(QString::number(value));
+        }
+    }
 
     BIN_Find_Func(Bin_Buffer, HKC_Osd_DataDef, ui->HKC_BACKLIGHT_MIN, 4, ui->FUNC_textEdit, "支持修改2383电流", "不支持修改2383电流", 16);
     BIN_Find_Func(Bin_Buffer, HKC_Osd_DataDef, ui->HKC_BACKLIGHT_DEF_PWM, 5, ui->FUNC_textEdit, "", "", 16);
@@ -377,79 +399,96 @@ void HK_BIN_Tool::on_Save_Bin_pushButton_clicked()
     /************* BIN *************/
     bool State = false;
     bool ok;
-    // State = Find_TargetString_InBinFile(Bin_Buffer, BinData_BackLightDef);
-    // if (State == true)
-    // {
-    //     BinData_BackLightDef.outputBuffer[0] = ui->_BACKLIGHT_MIN->text().toInt(&ok, 16);
-    //     BinData_BackLightDef.outputBuffer[1] = ui->_BACKLIGHT_DEF_PWM->text().toInt(&ok, 16);
-    //     BinData_BackLightDef.outputBuffer[2] = ui->_BACKLIGHT_MAX->text().toInt(&ok, 16);
-    //     BinData_BackLightDef.outputBuffer[3] = ui->_MPRT_PWM_MIN->text().toInt(&ok, 16);
-    //     BinData_BackLightDef.outputBuffer[4] = ui->_MPRT_PWM_DEF->text().toInt(&ok, 16);
-    //     BinData_BackLightDef.outputBuffer[5] = ui->_MPRT_PWM_MAX->text().toInt(&ok, 16);
-    //     State = Write_TargetString_InBinFile(Bin_Buffer, BinData_BackLightDef);
-    //     if (State == true)
-    //         ui->FUNC_textEdit->append("电流值修改成功");
-    //     else
-    //         ui->FUNC_textEdit->setText("电流值修改失败");
-    // }
-    // State = Find_TargetString_InBinFile(Bin_Buffer, Key_Value_DataDef);
-    // if (State == true)
-    // {
-    //     Key_Value_DataDef.outputBuffer[0] = ui->POWER_KEY->text().toInt(&ok, 16);
-    //     Key_Value_DataDef.outputBuffer[1] = ui->MENU_KEY->text().toInt(&ok, 16);
-    //     Key_Value_DataDef.outputBuffer[2] = ui->EXIT_KEY->text().toInt(&ok, 16);
-    //     Key_Value_DataDef.outputBuffer[3] = ui->RIGHT_KEY->text().toInt(&ok, 16);
-    //     Key_Value_DataDef.outputBuffer[4] = ui->LEFT_KEY->text().toInt(&ok, 16);
-
-    //     Key_Value_DataDef.outputBuffer[5] = ui->POWER_REG->text().toInt(&ok, 16);
-    //     Key_Value_DataDef.outputBuffer[6] = ui->MENU_REG->text().toInt(&ok, 16);
-    //     Key_Value_DataDef.outputBuffer[7] = ui->EXIT_REG->text().toInt(&ok, 16);
-    //     Key_Value_DataDef.outputBuffer[8] = ui->RIGHT_REG->text().toInt(&ok, 16);
-    //     Key_Value_DataDef.outputBuffer[9] = ui->LEFT_REG->text().toInt(&ok, 16);
-
-    //     State = Write_TargetString_InBinFile(Bin_Buffer, Key_Value_DataDef);
-    //     if (State == true)
-    //         ui->FUNC_textEdit->append("键值修改成功");
-    //     else
-    //         ui->FUNC_textEdit->setText("键值修改失败");
-    // }
-
-    //背光值
-    State = BIN_Find_Func(Bin_Buffer, BinData_BackLightDef, ui->_BACKLIGHT_MIN, 0, ui->FUNC_textEdit, "", "", 16);
-    BIN_Find_Func(Bin_Buffer, BinData_BackLightDef, ui->_BACKLIGHT_DEF_PWM, 1, ui->FUNC_textEdit, "", "", 16);
-    BIN_Find_Func(Bin_Buffer, BinData_BackLightDef, ui->_BACKLIGHT_MAX, 2, ui->FUNC_textEdit, "", "", 16);
-    BIN_Find_Func(Bin_Buffer, BinData_BackLightDef, ui->_MPRT_PWM_MIN, 3, ui->FUNC_textEdit, "", "", 16);
-    BIN_Find_Func(Bin_Buffer, BinData_BackLightDef, ui->_MPRT_PWM_DEF, 4, ui->FUNC_textEdit, "", "", 16);
-    BIN_Find_Func(Bin_Buffer, BinData_BackLightDef, ui->_MPRT_PWM_MAX, 5, ui->FUNC_textEdit, "", "", 16);
+    State = Find_TargetString_InBinFile(Bin_Buffer, BinData_BackLightDef);
     if (State == true)
     {
+        BinData_BackLightDef.outputBuffer[0] = ui->_BACKLIGHT_MIN->text().toInt(&ok, 16);
+        BinData_BackLightDef.outputBuffer[1] = ui->_BACKLIGHT_DEF_PWM->text().toInt(&ok, 16);
+        BinData_BackLightDef.outputBuffer[2] = ui->_BACKLIGHT_MAX->text().toInt(&ok, 16);
+        BinData_BackLightDef.outputBuffer[3] = ui->_MPRT_PWM_MIN->text().toInt(&ok, 16);
+        BinData_BackLightDef.outputBuffer[4] = ui->_MPRT_PWM_DEF->text().toInt(&ok, 16);
+        BinData_BackLightDef.outputBuffer[5] = ui->_MPRT_PWM_MAX->text().toInt(&ok, 16);
         State = Write_TargetString_InBinFile(Bin_Buffer, BinData_BackLightDef);
         if (State == true)
             ui->FUNC_textEdit->append("电流值修改成功");
         else
             ui->FUNC_textEdit->setText("电流值修改失败");
     }
-    //按键
-    State = BIN_Find_Func(Bin_Buffer, Key_Value_DataDef, ui->POWER_KEY, 0, ui->FUNC_textEdit, "", "", 16);
-    BIN_Find_Func(Bin_Buffer, Key_Value_DataDef, ui->MENU_KEY, 1, ui->FUNC_textEdit, "", "", 16);
-    BIN_Find_Func(Bin_Buffer, Key_Value_DataDef, ui->EXIT_KEY, 2, ui->FUNC_textEdit, "", "", 16);
-    BIN_Find_Func(Bin_Buffer, Key_Value_DataDef, ui->RIGHT_KEY, 3, ui->FUNC_textEdit, "", "", 16);
-    BIN_Find_Func(Bin_Buffer, Key_Value_DataDef, ui->LEFT_KEY, 4, ui->FUNC_textEdit, "", "", 16);
-
-    BIN_Find_Func(Bin_Buffer, Key_Value_DataDef, ui->POWER_REG, 5, ui->FUNC_textEdit, "", "", 16);
-    BIN_Find_Func(Bin_Buffer, Key_Value_DataDef, ui->MENU_REG, 6, ui->FUNC_textEdit, "", "", 16);
-    BIN_Find_Func(Bin_Buffer, Key_Value_DataDef, ui->EXIT_REG, 7, ui->FUNC_textEdit, "", "", 16);
-    BIN_Find_Func(Bin_Buffer, Key_Value_DataDef, ui->RIGHT_REG, 8, ui->FUNC_textEdit, "", "", 16);
-    BIN_Find_Func(Bin_Buffer, Key_Value_DataDef, ui->LEFT_REG, 9, ui->FUNC_textEdit, "", "", 16);
-
+    State = Find_TargetString_InBinFile(Bin_Buffer, Key_Value_DataDef);
     if (State == true)
     {
+        Key_Value_DataDef.outputBuffer[0] = ui->POWER_KEY->text().toInt(&ok, 16);
+        Key_Value_DataDef.outputBuffer[1] = ui->MENU_KEY->text().toInt(&ok, 16);
+        Key_Value_DataDef.outputBuffer[2] = ui->EXIT_KEY->text().toInt(&ok, 16);
+        Key_Value_DataDef.outputBuffer[3] = ui->RIGHT_KEY->text().toInt(&ok, 16);
+        Key_Value_DataDef.outputBuffer[4] = ui->LEFT_KEY->text().toInt(&ok, 16);
+
+        Key_Value_DataDef.outputBuffer[5] = ui->POWER_REG->text().toInt(&ok, 16);
+        Key_Value_DataDef.outputBuffer[6] = ui->MENU_REG->text().toInt(&ok, 16);
+        Key_Value_DataDef.outputBuffer[7] = ui->EXIT_REG->text().toInt(&ok, 16);
+        Key_Value_DataDef.outputBuffer[8] = ui->RIGHT_REG->text().toInt(&ok, 16);
+        Key_Value_DataDef.outputBuffer[9] = ui->LEFT_REG->text().toInt(&ok, 16);
+
         State = Write_TargetString_InBinFile(Bin_Buffer, Key_Value_DataDef);
         if (State == true)
             ui->FUNC_textEdit->append("键值修改成功");
         else
             ui->FUNC_textEdit->setText("键值修改失败");
     }
+    State = Find_TargetString_InBinFile(Bin_Buffer, Osd_DataDef);
+    if(State == true)
+    {
+        uchar RTD_2795_OSD_COLOR_TEMP_DEF;
+        uchar RTD_2795_OSD_LANGUAGE_DEF;
+        uchar temp = Osd_DataDef.outputBuffer[1];
+        RTD_2795_OSD_COLOR_TEMP_DEF = ui->RTD_Color_Temp_DEF->text().toInt(&ok, 10);
+        RTD_2795_OSD_LANGUAGE_DEF = ui->RTD_Language_DEF->text().toInt(&ok, 10);
+        temp = Write_Byte_With_Mask_Offset(temp, RTD_2795_OSD_COLOR_TEMP_DEF, _RTD2795_OSD_COLOR_TEMP_MAKS, _RTD2795_OSD_COLOR_TEMP_MAKS_OFFSET);
+        temp = Write_Byte_With_Mask_Offset(temp, RTD_2795_OSD_LANGUAGE_DEF, _RTD2795_OSD_LANGUAGE_MAKS, _RTD2795_OSD_LANGUAGE_MAKS_OFFSET);
+        Osd_DataDef.outputBuffer[1] = temp;
+        State = Write_TargetString_InBinFile(Bin_Buffer, Osd_DataDef);
+        if (State == true)
+            ui->FUNC_textEdit->append("OSD值修改成功");
+        else
+            ui->FUNC_textEdit->setText("OSD值修改失败");
+    }
+
+    State = Find_TargetString_InBinFile(Bin_Buffer, ColorTemp_DataDef);
+    if(State == true)
+    {
+        Combine_High_Low_4BIT(ui->RTD_CT9300_RED,   &ColorTemp_DataDef.outputBuffer[0]);
+        Combine_High_Low_4BIT(ui->RTD_CT9300_GREEN, &ColorTemp_DataDef.outputBuffer[2]);
+        Combine_High_Low_4BIT(ui->RTD_CT9300_BLUE,  &ColorTemp_DataDef.outputBuffer[4]);
+
+        Combine_High_Low_4BIT(ui->RTD_CT7500_RED,   &ColorTemp_DataDef.outputBuffer[6]);
+        Combine_High_Low_4BIT(ui->RTD_CT7500_GREEN, &ColorTemp_DataDef.outputBuffer[8]);
+        Combine_High_Low_4BIT(ui->RTD_CT7500_BLUE,  &ColorTemp_DataDef.outputBuffer[10]);
+
+        Combine_High_Low_4BIT(ui->RTD_CT6500_RED,   &ColorTemp_DataDef.outputBuffer[12]);
+        Combine_High_Low_4BIT(ui->RTD_CT6500_GREEN, &ColorTemp_DataDef.outputBuffer[14]);
+        Combine_High_Low_4BIT(ui->RTD_CT6500_BLUE,  &ColorTemp_DataDef.outputBuffer[16]);
+
+        Combine_High_Low_4BIT(ui->RTD_CT5800_RED,   &ColorTemp_DataDef.outputBuffer[18]);
+        Combine_High_Low_4BIT(ui->RTD_CT5800_GREEN, &ColorTemp_DataDef.outputBuffer[20]);
+        Combine_High_Low_4BIT(ui->RTD_CT5800_BLUE,  &ColorTemp_DataDef.outputBuffer[22]);
+
+        Combine_High_Low_4BIT(ui->RTD_CTSRGB_RED,   &ColorTemp_DataDef.outputBuffer[24]);
+        Combine_High_Low_4BIT(ui->RTD_CTSRGB_GREEN, &ColorTemp_DataDef.outputBuffer[26]);
+        Combine_High_Low_4BIT(ui->RTD_CTSRGB_BLUE,  &ColorTemp_DataDef.outputBuffer[28]);
+
+        Combine_High_Low_4BIT(ui->RTD_CTUSER_RED,   &ColorTemp_DataDef.outputBuffer[30]);
+        Combine_High_Low_4BIT(ui->RTD_CTUSER_GREEN, &ColorTemp_DataDef.outputBuffer[32]);
+        Combine_High_Low_4BIT(ui->RTD_CTUSER_BLUE,  &ColorTemp_DataDef.outputBuffer[34]);
+
+        State = Write_TargetString_InBinFile(Bin_Buffer, ColorTemp_DataDef);
+        if (State == true)
+            ui->FUNC_textEdit->append("色温值修改成功");
+        else
+            ui->FUNC_textEdit->setText("色温值修改失败");
+    }
+
+
+
 
     State = Find_TargetString_InBinFile(Bin_Buffer, HKC_Osd_DataDef);
     if(State == true)
