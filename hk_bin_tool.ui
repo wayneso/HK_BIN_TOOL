@@ -2867,7 +2867,7 @@
         <x>750</x>
         <y>10</y>
         <width>151</width>
-        <height>191</height>
+        <height>371</height>
        </rect>
       </property>
       <property name="title">
@@ -2876,7 +2876,7 @@
       <widget class="QLineEdit" name="COL_lineEdit">
        <property name="geometry">
         <rect>
-         <x>90</x>
+         <x>100</x>
          <y>20</y>
          <width>41</width>
          <height>20</height>
@@ -2964,7 +2964,7 @@
       <widget class="QLineEdit" name="NEW_COL_lineEdit">
        <property name="geometry">
         <rect>
-         <x>90</x>
+         <x>100</x>
          <y>100</y>
          <width>41</width>
          <height>20</height>
@@ -2978,13 +2978,117 @@
        <property name="geometry">
         <rect>
          <x>10</x>
-         <y>160</y>
+         <y>340</y>
          <width>131</width>
          <height>21</height>
         </rect>
        </property>
        <property name="text">
         <string>计算</string>
+       </property>
+      </widget>
+      <widget class="QLabel" name="COL_label_3">
+       <property name="geometry">
+        <rect>
+         <x>10</x>
+         <y>160</y>
+         <width>121</width>
+         <height>21</height>
+        </rect>
+       </property>
+       <property name="text">
+        <string>COL:</string>
+       </property>
+      </widget>
+      <widget class="QLabel" name="ROW_label_3">
+       <property name="geometry">
+        <rect>
+         <x>10</x>
+         <y>190</y>
+         <width>121</width>
+         <height>21</height>
+        </rect>
+       </property>
+       <property name="text">
+        <string>ROW:</string>
+       </property>
+      </widget>
+      <widget class="QLineEdit" name="NEW_COL_32_lineEdit">
+       <property name="geometry">
+        <rect>
+         <x>100</x>
+         <y>210</y>
+         <width>41</width>
+         <height>20</height>
+        </rect>
+       </property>
+       <property name="text">
+        <string/>
+       </property>
+      </widget>
+      <widget class="QLabel" name="COL_32_label">
+       <property name="geometry">
+        <rect>
+         <x>10</x>
+         <y>270</y>
+         <width>121</width>
+         <height>21</height>
+        </rect>
+       </property>
+       <property name="text">
+        <string>COL:</string>
+       </property>
+      </widget>
+      <widget class="QLineEdit" name="NEW_ROW_16_lineEdit">
+       <property name="geometry">
+        <rect>
+         <x>100</x>
+         <y>240</y>
+         <width>41</width>
+         <height>20</height>
+        </rect>
+       </property>
+       <property name="text">
+        <string/>
+       </property>
+      </widget>
+      <widget class="QLabel" name="COL_label_5">
+       <property name="geometry">
+        <rect>
+         <x>10</x>
+         <y>210</y>
+         <width>91</width>
+         <height>21</height>
+        </rect>
+       </property>
+       <property name="text">
+        <string>新COL(长/32)</string>
+       </property>
+      </widget>
+      <widget class="QLabel" name="ROW_label_4">
+       <property name="geometry">
+        <rect>
+         <x>10</x>
+         <y>240</y>
+         <width>101</width>
+         <height>21</height>
+        </rect>
+       </property>
+       <property name="text">
+        <string>新ROW(宽/16)</string>
+       </property>
+      </widget>
+      <widget class="QLabel" name="ROW_16_label">
+       <property name="geometry">
+        <rect>
+         <x>10</x>
+         <y>300</y>
+         <width>121</width>
+         <height>21</height>
+        </rect>
+       </property>
+       <property name="text">
+        <string>ROW:</string>
        </property>
       </widget>
      </widget>

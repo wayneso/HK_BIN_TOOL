@@ -870,6 +870,25 @@ void HK_BIN_Tool::on_LOGO_SIZE_COL_ROW_pushButton_clicked()
 
     ui->NEW_COL_lineEdit->setText(QString::number(NEW_COL));
     ui->NEW_ROW_lineEdit->setText(QString::number(NEW_ROW));
+
+    QString COL_label_3 = "COL:" + QString::number(NEW_COL / 12);
+    QString ROW_label_3 = "ROW:" + QString::number(NEW_ROW / 18);
+
+    ui->COL_label_3->setText(COL_label_3);
+    ui->ROW_label_3->setText(ROW_label_3);
+
+    int NEW_COL_32 = COL/32 * 32;
+    int NEW_ROW_16 = ROW/16 * 16;
+
+    ui->NEW_COL_32_lineEdit->setText(QString::number(NEW_COL_32));
+    ui->NEW_ROW_16_lineEdit->setText(QString::number(NEW_ROW_16));
+
+    QString COL_label_32 = "COL:" + QString::number(NEW_COL_32 / 32);
+    QString ROW_label_16 = "ROW:" + QString::number(NEW_ROW_16 / 16);
+
+    ui->COL_32_label->setText(COL_label_32);
+    ui->ROW_16_label->setText(ROW_label_16);
+
 }
 
 
